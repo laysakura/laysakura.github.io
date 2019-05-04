@@ -3,8 +3,6 @@ title: {{ title }}
 id: 'id-included-in-url'
 date: {{ date }}
 tags:
-  - 金融
-  - テクノロジー
   - High Performance Computing
   - Linux Kernel
   - Linuxオペレーション
@@ -13,7 +11,10 @@ tags:
   - セキュリティ
   - VPN
   - プロジェクトマネジメント
-  - チームビルディング
+  - Engineering Management
+  - Python
+  - Rust
+  - Succinct Data Structure
   - (タグ追加したら scaffolds/post.md にも追加すること)
 ---
 
