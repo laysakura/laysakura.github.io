@@ -1,6 +1,6 @@
 ---
 title: Pythonで色つきログを - rainbow_logging_handler をPyPIにリリースしました
-id: 12-05-python-rainbow-logging-handler
+id: python-rainbow-logging-handler
 tags:
   - Python
 date: 2013-12-05 16:52:32
