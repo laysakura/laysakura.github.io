@@ -8,6 +8,7 @@ tags:
   - Linuxオペレーション
   - データベース
   - MySQL
+  - SQLite
   - 機械学習
   - セキュリティ
   - VPN
