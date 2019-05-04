@@ -7,6 +7,7 @@ tags:
   - Linux Kernel
   - Linuxオペレーション
   - データベース
+  - MySQL
   - 機械学習
   - セキュリティ
   - VPN
