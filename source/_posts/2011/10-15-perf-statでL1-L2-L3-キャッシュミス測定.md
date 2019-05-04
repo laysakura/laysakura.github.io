@@ -9,40 +9,42 @@ date: 2011-10-15 13:12:42
 ---
 
 ## はじめに
-   この記事は，<a href="/2011/10/11/perf-stat-performance-counters">前回のエントリ</a>の続きものです．
-   まだご覧になっていない方は，前回分をお読みになってからこちらの記事を見てください．
+この記事は，<a href="/2011/10/11/perf-stat-performance-counters">前回のエントリ</a>の続きものです．
+まだご覧になっていない方は，前回分をお読みになってからこちらの記事を見てください．
 
 <!-- more -->
 
 <!-- toc -->
 
 ## 対象プロセッサ
-   このエントリは，AMDの次のプロセッサを対象に書かれています．
+このエントリは，AMDの次のプロセッサを対象に書かれています．
+
 - AMD Athlon 64
 - AMD Opteron
 - AMD Phenom
 
-   ただし， <span style="font-weight:bold;">これらのプロセッサでは本エントリの記述がそのまま当てはまる</span> という意味であって，
-   <span style="font-weight:bold;">他のプロセッサでも，記憶域の構成を知った上で本エントリのような考え方を適用すればキャッシュミス測定ができます．</span>
+ただし， <span style="font-weight:bold;">これらのプロセッサでは本エントリの記述がそのまま当てはまる</span> という意味であって，
+<span style="font-weight:bold;">他のプロセッサでも，記憶域の構成を知った上で本エントリのような考え方を適用すればキャッシュミス測定ができます．</span>
 
-   上に挙げたプロセッサをお使いの場合でも，L3キャッシュがあるモデルかどうかで読み替えてください．
-   本エントリではL3キャッシュがあるとして記述している箇所があります．
+上に挙げたプロセッサをお使いの場合でも，L3キャッシュがあるモデルかどうかで読み替えてください．
+本エントリではL3キャッシュがあるとして記述している箇所があります．
 
 ## 参考文献
-   <a href="/2011/10/11/perf-stat-performance-counters">前回のエントリ</a>でも紹介した
-   <a href="http://developer.amd.com/Assets/intro_to_ca_v3_final.pdf">Basic Performance Measurements for AMD Athlon 64, AMD Opteron and AMD Phenom Processors</a>
-   の "4.3 Memory Accesses" を参考に本エントリを書きました．
+<a href="/2011/10/11/perf-stat-performance-counters">前回のエントリ</a>でも紹介した
+<a href="http://developer.amd.com/Assets/intro_to_ca_v3_final.pdf">Basic Performance Measurements for AMD Athlon 64, AMD Opteron and AMD Phenom Processors</a>
+の "4.3 Memory Accesses" を参考に本エントリを書きました．
 
 ## perf stat でキャッシュミスを正確に測定するのは難しい
-   perf list 一覧できるイベント名は直感的ですが，実際には何のハードウェアイベントを測定しているのかが分かりにくいというのは<a href="/2011/10/11/perf-stat-performance-counters">前回のエントリ</a>でも触れました．
+perf list 一覧できるイベント名は直感的ですが，実際には何のハードウェアイベントを測定しているのかが分かりにくいというのは<a href="/2011/10/11/perf-stat-performance-counters">前回のエントリ</a>でも触れました．
 
-   試しに，イベント名を使ってキャッシュミスを計測します．
-   その値と， <a href="http://developer.amd.com/Assets/intro_to_ca_v3_final.pdf">Basic Performance Measurements for AMD Athlon 64, AMD Opteron and AMD Phenom Processors</a> に書かれた計算式から求めた値と比較してみて，「イベント名はアテできない・・・」ということを実感してみましょう．
+試しに，イベント名を使ってキャッシュミスを計測します．
+その値と， <a href="http://developer.amd.com/Assets/intro_to_ca_v3_final.pdf">Basic Performance Measurements for AMD Athlon 64, AMD Opteron and AMD Phenom Processors</a> に書かれた計算式から求めた値と比較してみて，「イベント名はアテできない・・・」ということを実感してみましょう．
 
-   測定に使ったCPUは，Quad-Core AMD Opteron. Model. 8354 です．L1データキャッシュ，L1命令キャッシュ,L2キャッシュがコアごとに1つずつ,L3キャッシュが4コアに1つあります．
+測定に使ったCPUは，Quad-Core AMD Opteron. Model. 8354 です．L1データキャッシュ，L1命令キャッシュ,L2キャッシュがコアごとに1つずつ,L3キャッシュが4コアに1つあります．
 
-   測定用アプリケーション(a.out)は単純なもので，1次元の領域に対して書き込みをした後読み出すだけです(下の擬似コード参照)．
->|c|
+測定用アプリケーション(a.out)は単純なもので，1次元の領域に対して書き込みをした後読み出すだけです(下の擬似コード参照)．
+
+```c
 size = atoi(コマンドライン引数);
 int *a = malloc(size * sizeof(int));
 
@@ -54,10 +56,11 @@ for (i = 0; i < size; ++size)
   sum += a[i];
 
 printf("%d\n", sum);
-||<
+```
 
-   では，イベント名を使ってキャッシュミスらしきものを計測してみましょう．
->|sh|
+では，イベント名を使ってキャッシュミスらしきものを計測してみましょう．
+
+```sh
 $ perf stat -e L1-dcache-load-misses -e L1-dcache-store-misses -e cache-misses -e LLC-load-misses -e LLC-store-misses ./a.out 1000000000
 
  Performance counter stats for './a.out 1000000000':
@@ -69,14 +72,16 @@ $ perf stat -e L1-dcache-load-misses -e L1-dcache-store-misses -e cache-misses -
   <not counted>  LLC-store-misses
 
     7.447300257  seconds time elapsed
-||<
-  *-store-misses が計測出来ていない時点で，イベント名が疑わしい臭いがします．
+```
 
-  (※ `dcache' はデータキャッシュ， `LLC' は `Last Level Cache' の略です)
+*-store-misses が計測出来ていない時点で，イベント名が疑わしい臭いがします．
 
-  次に， <a href="http://developer.amd.com/Assets/intro_to_ca_v3_final.pdf">Basic Performance Measurements for AMD Athlon 64, AMD Opteron and AMD Phenom Processors</a> の計算式を使った測定の結果を見てみます．
-  測定用のスクリプト， "perf-stat-with-events.py" はこのエントリ中に掲載します．
->|sh|
+(※ 'dcache' はデータキャッシュ， 'LLC' は 'Last Level Cache' の略です)
+
+次に， <a href="http://developer.amd.com/Assets/intro_to_ca_v3_final.pdf">Basic Performance Measurements for AMD Athlon 64, AMD Opteron and AMD Phenom Processors</a> の計算式を使った測定の結果を見てみます．
+測定用のスクリプト， "perf-stat-with-events.py" はこのエントリ中に掲載します．
+
+```sh
 $ perf-stat-with-events.py ./a.out 1000000000
 
 (出力抜粋)
@@ -87,57 +92,67 @@ $ perf-stat-with-events.py ./a.out 1000000000
 
 === Elapsed Time ===
     7.371837186  seconds time elapsed
-||<
-  先程のイベント名を使った測定の値と比較すると，どのように対応しているのかが全く分かりません．
+```
 
-  やはり，真面目に各階層のキャッシュミスを計測しようと思うと，イベント名に頼ってもいられないというのが現状のようです．
+先程のイベント名を使った測定の値と比較すると，どのように対応しているのかが全く分かりません．
 
-*## perf のソースを覗いて実際に測っているものを調べる
-    今回のエントリの本筋とは外れますので，読み飛ばして結構です．
+やはり，真面目に各階層のキャッシュミスを計測しようと思うと，イベント名に頼ってもいられないというのが現状のようです．
 
-    perf のソースを見て perf stat では何を測っているのかを確認してみたいと思います．
+### perf のソースを覗いて実際に測っているものを調べる
+今回のエントリの本筋とは外れますので，読み飛ばして結構です．
 
-    perfのソースは，Linuxのソースツリーの中にあります．
-    Linuxのソースがあるディレクトリの中で，
->|sh|
+perf のソースを見て perf stat では何を測っているのかを確認してみたいと思います．
+
+perfのソースは，Linuxのソースツリーの中にあります．
+Linuxのソースがあるディレクトリの中で，
+
+```sh
 find -name "perf_"
-||<
-    とすると，perfのソースのありかが分かります(ただし，これで列挙されるファイルで全てなのかは知りません)．
+```
 
-    実際にハードウェアカウンタの値をとるソースは，当然プロセッサの種類に依存します．
-    先の測定に用いた， AMD Opteron. Model. 8354 では，
-      "arch/x86/kernel/cpu/perf_event_amd.c"
-    に， perf stat ではどのハードウェアカウンタの値をとっているのかが書いてあります．
+とすると，perfのソースのありかが分かります(ただし，これで列挙されるファイルで全てなのかは知りません)．
 
-    コードについてあまり深くは触れませんが，これを見ると，
+実際にハードウェアカウンタの値をとるソースは，当然プロセッサの種類に依存します．
+先の測定に用いた， AMD Opteron. Model. 8354 では，
+"arch/x86/kernel/cpu/perf_event_amd.c"
+に， perf stat ではどのハードウェアカウンタの値をとっているのかが書いてあります．
+
+コードについてあまり深くは触れませんが，これを見ると，
+
 - 「AMDのプロセッサ」という風に汎用的な枠組みで定義しているので，L3キャッシュを持つプロセッサについても，L3キャッシュミスを計測するためのイベント名を提供していない
 - 例えばデータキャッシュミスなどは， <a href="http://developer.amd.com/Assets/intro_to_ca_v3_final.pdf">Basic Performance Measurements for AMD Athlon 64, AMD Opteron and AMD Phenom Processors</a> で「この測り方は正確な測定としてはお勧めできません」と書いてあるやり方で計測しようとしている
-    といった問題点が見えてきます．
 
-    Oprofileみたいに，プロセッサの種類をもっと細かく分類しなければ，「直感的なイベント名で正しく計測」というのは難しいのでしょう．
-    (余談の余談ですが，そういうpatchは投げられてないんですかね?)
+といった問題点が見えてきます．
+
+Oprofileみたいに，プロセッサの種類をもっと細かく分類しなければ，「直感的なイベント名で正しく計測」というのは難しいのでしょう．
+(余談の余談ですが，そういうpatchは投げられてないんですかね?)
 
 ## キャッシュ・メインメモリの構成を正しく把握する
-   お使いのプロセッサで，キャッシュとメインメモリがどのような構成になっているのかを正しく知らなければ，正しいキャッシュミス測定はできません．
-   これはそれぞれのプロセッサのマニュアルに載っている情報のはずです．
+お使いのプロセッサで，キャッシュとメインメモリがどのような構成になっているのかを正しく知らなければ，正しいキャッシュミス測定はできません．
+これはそれぞれのプロセッサのマニュアルに載っている情報のはずです．
 
-   先程の計測に使った AMD Opteron. Model. 8354 については，同様のキャッシュ・メインメモリ構成を持つプロセッサの日本語解説記事がありました:
-   <a href="http://pc.watch.impress.co.jp/docs/2006/1016/kaigai312.htm">後藤弘茂のWeekly海外ニュース - 大幅に強化されたAMDのクアッドコア「Barcelona」</a>
+先程の計測に使った AMD Opteron. Model. 8354 については，同様のキャッシュ・メインメモリ構成を持つプロセッサの日本語解説記事がありました:
+<a href="http://pc.watch.impress.co.jp/docs/2006/1016/kaigai312.htm">後藤弘茂のWeekly海外ニュース - 大幅に強化されたAMDのクアッドコア「Barcelona」</a>
 
 ## キャッシュミスを計算する
-   それでは，キャッシュミスを計算します．計算するのは，
+それでは，キャッシュミスを計算します．計算するのは，
+
 - L1データキャッシュミス
 - L1命令キャッシュミス
 - L2キャッシュミス
 - L3キャッシュミス
-   です．
 
-   そのために，次のハードウェアイベントを計測しておきます．
-   括弧内は，
->|sh|
+です．
+
+そのために，次のハードウェアイベントを計測しておきます．
+括弧内は，
+
+```sh
 $ perf stat -e rNNN
-||<
-   の NNN に当たる， <UnitMask(16進数)><EventSelect(16進数)> を表します．
+```
+
+の NNN に当たる， <UnitMask(16進数)><EventSelect(16進数)> を表します．
+
 - Data Cache Accesses (40)
 - Data Cache Refills from L2 (1e42)
 - Data Cache Refills from System (1e43)
@@ -149,55 +164,64 @@ $ perf stat -e rNNN
 - Read Requests to L3 Cache (cf74e0)
 - L3 Cache Misses (cf74e1)
 
-*## L1データキャッシュミスの計算を例に，考え方を知る
-    L1データキャッシュミスを直接測定するためのハードウェアイベントはありません．間接的な手法を採ります．
+### L1データキャッシュミスの計算を例に，考え方を知る
+L1データキャッシュミスを直接測定するためのハードウェアイベントはありません．間接的な手法を採ります．
 
-    これはL1データキャッシュにも以外の全てのキャッシュにも言えることですが，
-    <span style="font-weight:bold;">キャッシュミスが起きると，自分より下のレベルのキャッシュかメインメモリからキャッシュライン分のデータを取ってきて，自分のキャッシュに載せる</span>
-    ということが起きます(この動作を refill と言います)．
-    つまり，
-    <span style="font-weight:bold;">自分より下のレベルのキャッシュ・メインメモリからデータを取ってきて，自分のキャッシュに載せるという一連の動作(Refill)の回数が，キャッシュミス回数</span>
-    となります．
+これはL1データキャッシュにも以外の全てのキャッシュにも言えることですが，
+<span style="font-weight:bold;">キャッシュミスが起きると，自分より下のレベルのキャッシュかメインメモリからキャッシュライン分のデータを取ってきて，自分のキャッシュに載せる</span>
+ということが起きます(この動作を refill と言います)．
+つまり，
+<span style="font-weight:bold;">自分より下のレベルのキャッシュ・メインメモリからデータを取ってきて，自分のキャッシュに載せるという一連の動作(Refill)の回数が，キャッシュミス回数</span>
+となります．
 
-    従って，
->>
-    "L1データキャッシュミス回数" = "L2からL1データキャッシュへのrefill回数" + "L3からL1データキャッシュへのrefill回数" + "メインメモリからL1データキャッシュへのrefill回数"
-<<
-    という関係が成立します．
+従って，
 
-    右辺の項とハードウェアイベントの対応は，
->>
-    "L2からL1データキャッシュへのrefill回数" = "Data Cache Refills from L2"
-    ("L3からL1データキャッシュへのrefill回数" + "メインメモリからL1データキャッシュへのrefill回数") = "Data Cache Refills from System"
-<<
-    となっています．
+```
+"L1データキャッシュミス回数" = "L2からL1データキャッシュへのrefill回数" + "L3からL1データキャッシュへのrefill回数" + "メインメモリからL1データキャッシュへのrefill回数"
+```
 
-    以上より，
->>
-    "L1データキャッシュミス回数" = "Data Cache Refills from L2" + "Data Cache Refills from System"
-<<
-    として計算ができます．
+という関係が成立します．
 
-*## その他のレベルのキャシュミスについて
-    L2キャッシュミスが起こる状況を考えてみます．
+右辺の項とハードウェアイベントの対応は，
+
+```
+"L2からL1データキャッシュへのrefill回数" = "Data Cache Refills from L2"
+("L3からL1データキャッシュへのrefill回数" + "メインメモリからL1データキャッシュへのrefill回数") = "Data Cache Refills from System"
+```
+
+となっています．
+
+以上より，
+
+```
+"L1データキャッシュミス回数" = "Data Cache Refills from L2" + "Data Cache Refills from System"
+```
+
+として計算ができます．
+
+### その他のレベルのキャシュミスについて
+L2キャッシュミスが起こる状況を考えてみます．
+
 - L1データキャッシュミスが起きて，L2キャッシュにアクセスしたところ，L2キャッシュもミスしたので，L3キャッシュまたはメインメモリから，L1データキャッシュにキャッシュラインを取ってきた
 - L1命令キャッシュミスが起きて，L2キャッシュにアクセスしたところ，L2キャッシュもミスしたので，L3キャッシュまたはメインメモリから，L1命令キャッシュにキャッシュラインを取ってきた
 
-    これらの場合の他に，L2キャッシュのTLBミスが発生した場合も勘定に入れます(よく分かってないのですが，ページテーブルのキャッシュとして，TLBとの間のL2キャッシュも使用しているのでしょうかね?．
+これらの場合の他に，L2キャッシュのTLBミスが発生した場合も勘定に入れます(よく分かってないのですが，ページテーブルのキャッシュとして，TLBとの間のL2キャッシュも使用しているのでしょうかね?．
 
-    従って，
->>
-    "L2キャッシュミス回数" = "Data Cache Refills from System" + "Instruction Cache Refills from System" + "L2 Cache Misses [TLB fill]"
-<<
-    と計算できます．
+従って，
 
-    今回対象にしているプロセッサでは，(L3キャッシュを持つものならば)L3キャッシュミスは直接計測できます．
+```
+"L2キャッシュミス回数" = "Data Cache Refills from System" + "Instruction Cache Refills from System" + "L2 Cache Misses [TLB fill]"
+```
+
+と計算できます．
+
+今回対象にしているプロセッサでは，(L3キャッシュを持つものならば)L3キャッシュミスは直接計測できます．
 
 ## キャッシュに関するイベントを計測するスクリプト
-   データキャッシュ・命令キャッシュ・L2キャッシュ・L3キャッシュに関する測定をするスクリプトを作りました．
-   AMD Opteron. Model. 8354 で動作を確認しています．
+データキャッシュ・命令キャッシュ・L2キャッシュ・L3キャッシュに関する測定をするスクリプトを作りました．
+AMD Opteron. Model. 8354 で動作を確認しています．
 
->|sh|
+```sh
 $ perf-stat-with-events.py ./a.out 1000000000
 === Running Environment ===
  Performance counter stats for './mopt_ref_implementation 1000000000':
@@ -236,14 +260,14 @@ $ perf-stat-with-events.py ./a.out 1000000000
 
 === Elapsed Time ===
     7.371837186  seconds time elapsed
-||<
+```
 
-   といった感じの出力が得られます．
+といった感じの出力が得られます．
 
-   改変等ご自由にどうぞ．
-   (print_calculated_events 関数がアレな感じですが，基本的にやっていることは上述のキャッシュミス計算などです)
+改変等ご自由にどうぞ．
+(print_calculated_events 関数がアレな感じですが，基本的にやっていることは上述のキャッシュミス計算などです)
 
->|python|
+```python
 #!/usr/bin/env python
 
 # This script is written referring to
@@ -454,13 +478,13 @@ def main():
 
 if __name__ == "__main__":
     main()
-||<
+```
 
 ### スクリプトの実装上の細かい注意点
-    キャッシュミスなどの計算値は，計算に必要なハードウェアイベントが正しく測定されていなければ出せません．
-    更に，計算値Aを利用して計算値Bを出す場合も，計算値Aが正しい値である必要があります．
+キャッシュミスなどの計算値は，計算に必要なハードウェアイベントが正しく測定されていなければ出せません．
+更に，計算値Aを利用して計算値Bを出す場合も，計算値Aが正しい値である必要があります．
 
-    つまり，「測定値が正しく採れなかった場合，影響が連鎖する」という性質があります．
-    スクリプトでは，
-      "_clever_calc" , "_clever_print"
-    関数によって，この連鎖関係を把握しています．
+つまり，「測定値が正しく採れなかった場合，影響が連鎖する」という性質があります．
+スクリプトでは，
+`_clever_calc` , `_clever_print`
+関数によって，この連鎖関係を把握しています．
