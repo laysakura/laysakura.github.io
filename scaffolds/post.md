@@ -44,3 +44,16 @@ puts 'hello world'
 {% githubCard user:laysakura repo:rust-fid %}
 
 詳しくは https://github.com/Gisonrg/hexo-github-card を見よ。
+
+### 数式を書く
+
+\\(\frac{a}{b}\\) でインライン数式。
+
+別行の数式は以下。
+
+\\[
+  \frac{\pi}{2} =
+  \left( \int_{0}^{\infty} \frac{\sin x}{\sqrt{x}} dx \right)^2 =
+  \sum_{k=0}^{\infty} \frac{(2k)!}{2^{2k}(k!)^2} \frac{1}{2k+1} =
+  \prod_{k=1}^{\infty} \frac{4k^2}{4k^2 - 1}
+\\]

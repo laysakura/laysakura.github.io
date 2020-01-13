@@ -136,14 +136,31 @@
     border-collapse: collapse
     border-spacing: 0
 
-  th
-    font-weight: bold
-    border-bottom: 3px solid color-border
-    padding-bottom: 0.5em
+    tr
+      display: table-row
+    tr:nth-child(2n)
+      background-color: color-super-pale
 
-  td
-    border-bottom: 1px solid color-border
-    padding: 10px 0
+    thead
+      display: table-header-group
+
+    th
+      display: table-cell
+      font-weight: bold
+      padding: 6px 13px
+      border: 1px solid color-border
+      border-bottom: 3px solid color-border
+
+    tbody
+      display: table-row-group
+
+    td
+      padding: 6px 13px
+      border: 1px solid color-border
+    td.code
+      border: 0
+    td.gutter
+      border: 0
 
   blockquote
     font-family: font-serif
