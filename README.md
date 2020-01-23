@@ -20,6 +20,7 @@ https://laysakura.github.io
 ```bash
 git checkout ready
 
+rm -rf ../tmp
 rm package*.json
 rm -rf node_modules/
 
