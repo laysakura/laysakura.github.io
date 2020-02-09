@@ -471,7 +471,14 @@ void _init(int cid, int nc)  // cid = CPUコアID, nc = 1
   int ret = main(0, 0);
 
   // パフォーマンスカウンタの内容をコンソール出力する、シングルスレッドベンチマークの共通後処理。
-  // buf はコンソール出力する文字列
+  // buf はコンソール出力する文字列を格納する領域。サイズはパフォーマンスカウンタの個数 * 32。
+  // 1個のカウンタあたり最長32バイトの文字出力ができるようにしている。
+  // NUM_COUNTERS は
+  // https://github.com/riscv/riscv-tests/blob/3a98ec2e306938cce07ab15e3678d670611aa66d/benchmarks/common/syscalls.c#L36-L38
+  // で2個に固定されている。Spikeでの実行例で見たように、 mcycle, minstret の2つに設定されている。
+  // 設定箇所をするための関数は
+  // https://github.com/riscv/riscv-tests/blob/3a98ec2e306938cce07ab15e3678d670611aa66d/benchmarks/common/syscalls.c#L39-L54
+  // であり、各アプリケーションから計測対象コードの前後で setStats(1); setStats(0) されている。
   char buf[NUM_COUNTERS * 32] __attribute__((aligned(64)));
   char* pbuf = buf;
   for (int i = 0; i < NUM_COUNTERS; i++)
@@ -479,10 +486,32 @@ void _init(int cid, int nc)  // cid = CPUコアID, nc = 1
       pbuf += sprintf(pbuf, "%s = %d\n", counter_names[i], counters[i]);
   if (pbuf != buf)
     printstr(buf);
+  // sprintf や printstr はSpikeの用意しているシステムコール呼び出しを使って実現している。
 
+  // exit() の処理は、コードを追っていくと最終的に
+  // https://github.com/riscv/riscv-tests/blob/3a98ec2e306938cce07ab15e3678d670611aa66d/benchmarks/common/syscalls.c#L56-L60
+  // の tohost_exit() に行き着く。
   exit(ret);
 }
 ```
+
+パフォーマンスカウンタ `mcycle`, `minstret` の値をコンソールに文字出力して、 `exit(main関数の返り値)` を呼び出して終了しています。
+`exit()` が最終的に行き着く `tohost_exit()` は興味深いので実装を見てみます。
+
+```c benchmarks/common/syscalls.c
+void __attribute__((noreturn)) tohost_exit(uintptr_t code)
+{
+  tohost = (code << 1) | 1;  // tohost という変数に main 関数の返り値を左シフトして最下位ビットを1にした値を書き込み
+  while (1);                 // 無限ループ
+}
+```
+
+これでどうしてベンチマークプログラムの実行が終わるのでしょうか？
+これはSpikeの定めている **HTIF (Host-Target Interface** によるものです。特定の番地の64ビット符号なし整数に0以外の値が書き込まれていたら、Host側のSpikeはTarget側のベンチマークプログラムに何らかの介入をします。ターゲット側からみたら、 `tohost` がSpikeに対する連絡手段となるのです。
+Target側が無限ループしているのにHost側に制御が移る理由があまりわかっていないのですが、おそらくSpikeはタイマ割り込みはいつでも発生するように作っているのだと思います。タイ回り込みの処理において `tohost` 領域の値をチェックして、非ゼロの場合にTargetプログラムを終了させる挙動かと推察します。
+このあたりは確信できるドキュメントなど見つからなかったので、詳しい方は教えていただけると嬉しいです。
+
+`tohost` の番地は `.tohost` セクションの番地から取得できるように https://github.com/riscv/riscv-tests/blob/3a98ec2e306938cce07ab15e3678d670611aa66d/benchmarks/common/test.ld#L29 において設定されています。
 
 ## `benchmarks/mt-vvadd` （ベクトルの加算; マルチスレッド）の挙動を追う
 
