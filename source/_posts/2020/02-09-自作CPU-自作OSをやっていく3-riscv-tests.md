@@ -3,7 +3,7 @@ title: 自作CPU & 自作OSをやっていく (3) - riscv/riscv-tests の挙動�
 id: handcraft-cpu-os-3
 tags:
   - 自作CPU & 自作OS
-date: 2020-02-08 15:00:00
+date: 2020-02-09 15:00:00
 ---
 
 2020年1月から、趣味エンジニアリング活動として自作CPUと自作OSをやっていく。
