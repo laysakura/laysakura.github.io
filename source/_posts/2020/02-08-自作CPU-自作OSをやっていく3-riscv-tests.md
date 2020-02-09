@@ -369,15 +369,13 @@ _start:
   # ----------- tp (core#0) = (_end + 63) & -64
   #
   # 各コア、スタックポインタは下方向に（低位に向かって）伸ばし、スレッドポインタは上方向に（高位に向かって）伸ばす。
-  # おそらくこうセッティングしたいと思うのだが、下記のコードではコアIDが大きいほどスタックサイズが大きいように見える...
-  # この点はIssueで確認中: https://github.com/riscv/riscv-tests/issues/241
   #
 #define STKSHIFT 17
-  sll a2, a0, STKSHIFT
-  add tp, tp, a2
   add sp, a0, 1
   sll sp, sp, STKSHIFT
   add sp, sp, tp
+  sll a2, a0, STKSHIFT
+  add tp, tp, a2
 
   # _init 関数へジャンプ。
   #   a0 = mhartid (CPUコアのID) ; ただし mhartid != 0 はこのコードパスに到達しない。
@@ -390,6 +388,8 @@ _start:
 trap_entry:
 ...
 ```
+
+マルチコアにおけるスタック領域が、コア番号が大きいほど大きくなるバグがありましたが、[PR](https://github.com/riscv/riscv-tests/pull/242)をマージしてもらって直りました😉
 
 `crt.S` では最後に `_init` にジャンプしました。この `_init` は https://github.com/riscv/riscv-tests/blob/3a98ec2e306938cce07ab15e3678d670611aa66d/benchmarks/common/syscalls.c#L106-L123 で定義されています。
 
