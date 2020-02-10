@@ -17,7 +17,9 @@ docker-compose up --build
 
 ## デプロイ
 
-ready ブランチにpushされたらGitHub Actionsが勝手にやる。
+```bash
+docker exec -it laysakuragithubio_hexo_1 bash -c 'hexo clean && hexo deploy --generate'
+```
 
 ## テーマ変更の流れ
 
