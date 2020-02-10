@@ -21,6 +21,8 @@ docker-compose up --build
 docker exec -it laysakuragithubio_hexo_1 bash -c 'hexo clean && hexo deploy --generate'
 ```
 
+GitHubで2FAをやっている場合は、認証時のパスワードは [Personal Access Tokens](https://github.com/settings/tokens) を使うこと。
+
 ## テーマ変更の流れ
 
 git subtree で `themes/apollo` を作っている。
