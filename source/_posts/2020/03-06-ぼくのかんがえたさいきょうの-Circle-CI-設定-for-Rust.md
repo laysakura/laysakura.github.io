@@ -10,7 +10,7 @@ date: 2020-03-06 07:02:35
 
 - lint, testなどの各ジョブが並列に動く（ジョブ実行数を多くしてないとdocker containerの立ち上げ分むしろ全体時間はロスになることもあるが...）。
 - [Travis CI のマトリクスビルド](https://docs.travis-ci.com/user/build-matrix/#matrix-expansion) に近いことを、 `parameters:` を使ってやっている。
-    - `rust-toolchain` ファイルに書かれたバージョンと、 `.circleci/config.yml` に書かれた MSRV (Minimum Supported Rust Version) の2つでビルドしている。
+    - [`rust-toolchain` ファイル](http://www.soudegesu.com/post/rust/rust-with-rustup/#%E3%83%84%E3%83%BC%E3%83%AB%E3%83%81%E3%82%A7%E3%82%A4%E3%83%B3%E3%82%92%E5%9B%BA%E5%AE%9A%E3%81%99%E3%82%8B) に書かれたバージョンと、 `.circleci/config.yml` に書かれた MSRV (Minimum Supported Rust Version) の2つでビルドしている。
 - `cargo-readme` を使ってrustdocとREADMEを比較し、どちらかがメンテされていない場合にエラーにする（お好みで）。
 - キャッシュ使う。
 
