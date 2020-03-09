@@ -1,5 +1,5 @@
 ---
-title: ぼくのかんがえたさいきょうの Circle CI 設定 for Rust
+title: ぼくのかんがえたさいきょうの CircleCI 設定 for Rust
 id: rust-circle-ci
 tags:
   - Rust
@@ -18,6 +18,14 @@ date: 2020-03-06 07:02:35
 
 <!-- more -->
 
+## 更新履歴
+
+- 2020/03/09
+    - rust-jp Slackスペースでの sinsoku さんのご指摘により、以下修正 🙏
+        - job中のコマンドをYAMLのアンカーで共通化していたのを、CircleCIの [`commands:`](https://circleci.com/docs/ja/2.0/configuration-reference/#commandsversion21-%E3%81%8C%E5%BF%85%E9%A0%88) 機能を使うように修正。
+        - キャッシュをリストアする際に、キャッシュキーを複数設定するように修正。
+
+
 ```yml .circleci/config.yml
 version: 2.1
 
@@ -31,19 +39,39 @@ executors:
       - image: circleci/rust:latest
     working_directory: ~/app
 
-# YAMLのアンカー
-# (See: https://magazine.rubyist.net/articles/0009/0009-YAML.html#%E3%82%A2%E3%83%B3%E3%82%AB%E3%83%BC%E3%81%A8%E3%82%A8%E3%82%A4%E3%83%AA%E3%82%A2%E3%82%B9 )
-# を用いて、共通で使うコマンドやキャッシュキーを定義する。
-references:
-  commands:
-    build_dep: &build_dep
-      name: Record build environment to use as cache key
-      command: |
-        echo $OS_VERSION | tee /tmp/build-dep
-        rustc --version | tee /tmp/build-dep
-        cat Cargo.lock >> /tmp/build-dep
+# どのジョブでも使うキャッシュ関連のコマンドを共通定義。
+# See: https://circleci.com/docs/ja/2.0/configuration-reference/#commandsversion21-%E3%81%8C%E5%BF%85%E9%A0%88
+commands:
+  record_build_env:
+    steps:
+      - run:
+          name: Record build environment to use as cache key
+          command: |
+            echo $OS_VERSION | tee /tmp/build-env
+            rustc --version | tee /tmp/build-env
 
-    cache-key: &cache-key v1-cache-cargo-target-{{ .Environment.CIRCLE_JOB }}-{{ .Environment.CIRCLECI_CACHE_VERSION }}-{{ checksum "/tmp/build-dep" }}
+  save_cache_:  # `save_cache` は予約語なのでアンダースコアをつける。
+    steps:
+      - save_cache:
+          # CIRCLECI_CACHE_VERSION 環境変数は、キャッシュをパージしたくなった際にセットする（または今までセットしていたのとは異なる文字列をセットする）。
+          # CIRCLE_JOB は CircleCI が勝手にセットしてくれる。この例だと `lint`, `readme`, `MSRV (Minimum Supported Rust Version)` などがセットされる。
+          key: cache-cargo-target-{{ .Environment.CIRCLECI_CACHE_VERSION }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/build-env" }}-{{ checksum "Cargo.lock" }}
+          paths:
+            - ~/.cargo
+            - target
+
+  restore_cache_:  # `restore_cache` は予約語なのでアンダースコアをつける。
+    steps:
+      - restore_cache:
+          keys:
+            - cache-cargo-target-{{ .Environment.CIRCLECI_CACHE_VERSION }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/build-env" }}-{{ checksum "Cargo.lock" }}
+
+            # 依存関係を追加するなどして Cargo.lock に変更があった際も、同一ジョブ・同一環境の最新のキャッシュをリストアする。
+            # さもないと、依存関係の微修正でもフルビルドが走ってしまう。
+            #
+            # CircleCIのキャッシュキーは、上の候補から順番に前方一致で検索される。
+            # See: https://circleci.com/docs/ja/2.0/caching/#%E3%82%BD%E3%83%BC%E3%82%B9%E3%82%B3%E3%83%BC%E3%83%89%E3%81%AE%E3%82%AD%E3%83%A3%E3%83%83%E3%82%B7%E3%83%A5
+            - cache-cargo-target-{{ .Environment.CIRCLECI_CACHE_VERSION }}-{{ .Environment.CIRCLE_JOB }}-{{ checksum "/tmp/build-env" }}
 
 jobs:
   lint:
@@ -52,38 +80,34 @@ jobs:
     steps:
       - checkout
 
-      # 環境情報からキャッシュキーを構築し、キャッシュをrestore
-      - run: *build_dep
-      - restore_cache:
-          key: *cache-key
+      # `commands:` で定義したコマンドを呼び出す。
+      # 環境情報からキャッシュキーを構築し、キャッシュをリストア。
+      - record_build_env
+      - restore_cache_
 
       - run:
           name: rustup component add
           command: rustup component add clippy rustfmt
+
+      # clippyのwarningも全て CI fail にする。お好みで。
       - run:
           name: fmt
           command: cargo fmt --all -- --check
-
-      # clippyのwarningも全て CI fail にする。お好みで。
       - run:
           name: clippy
           command: cargo clippy --all-targets --all-features -- -D warnings
 
-      - save_cache:
-          key: *cache-key
-          paths:
-            - ~/.cargo
+      - save_cache_
 
-  # rustdocとREADMEを比較の比較。お好みで。
+  # rustdocとREADMEを比較。お好みで。
   readme:
     executor:
       name: default
     steps:
       - checkout
 
-      - run: *build_dep
-      - restore_cache:
-          key: *cache-key
+      - record_build_env
+      - restore_cache_
 
       - run:
           name: Install cargo-readme
@@ -94,10 +118,7 @@ jobs:
             cargo readme | tee /tmp/README.md
             diff /tmp/README.md README.md
 
-      - save_cache:
-          key: *cache-key
-          paths:
-            - ~/.cargo
+      - save_cache_
 
   test:
     # マトリクスビルドもどきを実現するためのパラメータ定義。パラメータを与えて呼び出しているのは最下部の `workflows: -> test: -> jobs: -> test:` の箇所。
@@ -105,7 +126,6 @@ jobs:
       rust_version:
         type: string
         default: ""
-
     executor:
       name: default
     steps:
@@ -125,19 +145,14 @@ jobs:
                   rustup install << parameters.rust_version >>
                   rustup override set << parameters.rust_version >>
 
-      - run: *build_dep
-      - restore_cache:
-          key: *cache-key
+      - record_build_env
+      - restore_cache_
 
       - run:
           name: build & test
           command: RUST_BACKTRACE=1 cargo test --verbose --all -- --nocapture
 
-      - save_cache:
-          key: *cache-key
-          paths:
-            - ~/.cargo
-            - target
+      - save_cache_
 
 workflows:
   version: 2
