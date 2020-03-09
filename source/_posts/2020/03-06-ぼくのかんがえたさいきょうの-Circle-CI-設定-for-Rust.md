@@ -21,7 +21,7 @@ date: 2020-03-06 07:02:35
 ## 更新履歴
 
 - 2020/03/09
-    - rust-jp Slackスペースでの sinsoku さんのご指摘により、以下修正 🙏
+    - rust-jp Slackスペースでの sinsoku さんのご指摘により、以下修正 🙏 ([diff](https://github.com/laysakura/laysakura.github.io/pull/42))
         - job中のコマンドをYAMLのアンカーで共通化していたのを、CircleCIの [`commands:`](https://circleci.com/docs/ja/2.0/configuration-reference/#commandsversion21-%E3%81%8C%E5%BF%85%E9%A0%88) 機能を使うように修正。
         - キャッシュをリストアする際に、キャッシュキーを複数設定するように修正。
 
