@@ -88,8 +88,10 @@ fn i_need_static_bound_type<T: 'static>(v: T) {}
 // 参照を含まない
 struct IHaveValue(String);
 
+// 'static ライフタイムの参照だけ含む
 struct IHaveStaticRef(&'static str);
 
+// 'a というライフタイムの参照だけ含む
 struct IHaveNonStaticRef<'a>(&'a str);
 
 fn main() {
