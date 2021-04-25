@@ -230,7 +230,7 @@ impl<'r, R: Repositories> UseCase<'r, R> {
 ```
 
 その他の関数も含めて完成させたものが [app/src/use_case.rs](https://github.com/laysakura/mockall-example-rs/blob/master/app/src/use_case.rs) です。
-ユースケースは複雑度も高い部分なので念入りにテストしたいですね。今回は `app/tests` 以下に、 `UseCase::search_users()` 関数のホワイトボックステストを書くことにします。
+ユースケースは複雑度も高い部分なので念入りにテストしたいですね。今回は `app/tests` 以下に、 `UseCase::search_users()` 関数のブラックボックステストを書くことにします。
 
 ```rust app/tests/test_use_case_search_users.rs
 #[test]
