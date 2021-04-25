@@ -75,6 +75,79 @@
     <div id="main">
       
   
+    <article id="post-Rustでmockするならmockallで決まり！・・・でよろしいでしょうか？" class="post">
+  <footer class="entry-meta-header">
+    <span class="meta-elements date">
+      <a href="/2021/04/21/id-included-in-url/" class="article-date">
+  <time datetime="2021-04-21T09:56:42.000Z" itemprop="datePublished">2021-04-21</time>
+</a>
+    </span>
+  </footer>
+  
+  <header class="entry-header">
+    
+  
+    <h1 itemprop="name" class="entry-title">
+      <a class="article-title" href="/2021/04/21/id-included-in-url/">Rustでmockするならmockallで決まり！・・・でよろしいでしょうか？</a>
+    </h1>
+  
+
+  </header>
+  <div class="entry-content">
+    
+    <p>Rustで DI (Dependency Injection)、してますか？<br>今日話題にするのはドメイン層でインターフェイスを定義してインフラ層でその実装を書くやつです。<br>例えばドメイン層で <code>trait UserRepository</code> を書いて、インフラ層で <code>struct UserRepositoryImpl</code> するやつです。</p>
+<p>テストを書くとき、 <code>struct UserRepositoryImpl</code> はDBアクセスなどしてしまうので取り回しが悪いから、mock を作って fixture を入出力したいことありますよね。<br>Rustでそういうことやるなら mockall がオススメだよという記事です。</p>
+<div style="text-align: center">
+  <div class="github-card"
+    data-user="asomers"
+    data-repo="mockall"
+    data-height="200"
+    data-width="400"
+    data-theme="default"
+    data-target=""
+    data-client-id=""
+    data-client-secret=""
+  ></div>
+</div>
+<script src="/github-card-lib/githubcard.js"></script>
+
+
+<p>そんなに不満はないのですが、もしベターなやり方があったら記事末尾のコメントや<a href="https://twitter.com/laysakura" target="_blank" rel="noopener">Twitter</a>やらもらえたら嬉しいです。</p>
+<p>前職のFOLIO時代の同僚で現CADDiの <a href="https://caddi.tech/archives/2331" target="_blank" rel="noopener">むらみんさんの記事</a> に</p>
+<blockquote>
+<p>外部通信のような比較的大きい副作用が絡むテストに於いて テストダブルを差し込むことは可能なのですが、かなりの労力が必要になる印象を持っています。</p>
+</blockquote>
+<p>と書いていたのを今更ながら発見して、自分はこうしてるけど皆はどうしてるんだろ？と思って筆（キーボード）を取りました。</p>
+    
+    <p class="article-more-link">
+      <a href="/2021/04/21/id-included-in-url/#more">続きを読む</a>
+    </p>
+    
+    
+  </div>
+  <footer class="entry-footer">
+    <div class="entry-meta-footer">
+      <span class="category">
+        
+      </span>
+      <span class="tags">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Rust/" rel="tag">Rust</a></li></ul>
+
+      </span>
+    </div>
+  </footer>
+  
+  
+</article>
+
+
+<hr class="article-devider">
+
+
+
+
+  
     <article id="post-Rustの2種類のstatic" class="post">
   <footer class="entry-meta-header">
     <span class="meta-elements date">
@@ -428,7 +501,7 @@
 		<a href="/">俺とお前とlaysakura</a>
 	</h1>
 	<span class="copyright">
-		&copy; 2020 Sho Nakatani a.k.a. laysakura<br>
+		&copy; 2021 Sho Nakatani a.k.a. laysakura<br>
 		Modify from <a href="https://sanographix.github.io/tumblr/apollo/" target="_blank">Apollo</a> theme, designed by <a href="https://www.sanographix.net/" target="_blank">SANOGRAPHIX.NET</a><br>
 		Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
 	</span>

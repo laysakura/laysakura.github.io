@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   
-  <title>過去の投稿: 2012 | 俺とお前とlaysakura</title>
+  <title>過去の投稿: 2021/4 | 俺とお前とlaysakura</title>
   
-  <link rel="canonical" href="https://laysakura.github.io/archives/2012/"/>
+  <link rel="canonical" href="https://laysakura.github.io/archives/2021/04/"/>
   <meta name="viewport" content="width=device-width">
   <meta property="og:type" content="website">
 <meta property="og:title" content="俺とお前とlaysakura">
-<meta property="og:url" content="https://laysakura.github.io/archives/2012/index.html">
+<meta property="og:url" content="https://laysakura.github.io/archives/2021/04/index.html">
 <meta property="og:site_name" content="俺とお前とlaysakura">
 <meta property="og:locale" content="ja_JP">
 <meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
@@ -75,11 +75,11 @@
     <div id="main">
       
   
-    <article id="post-真・SSEを使って8flops-clockを実現する" class="post">
+    <article id="post-Rustでmockするならmockallで決まり！・・・でよろしいでしょうか？" class="post">
   <footer class="entry-meta-header">
     <span class="meta-elements date">
-      <a href="/2012/01/06/sse-8flops-clock/" class="article-date">
-  <time datetime="2012-01-06T03:43:46.000Z" itemprop="datePublished">2012-01-06</time>
+      <a href="/2021/04/21/id-included-in-url/" class="article-date">
+  <time datetime="2021-04-21T09:56:42.000Z" itemprop="datePublished">2021-04-21</time>
 </a>
     </span>
   </footer>
@@ -88,19 +88,39 @@
     
   
     <h1 itemprop="name" class="entry-title">
-      <a class="article-title" href="/2012/01/06/sse-8flops-clock/">真・SSEを使って8flops/clockを実現する</a>
+      <a class="article-title" href="/2021/04/21/id-included-in-url/">Rustでmockするならmockallで決まり！・・・でよろしいでしょうか？</a>
     </h1>
   
 
   </header>
   <div class="entry-content">
     
-    <p><a href="http://atnd.org/events/21910" target="_blank" rel="noopener">カーネル／VM Advent Calendar</a> の34日目として書きます．<br>記事の内容自体はこのイベントと関係ありませんので，どなたでもお楽しみ下さいませ．</p>
-<p>今回は <a href="http://d.hatena.ne.jp/laysakura/20111113/1321155826" target="_blank" rel="noopener">自分の前回の記事</a> で見つけた誤りを訂正しつつ，<br>Intelの一部CPUがサポートするSSE(Streaming SIMD Extensions)命令により1clockで8個の単精度浮動小数点演算を行なう方法を紹介します．</p>
-<p>なるべく前回の記事とは独立した記述を心がけます．</p>
+    <p>Rustで DI (Dependency Injection)、してますか？<br>今日話題にするのはドメイン層でインターフェイスを定義してインフラ層でその実装を書くやつです。<br>例えばドメイン層で <code>trait UserRepository</code> を書いて、インフラ層で <code>struct UserRepositoryImpl</code> するやつです。</p>
+<p>テストを書くとき、 <code>struct UserRepositoryImpl</code> はDBアクセスなどしてしまうので取り回しが悪いから、mock を作って fixture を入出力したいことありますよね。<br>Rustでそういうことやるなら mockall がオススメだよという記事です。</p>
+<div style="text-align: center">
+  <div class="github-card"
+    data-user="asomers"
+    data-repo="mockall"
+    data-height="200"
+    data-width="400"
+    data-theme="default"
+    data-target=""
+    data-client-id=""
+    data-client-secret=""
+  ></div>
+</div>
+<script src="/github-card-lib/githubcard.js"></script>
+
+
+<p>そんなに不満はないのですが、もしベターなやり方があったら記事末尾のコメントや<a href="https://twitter.com/laysakura" target="_blank" rel="noopener">Twitter</a>やらもらえたら嬉しいです。</p>
+<p>前職のFOLIO時代の同僚で現CADDiの <a href="https://caddi.tech/archives/2331" target="_blank" rel="noopener">むらみんさんの記事</a> に</p>
+<blockquote>
+<p>外部通信のような比較的大きい副作用が絡むテストに於いて テストダブルを差し込むことは可能なのですが、かなりの労力が必要になる印象を持っています。</p>
+</blockquote>
+<p>と書いていたのを今更ながら発見して、自分はこうしてるけど皆はどうしてるんだろ？と思って筆（キーボード）を取りました。</p>
     
     <p class="article-more-link">
-      <a href="/2012/01/06/sse-8flops-clock/#more">続きを読む</a>
+      <a href="/2021/04/21/id-included-in-url/#more">続きを読む</a>
     </p>
     
     
@@ -112,7 +132,7 @@
       </span>
       <span class="tags">
         
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/High-Performance-Computing/" rel="tag">High Performance Computing</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Rust/" rel="tag">Rust</a></li></ul>
 
       </span>
     </div>
