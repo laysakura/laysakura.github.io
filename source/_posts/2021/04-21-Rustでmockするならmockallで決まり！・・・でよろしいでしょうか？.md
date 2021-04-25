@@ -1,9 +1,9 @@
 ---
 title: Rustでmockするならmockallで決まり！・・・でよろしいでしょうか？
-id: id-included-in-url
+id: rust-mockall
 tags:
   - Rust
-date: 2021-04-21 18:56:42
+date: 2021-04-25 14:39:42
 ---
 
 Rustで DI (Dependency Injection)、してますか？
