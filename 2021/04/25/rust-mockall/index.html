@@ -14,11 +14,13 @@
 <meta property="og:site_name" content="俺とお前とlaysakura">
 <meta property="og:description" content="Rustで DI (Dependency Injection)、してますか？今日話題にするのはドメイン層でインターフェイスを定義してインフラ層でその実装を書くやつです。例えばドメイン層で trait UserRepository を書いて、インフラ層で struct UserRepositoryImpl するやつです。 テストを書くとき、 struct UserRepositoryImpl はDB">
 <meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://laysakura.github.io/img/2021/04-21-unresolved-import.png">
 <meta property="article:published_time" content="2021-04-25T05:39:42.000Z">
-<meta property="article:modified_time" content="2021-04-25T06:45:35.462Z">
+<meta property="article:modified_time" content="2021-05-05T05:50:08.463Z">
 <meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
 <meta property="article:tag" content="Rust">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laysakura.github.io/img/2021/04-21-unresolved-import.png">
 
   <!-- favicon -->
   <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
@@ -129,6 +131,7 @@
 </ul>
 </li>
 <li><a href="#おわりに">おわりに</a></li>
+<li><a href="#おまけ-rust-analyzer-を使っていて-use-mockfoo-が-unresolved-import-エラーになるとき">おまけ: rust-analyzer を使っていて <code>use ...::MockFoo</code> が unresolved import エラーになるとき</a></li>
 </ul>
 <!-- tocstop -->
 
@@ -260,6 +263,13 @@
 <li><a href="https://docs.rs/mockall/0.9.1/mockall/#external-traits" target="_blank" rel="noopener">自分でいじれない crate の中にある trait をモックする</a></li>
 </ul>
 <p>などありますので、ドキュメントを一読いただきよろしければ使ってみてください。</p>
+<h2><span id="おまけ-rust-analyzer-を使っていて-use-mockfoo-が-unresolved-import-エラーになるとき">おまけ: rust-analyzer を使っていて <code>use ...::MockFoo</code> が unresolved import エラーになるとき</span></h2><p>VSCodeで使っていると、 <code>use ...::MockFoo</code> をしているファイルを開いているときに rust-analyzer が unresolved import エラーを報告します。</p>
+<img src="/img/2021/04-21-unresolved-import.png" alt="rust-analyzer が unresolved import エラーを報告" width="auto" height="auto">
+
+<p><a href="https://github.com/rust-analyzer/rust-analyzer/issues/6038" target="_blank" rel="noopener">https://github.com/rust-analyzer/rust-analyzer/issues/6038</a> で報告されている問題と同根であると考えられ、<a href="https://github.com/rust-analyzer/rust-analyzer/issues/6038#issuecomment-699670537" target="_blank" rel="noopener">issue内のコメント</a>に従いVSCodeの場合は設定ファイルに</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">"rust-analyzer.diagnostics.disabled": ["unresolved-import"]</span><br></pre></td></tr></table></figure>
+
+<p>を追記すれば解消します。</p>
 
     
   </div>
