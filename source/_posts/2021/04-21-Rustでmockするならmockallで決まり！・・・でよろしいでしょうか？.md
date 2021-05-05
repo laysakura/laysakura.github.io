@@ -529,3 +529,17 @@ pub trait UserRepository {
 - [自分でいじれない crate の中にある trait をモックする](https://docs.rs/mockall/0.9.1/mockall/#external-traits)
 
 などありますので、ドキュメントを一読いただきよろしければ使ってみてください。
+
+## おまけ: rust-analyzer を使っていて `use ...::MockFoo` が unresolved import エラーになるとき
+
+VSCodeで使っていると、 `use ...::MockFoo` をしているファイルを開いているときに rust-analyzer が unresolved import エラーを報告します。
+
+<img src="/img/2021/04-21-unresolved-import.png" alt="rust-analyzer が unresolved import エラーを報告" width="auto" height="auto">
+
+<https://github.com/rust-analyzer/rust-analyzer/issues/6038> で報告されている問題と同根であると考えられ、[issue内のコメント](https://github.com/rust-analyzer/rust-analyzer/issues/6038#issuecomment-699670537)に従いVSCodeの場合は設定ファイルに
+
+```json
+"rust-analyzer.diagnostics.disabled": ["unresolved-import"]
+```
+
+を追記すれば解消します。
