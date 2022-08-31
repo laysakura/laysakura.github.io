@@ -7,7 +7,7 @@ tags:
 date: 2022-08-31 11:18:09
 ---
 
-<img src="/img/2022/08-31-03.drawio.svg" alt="Apache Beam Portable Framework概要図" width="auto" height="auto">
+<img src="/img/2022/08-31-03.drawio.svg" alt="Apache Beam Portable Framework概要図" width="600px" height="auto">
 
 ストリーム処理とバッチ処理を統合して扱えるプログラミングモデル（あるいはデータ処理のフロントエンド）である [Apache Beam](https://beam.apache.org/) が、特にGoogle Cloud DataflowやApache Flinkからの利用を背景にシェアを伸ばしています。
 
@@ -90,11 +90,11 @@ p.run().waitUntilFinish();
 
 例えば、ストリーム処理系としてFlinkを利用し、コードはJavaで書く場合は下図のような構成になる。典型的にはRunnerはリモートサーバーで、Engineは別のリモートサーバーで稼働することになる。
 
-<img src="/img/2022/08-31-01.drawio.svg" alt="SDK, Runner, Engine" width="auto" height="auto">
+<img src="/img/2022/08-31-01.drawio.svg" alt="SDK, Runner, Engine" width="600px" height="auto">
 
 主にlocal環境での動作確認やテスト用に、Direct Runnerというのも用意されている。Engineの機能も果たし、パイプライン実行までしてくれるもの。
 
-<img src="/img/2022/08-31-02.drawio.svg" alt="Direct Runner" width="auto" height="auto">
+<img src="/img/2022/08-31-02.drawio.svg" alt="Direct Runner" width="600px" height="auto">
 
 ### Beamのプログラミングモデルをちゃんと理解
 
@@ -184,13 +184,13 @@ Portability Frameworkは現在も開発途上であり、細かい方針転換�
 
 Portable Runnerにより、例えば「JVMで動作するFlinkやDataflowなどのEngineを使いつつPythonで定義したパイプラインを実行」することが可能になる。
 
-<img src="/img/2022/08-31-03.drawio.svg" alt="Portable Runner" width="auto" height="auto">
+<img src="/img/2022/08-31-03.drawio.svg" alt="Portable Runner" width="600px" height="auto">
 
 ---
 
 まず、UDFが登場しないパイプラインについて図解する。
 
-<img src="/img/2022/08-31-04.drawio.svg" alt="UDFが登場しないパイプラインのPortable Runnerでの実行" width="auto" height="auto">
+<img src="/img/2022/08-31-04.drawio.svg" alt="UDFが登場しないパイプラインのPortable Runnerでの実行" width="600px" height="auto">
 
 これが実現できれば、Portable Runnerの実装言語は何でも良くなり、かつRunnerはPortable Runnerが1つあれば事足りるようになる。
 
@@ -201,7 +201,7 @@ ProtocolBeffer（やgRPC）では「クライアント側で任意の言語で�
 
 UDFが登場するパイプラインでは下図のようになる。
 
-<img src="/img/2022/08-31-05.drawio.svg" alt="UDFが登場するパイプラインのPortable Runnerでの実行" width="auto" height="auto">
+<img src="/img/2022/08-31-05.drawio.svg" alt="UDFが登場するパイプラインのPortable Runnerでの実行" width="600px" height="auto">
 
 新たに SDK Harness というのが登場している。この実体はDockerコンテナであり、本例では「PythonのUDFが実行できるようにPython処理系 (とBeamランタイム) が入ったDockerコンテナ」である。
 
@@ -219,6 +219,6 @@ Portable Runner を各言語に定義する動きが見受けられる。
 
 SDKからRunnerへのパイプライン受け渡し部分にはRunner APIは使われていない。
 
-<img src="/img/2022/08-31-06.drawio.svg" alt="現状のPortable Runnerでの実行" width="auto" height="auto">
+<img src="/img/2022/08-31-06.drawio.svg" alt="現状のPortable Runnerでの実行" width="600px" height="auto">
 
 また、SDK Harnessの実装はGoogle Cloud Dataflow用のものだけ進んでいるように見えて、実質SDKとRunnerの言語は合わせる必要がある状況。
