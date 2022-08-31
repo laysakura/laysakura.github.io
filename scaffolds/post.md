@@ -7,8 +7,10 @@ tags:
   - Linux Kernel
   - Linuxオペレーション
   - データベース
+  - ストリーム処理
   - MySQL
   - SQLite
+  - Apache Beam
   - 機械学習
   - セキュリティ
   - VPN
