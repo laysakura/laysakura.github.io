@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Rustの std::sync::RwLock はLinuxでwriter starvation問題を起こす (macOSなら平気) | 俺とお前とlaysakura</title>
+  
+  <link rel="canonical" href="https://laysakura.github.io/2022/03/30/rust-RwLock-writer-starvation/"/>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="まとめ:  std::sync::RwLock::&amp;#123;write(), try_read()&amp;#125; を併用した場合には「書き込みロックを最優先」という挙動は必ずしも期待できない (LinuxではNG) Pthread の規約が挙動に自由度をもたせており、Linuxにおけるデフォルト実装では writer starvation が発生する Rustにおいて writer starv">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rustの std::sync::RwLock はLinuxでwriter starvation問題を起こす (macOSなら平気)">
+<meta property="og:url" content="https://laysakura.github.io/2022/03/30/rust-RwLock-writer-starvation/index.html">
+<meta property="og:site_name" content="俺とお前とlaysakura">
+<meta property="og:description" content="まとめ:  std::sync::RwLock::&amp;#123;write(), try_read()&amp;#125; を併用した場合には「書き込みロックを最優先」という挙動は必ずしも期待できない (LinuxではNG) Pthread の規約が挙動に自由度をもたせており、Linuxにおけるデフォルト実装では writer starvation が発生する Rustにおいて writer starv">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://laysakura.github.io/img/2022/03-30-starvation.png">
+<meta property="article:published_time" content="2022-03-30T06:26:26.000Z">
+<meta property="article:modified_time" content="2023-11-07T19:54:06.436Z">
+<meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
+<meta property="article:tag" content="Rust">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laysakura.github.io/img/2022/03-30-starvation.png">
+
+  <!-- favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" href="/favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22289437-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+  <!-- MathJax -->
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+  <div id="container">
+    <div class="mobile-nav-panel">
+	<i class="icon-reorder icon-large"></i>
+</div>
+<header id="header">
+	<h1 class="blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<nav class="nav">
+		<ul>
+			<li><a href="/archives">過去の投稿</a></li>
+			<li><a id="nav-search-btn" class="nav-icon" title="Search"></a></li>
+			<li><a target="_blank" rel="noopener" href="http://cloud.feedly.com/#subscription%2Ffeed%2Fhttps%3A%2F%2Flaysakura.github.io%2Fatom.xml" id="nav-rss-link" class="nav-icon" title="RSS Feed"></a></li>
+		</ul>
+	</nav>
+	<div id="search-form-wrap">
+		<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laysakura.github.io"></form>
+	</div>
+</header>
+    <div id="main">
+      <article id="post-Rustの-std-sync-RwLock-はLinuxでwriter-starvation問題を起こす-macOSなら平気" class="post">
+  <footer class="entry-meta-header">
+    <span class="meta-elements date">
+      <a href="/2022/03/30/rust-RwLock-writer-starvation/" class="article-date">
+  <time datetime="2022-03-30T06:26:26.000Z" itemprop="datePublished">2022-03-30</time>
+</a>
+    </span>
+  </footer>
+  
+  <header class="entry-header">
+    
+  
+    <h1 class="article-title entry-title" itemprop="name">
+      Rustの std::sync::RwLock はLinuxでwriter starvation問題を起こす (macOSなら平気)
+    </h1>
+  
+
+  </header>
+  <div class="entry-content">
+    
+    <img src="/img/2022/03-30-starvation.png" alt="お腹が減ったワンちゃん" width="400px" height="auto">
+
+<p>まとめ:</p>
+<ul>
+<li><code>std::sync::RwLock::&#123;write(), try_read()&#125;</code> を併用した場合には「書き込みロックを最優先」という挙動は必ずしも期待できない (LinuxではNG)</li>
+<li>Pthread の規約が挙動に自由度をもたせており、Linuxにおけるデフォルト実装では <strong>writer starvation</strong> が発生する</li>
+<li>Rustにおいて writer starvation を回避しつつ readers-writer lock を使うには <a target="_blank" rel="noopener" href="https://docs.rs/parking_lot/latest/parking_lot/type.RwLock.html"><code>parking_lot::RwLock</code></a> を使うと良い</li>
+</ul>
+<span id="more"></span>
+
+<h2><span id="目次">目次</span></h2><!-- toc -->
+
+<ul>
+<li><a href="#%E8%83%8C%E6%99%AF-readers-writer-lock-%E3%81%A8%E3%81%AF">背景: Readers-writer lock とは？</a></li>
+<li><a href="#%E8%83%8C%E6%99%AF-rust%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B-readers-writer-lock">背景: Rustにおける readers-writer lock</a></li>
+<li><a href="#%E8%83%8C%E6%99%AF-rwlockwrite-%E3%81%A8-rwlocktry_read">背景: RwLock::write() と RwLock::try_read()</a></li>
+<li><a href="#%E5%86%8D%E7%8F%BE%E3%82%B3%E3%83%BC%E3%83%89">再現コード</a></li>
+<li><a href="#%E5%8E%9F%E5%9B%A0%E5%88%86%E6%9E%90">原因分析</a></li>
+<li><a href="#%E4%BF%AE%E6%AD%A3-parking_lotrwlock-%E3%82%92%E4%BD%BF%E3%81%86">修正: <code>parking_lot::RwLock</code> を使う</a></li>
+<li><a href="#%E3%81%8A%E3%82%8F%E3%82%8A%E3%81%AB">おわりに</a></li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="背景-readers-writer-lock-とは">背景: Readers-writer lock とは？</span></h2><p>あるリソースがあり、並列に動作する複数のスレッドからそのカウンタ変数を読み書きしたいとします。</p>
+<p>カウンタ変数 <code>c = 1</code> をリソースの例とします。<br>スレッド1がカウンタ変数をインクリメントして <code>c = 2</code> にし、スレッド2がもう一度インクリメントして <code>c = 3</code> になることが期待結果だとします。<br>しかしスレッド1とスレッド2が同時にインクリメントを走らせ、どちらも <code>c = 1</code> の時点でカウンタ変数を読んでしまった場合、結果は <code>c = 2</code> になってしまいます。</p>
+<p>リソースを複数スレッドで更新する場合、よく使われるのは排他ロック (mutex) ですね。<br>上記の例でも、各スレッドが <code>c</code> を読む前に排他ロックを獲得し、更新が完了したら排他ロックを解放すれば、必ず <code>c = 3</code> の結果が得られます。</p>
+<p>しかし、多くのスレッドがリソースに対して読み取りアクセスのみをし、少ないスレッドが書き込みアクセスをするようなケースでは、排他ロックよりも効率の良いロックがあります。それが <strong>readers-writer lock</strong> です。<br>ロックの獲得を待っている間は、プログラムで本当に行いたい処理ができないので、できる限りロック待ちの時間は短くしたいです。ただ待ってるだけなら自分のプログラムにしか迷惑を書けませんが、spin waitでロックが空くのを待ってしまうと、OS上の他のプログラムに割当てられるはずだったCPU時間まで奪ってしまいます。<br>Readers-writer lock では、読み取りロック (reader lock) を取るスレッドしかいない場合にはロック待ちが発生しません。書き込みロック (writer lock) を獲得しているスレッドが1つでも存在した場合、その間は他のスレッドは読み取りロックも書き込みロックも獲得できません。<br>この性質から、読み取りロックは shared lock, 書き込みロックは exclusive lock とも呼ばれます。</p>
+<h2><span id="背景-rustにおける-readers-writer-lock">背景: Rustにおける readers-writer lock</span></h2><p><a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/sync/struct.RwLock.html">std::sync::RwLock</a> が通常使われます。<br>上記ページ Examples からの引用ですが、こんなセマンティクスで読み取りロックと書き込みロックを取得します。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::sync::RwLock;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> <span class="variable">lock</span> = RwLock::<span class="title function_ invoke__">new</span>(<span class="number">5</span>);</span><br><span class="line"></span><br><span class="line"><span class="comment">// many reader locks can be held at once</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">r1</span> = lock.<span class="title function_ invoke__">read</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">r2</span> = lock.<span class="title function_ invoke__">read</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    <span class="built_in">assert_eq!</span>(*r1, <span class="number">5</span>);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(*r2, <span class="number">5</span>);</span><br><span class="line">&#125; <span class="comment">// read locks are dropped at this point</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// only one write lock may be held, however</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">w</span> = lock.<span class="title function_ invoke__">write</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    *w += <span class="number">1</span>;</span><br><span class="line">    <span class="built_in">assert_eq!</span>(*w, <span class="number">6</span>);</span><br><span class="line">&#125; <span class="comment">// write lock is dropped here</span></span><br></pre></td></tr></table></figure>
+
+<h2><span id="背景-rwlockwrite-と-rwlocktry_read">背景: RwLock::write() と RwLock::try_read()</span></h2><p>「リソースを更新する頻度は少ないが、更新したいときは（読み取りを止めて）最優先で更新したい」というケースはよくあるものです。</p>
+<p>その場合は、リソースを更新する側のロックには <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/sync/struct.RwLock.html#method.write">std::sync::RwLock::write()</a> を、読み取る側のロックには <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/std/sync/struct.RwLock.html#method.try_read">std::sync::RwLock::try_read()</a> を使うと良いと考えられます (筆者は考えました)。<br><code>RwLock::write()</code> はブロッキングコールであり、書き込みロックが獲得できるまでロック待ちをします。 <code>RwLock::try_read()</code> はノンブロッキングコールです。書き込みロックが獲得されていなければロック取得できるのはもちろん、書き込みロックが取得されている場合は、ロック待ちなしでエラー (<code>Err</code>) が返却されます。</p>
+<p>しかし <code>std::sync::RwLock::write()</code> と <code>std::sync::RwLock::try_lock()</code> の併用では、プラットフォームによっては <strong>「更新が最優先にならない」</strong> という事象を発見しました。</p>
+<h2><span id="再現コード">再現コード</span></h2><p>短いのでまず再現コードを貼ります。下記のコードは、macOSだと期待通りに終了し、Linuxだと終了せずに走り続けます。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> std::&#123;process::exit, sync::Arc, thread&#125;;</span><br><span class="line"></span><br><span class="line"><span class="keyword">use</span> std::sync::RwLock;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">reader_loop</span>(lock: &amp;RwLock&lt;()&gt;) &#123;</span><br><span class="line">    <span class="keyword">loop</span> &#123;</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">_guard</span> = lock.<span class="title function_ invoke__">try_read</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">writer_exit</span>(lock: &amp;RwLock&lt;()&gt;) &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">_guard</span> = lock.<span class="title function_ invoke__">write</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line"></span><br><span class="line">    eprintln!(<span class="string">&quot;writer: exit&quot;</span>);</span><br><span class="line">    <span class="title function_ invoke__">exit</span>(<span class="number">0</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">main</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">w_lock</span> = Arc::<span class="title function_ invoke__">new</span>(RwLock::<span class="title function_ invoke__">new</span>(()));</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> <span class="variable">_</span> <span class="keyword">in</span> <span class="number">0</span>..<span class="number">30</span> &#123;</span><br><span class="line">        <span class="comment">// more than the number of physical CPU cores</span></span><br><span class="line">        <span class="keyword">let</span> <span class="variable">r_lock</span> = w_lock.<span class="title function_ invoke__">clone</span>();</span><br><span class="line">        <span class="keyword">let</span> <span class="variable">_r_handle</span> = thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || <span class="title function_ invoke__">reader_loop</span>(&amp;r_lock));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">w_handle</span> = thread::<span class="title function_ invoke__">spawn</span>(<span class="keyword">move</span> || &#123;</span><br><span class="line">        <span class="title function_ invoke__">writer_exit</span>(w_lock.<span class="title function_ invoke__">as_ref</span>());</span><br><span class="line">    &#125;);</span><br><span class="line"></span><br><span class="line">    w_handle.<span class="title function_ invoke__">join</span>().<span class="title function_ invoke__">unwrap</span>();</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>まず30個 (CPUコア数より多ければいくつでも良い) の読み取りスレッドを立ち上げます。読み取りスレッドは無限ループの中で <code>try_read()</code> を発行し続けます。<br>次に1個の書き込みスレッドを立ち上げます。書き込みスレッドは、 <code>write()</code> で書き込みロックの獲得に成功したらその直後にプロセスを <code>exit</code> します。</p>
+<p>「更新が最優先」の挙動になるならば、 <code>exit</code> が呼ばれてプロセスが終了します。これが期待挙動です。<br>しかしLinuxでは <code>write()</code> がいつまで経っても成功せず、プロセスは終了しません。</p>
+<h2><span id="原因分析">原因分析</span></h2><p><code>std::sync::RwLock::write()</code> の実装を追うと、libcの <a target="_blank" rel="noopener" href="https://github.com/rust-lang/rust/blob/1446d17b8f4bd3ff8dbfb129a7674165e06f9f4c/library/std/src/sys/unix/locks/pthread_rwlock.rs#L75"><code>pthread_rwlock_wrlock()</code> を呼び出している箇所</a> にたどり着きます。<br><a target="_blank" rel="noopener" href="https://linux.die.net/man/3/pthread_rwlock_wrlock"><code>pthread_rwlock_wrlock()</code> のマニュアル</a>を読むと、</p>
+<blockquote>
+<p>Implementations <strong>may</strong> favor writers over readers to avoid writer starvation.</p>
+</blockquote>
+<p>とあります (強調は筆者による)。</p>
+<p>つまり、「書き込み側を読み取り側よりも優先するかどうかは実装次第」ということです。<br>Writer starvationというのは、「書き込み側が、読み取り側に邪魔されて、いつまで立ってもロック獲得の機会を与えられない」状況のことです。</p>
+<p>macOSの実装では writer starvation が発生しない、つまり書き込み側が読み取りに優先するのですが、Linuxはそうはなっていないというのが原因でした。<br>上記再現コードでは、CPUコアよりも多くのスレッドが無限ループで (CPU時間を明け渡すことなく) 読み取りロックを獲得しています。Linuxでは writer starvation が起こるケースです。</p>
+<p><a target="_blank" rel="noopener" href="https://linuxjm.osdn.jp/html/LDP_man-pages/man3/pthread_rwlockattr_setkind_np.3.html"><code>PTHREAD_RWLOCK_PREFER_WRITER_NONRECURSIVE_NP</code> 属性</a> をセットすれば writer starvation を避けられそうですが、Rustで素直に解決するための方法を以下に記載します。</p>
+<h2><span id="修正-parking_lotrwlock-を使う">修正: <code>parking_lot::RwLock</code> を使う</span></h2><p><a target="_blank" rel="noopener" href="https://docs.rs/parking_lot/latest/parking_lot/type.RwLock.html">parking_lot::RwLock</a> を見ると、</p>
+<blockquote>
+<p>This lock uses a task-fair locking policy <strong>which avoids both reader and writer starvation</strong>.</p>
+</blockquote>
+<p>とあります (強調は筆者による)。<br>Writer starvation を避けられるように作られており、実際 <code>parking_lot::RwLock</code> を使用するように再現コードを書き換えれば、期待通りLinuxでもプロセスが終了するようになります。</p>
+<h2><span id="おわりに">おわりに</span></h2><p>業務で作っている IoTや車載機のためのストリーム処理系SpringQL のデバッグ中にこの問題を発見しました。</p>
+<div style="text-align: center">
+  <div class="github-card" data-user="SpringQL" data-repo="SpringQL" data-height="200" data-width="400" data-theme="default" data-target data-client-id data-client-secret></div>
+</div>
+<script src="/github-card-lib/githubcard.js"></script>
+
+
+<p>自分の開発PC (macOS) では快調に動くのに、CIの ubuntu-latest では毎回テストが刺さっていて、（動くと思ってるのは自分だけで本当は世界の誰も動かせないのでは…？）と疑心暗鬼になりながらのデバッグでした。<br>Linuxだけ書き込みロック獲得がどうも遅い (ちょうど4秒くらい待たされる) と気づいてからは実装依存の箇所を探そうと思い至り、そこからは楽しく<a target="_blank" rel="noopener" href="https://github.com/SpringQL/SpringQL/pull/62">修正できました</a>。</p>
+<p>再現コード・修正コードは<a target="_blank" rel="noopener" href="https://github.com/laysakura/rust-RwLock-writer-starvation">こちらのリポジトリ</a>に置いています。お手元の環境でもお試しください。</p>
+
+    
+  </div>
+  <footer class="entry-footer">
+    <div class="entry-meta-footer">
+      <span class="category">
+        
+      </span>
+      <span class="tags">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Rust/" rel="tag">Rust</a></li></ul>
+
+      </span>
+    </div>
+  </footer>
+  
+  <footer class="author-info clearfix">
+    <img class="author-picture circle" src="https://www.gravatar.com/avatar/cb02a2b3f429b7c938d1fe2665e8e342">
+    <div class="author-content right">
+      <div class="author-caption">
+        <span class="label">author</span>
+        Sho Nakatani a.k.a. laysakura
+      </div>
+      <p class="author-description">
+        東京大学大学院 情報理工学系研究科 電子情報学専攻 修士課程で並列分散処理・ストリーム処理・データベースを研究。<br>
+        2014年4月に株式会社ディー・エヌ・エーにエンジニアスペシャリストとして入社し、ソーシャルゲームのサーバサイド共通基盤の開発に従事。<br>
+        2016年8月より、オンライン証券会社<a target="_blank" rel="noopener" href="https://folio-sec.com">株式会社FOLIO</a>に入社。バックエンドシステム開発・プロジェクトマネージメント・Engineering
+        Managementに従事。<br>
+        2020年3月より<a target="_blank" rel="noopener" href="https://idein.jp">Idein株式会社</a>所属。デバイス・高性能計算関連の研究開発。<br>
+        2021年9月よりトヨタ自動車株式会社所属。自動車データの収集〜分析基盤の研究開発に従事。<br>
+        その他個人事業主として、RDBMS開発やIntel SGXを利用するためのライブラリ開発などの活動。
+      </p>
+      <ul class="author-social-buttons">
+        <li class="author-social-button"><a class="fa fa-lg fa-twitter-square" target="_blank" rel="noopener" href="https://twitter.com/laysakura"></a>
+        </li>
+        <li class="author-social-button"><a class="fa fa-lg fa-github-square" target="_blank" rel="noopener" href="https://github.com/laysakura"></a>
+        </li>
+        <li class="author-social-button"><a class="fa fa-lg fa-facebook-square"
+            target="_blank" rel="noopener" href="https://www.facebook.com/lay.sakura"></a></li>
+      </ul>
+    </div>
+  </footer>
+  
+  
+  
+<nav id="article-nav">
+  
+    <a href="/2022/08/31/beam-multi-lang-backend/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Apache Beamが多言語・多バックエンド処理系を実現する仕組み
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2021/12/15/toyota-3.5month-passed/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">
+        
+          トヨタの3.5ヶ月のソフトウェアエンジニア（研究開発）生活を振り返る
+        
+      </div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+<section id="comments">
+  <div id="disqus_thread">
+
+    <!-- comment service provided by disqus -->
+    <script>
+      /**
+       *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+       *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+       */
+      var disqus_config = function () {
+        this.page.url = https://laysakura.github.io/2022/03/30/rust-RwLock-writer-starvation/;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = https://laysakura.github.io/2022/03/30/rust-RwLock-writer-starvation/; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+      (function () {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//laysakura.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by
+        Disqus.</a></noscript>
+  </div>
+</section>
+
+
+    </div>
+    <div class="mb-search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:laysakura.github.io">
+  </form>
+</div>
+<footer id="footer">
+	<h1 class="footer-blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<span class="copyright">
+		&copy; 2023 Sho Nakatani a.k.a. laysakura<br>
+		Modify from <a href="https://sanographix.github.io/tumblr/apollo/" target="_blank">Apollo</a> theme, designed by <a href="https://www.sanographix.net/" target="_blank">SANOGRAPHIX.NET</a><br>
+		Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+	</span>
+</footer>
+
+    
+<script>
+  var disqus_shortname = 'laysakura';
+  
+  var disqus_url = 'https://laysakura.github.io/2022/03/30/rust-RwLock-writer-starvation/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+
+  <!-- https://github.com/vfeskov/vanilla-back-to-top -->
+  <script src="https://unpkg.com/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js"></script>
+  <script>addBackToTop({
+    diameter: 50,
+    backgroundColor: '#33a6b880',
+    textColor: '#fff'
+  })</script>
+
+</body>
+</html>

@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Apache Beamが多言語・多バックエンド処理系を実現する仕組み | 俺とお前とlaysakura</title>
+  
+  <link rel="canonical" href="https://laysakura.github.io/2022/08/31/beam-multi-lang-backend/"/>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="ストリーム処理とバッチ処理を統合して扱えるプログラミングモデル（あるいはデータ処理のフロントエンド）である Apache Beam が、特にGoogle Cloud DataflowやApache Flinkからの利用を背景にシェアを伸ばしています。 Apache Beamの特色として、複数のプログラミング言語のSDKを持つこと・複数のバックエンド処理系（Flinkなどを指す）を持つことが挙げ">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Apache Beamが多言語・多バックエンド処理系を実現する仕組み">
+<meta property="og:url" content="https://laysakura.github.io/2022/08/31/beam-multi-lang-backend/index.html">
+<meta property="og:site_name" content="俺とお前とlaysakura">
+<meta property="og:description" content="ストリーム処理とバッチ処理を統合して扱えるプログラミングモデル（あるいはデータ処理のフロントエンド）である Apache Beam が、特にGoogle Cloud DataflowやApache Flinkからの利用を背景にシェアを伸ばしています。 Apache Beamの特色として、複数のプログラミング言語のSDKを持つこと・複数のバックエンド処理系（Flinkなどを指す）を持つことが挙げ">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://laysakura.github.io/img/2022/08-31-03.drawio.svg">
+<meta property="og:image" content="https://laysakura.github.io/img/2022/08-31-design-your-pipeline-linear.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2022/08-31-01.drawio.svg">
+<meta property="og:image" content="https://laysakura.github.io/img/2022/08-31-02.drawio.svg">
+<meta property="og:image" content="https://laysakura.github.io/img/2022/08-31-beam-reality-2018.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2022/08-31-03.drawio.svg">
+<meta property="og:image" content="https://laysakura.github.io/img/2022/08-31-04.drawio.svg">
+<meta property="og:image" content="https://laysakura.github.io/img/2022/08-31-05.drawio.svg">
+<meta property="og:image" content="https://laysakura.github.io/img/2022/08-31-06.drawio.svg">
+<meta property="article:published_time" content="2022-08-31T02:18:09.000Z">
+<meta property="article:modified_time" content="2023-11-07T19:54:06.436Z">
+<meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
+<meta property="article:tag" content="ストリーム処理">
+<meta property="article:tag" content="Apache Beam">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laysakura.github.io/img/2022/08-31-03.drawio.svg">
+
+  <!-- favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" href="/favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22289437-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+  <!-- MathJax -->
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+  <div id="container">
+    <div class="mobile-nav-panel">
+	<i class="icon-reorder icon-large"></i>
+</div>
+<header id="header">
+	<h1 class="blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<nav class="nav">
+		<ul>
+			<li><a href="/archives">過去の投稿</a></li>
+			<li><a id="nav-search-btn" class="nav-icon" title="Search"></a></li>
+			<li><a target="_blank" rel="noopener" href="http://cloud.feedly.com/#subscription%2Ffeed%2Fhttps%3A%2F%2Flaysakura.github.io%2Fatom.xml" id="nav-rss-link" class="nav-icon" title="RSS Feed"></a></li>
+		</ul>
+	</nav>
+	<div id="search-form-wrap">
+		<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laysakura.github.io"></form>
+	</div>
+</header>
+    <div id="main">
+      <article id="post-Apache-Beamが多言語・多バックエンド処理系を実現する仕組み" class="post">
+  <footer class="entry-meta-header">
+    <span class="meta-elements date">
+      <a href="/2022/08/31/beam-multi-lang-backend/" class="article-date">
+  <time datetime="2022-08-31T02:18:09.000Z" itemprop="datePublished">2022-08-31</time>
+</a>
+    </span>
+  </footer>
+  
+  <header class="entry-header">
+    
+  
+    <h1 class="article-title entry-title" itemprop="name">
+      Apache Beamが多言語・多バックエンド処理系を実現する仕組み
+    </h1>
+  
+
+  </header>
+  <div class="entry-content">
+    
+    <img src="/img/2022/08-31-03.drawio.svg" alt="Apache Beam Portable Framework概要図" width="600px" height="auto">
+
+<p>ストリーム処理とバッチ処理を統合して扱えるプログラミングモデル（あるいはデータ処理のフロントエンド）である <a target="_blank" rel="noopener" href="https://beam.apache.org/">Apache Beam</a> が、特にGoogle Cloud DataflowやApache Flinkからの利用を背景にシェアを伸ばしています。</p>
+<p>Apache Beamの特色として、複数のプログラミング言語のSDKを持つこと・複数のバックエンド処理系（Flinkなどを指す）を持つことが挙げられますが、これがどう実現されているのかをまとめます。</p>
+<span id="more"></span>
+
+<h2><span id="目次">目次</span></h2><!-- toc -->
+
+<ul>
+<li><a href="#%E5%89%8D%E6%8F%90%E7%9F%A5%E8%AD%98-beam%E5%85%A5%E9%96%80">前提知識: Beam入門</a><ul>
+<li><a href="#example%E3%82%B3%E3%83%BC%E3%83%89%E3%81%8B%E3%82%89%E3%81%96%E3%81%A3%E3%81%8F%E3%82%8A%E7%90%86%E8%A7%A3">Exampleコードからざっくり理解</a><ul>
+<li><a href="#beam%E3%81%AE%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0%E4%BD%93%E9%A8%93">Beamのプログラミング体験</a></li>
+<li><a href="#beam%E3%81%AE%E3%82%B3%E3%83%BC%E3%83%89%E3%82%92%E8%A6%8B%E3%81%A6%E3%81%BF%E3%82%8B">Beamのコードを見てみる</a></li>
+<li><a href="#beam%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E3%83%91%E3%82%A4%E3%83%97%E3%83%A9%E3%82%A4%E3%83%B3%E5%AE%9F%E8%A1%8C">Beamにおけるパイプライン実行</a></li>
+</ul>
+</li>
+<li><a href="#beam%E3%81%AE%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%9F%E3%83%B3%E3%82%B0%E3%83%A2%E3%83%87%E3%83%AB%E3%82%92%E3%81%A1%E3%82%83%E3%82%93%E3%81%A8%E7%90%86%E8%A7%A3">Beamのプログラミングモデルをちゃんと理解</a></li>
+</ul>
+</li>
+<li><a href="#%E5%89%8D%E6%8F%90%E7%9F%A5%E8%AD%98-beam%E3%81%A7%E3%81%AF%E8%A4%87%E6%95%B0%E7%A8%AE%E9%A1%9E%E3%81%AE%E3%83%90%E3%83%83%E3%82%AF%E3%82%A8%E3%83%B3%E3%83%89%E3%81%8C%E4%BD%BF%E3%81%88%E3%82%8B">前提知識: Beamでは複数種類のバックエンドが使える</a></li>
+<li><a href="#%E5%89%8D%E6%8F%90%E7%9F%A5%E8%AD%98-beam%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0%E3%81%AF%E5%A4%9A%E8%A8%80%E8%AA%9E%E3%81%A7%E8%A8%98%E8%BF%B0%E3%81%A7%E3%81%8D%E3%82%8B">前提知識: Beamプログラムは多言語で記述できる</a></li>
+<li><a href="#%E5%A4%9A%E8%A8%80%E8%AA%9E%E4%BB%96%E3%83%90%E3%83%83%E3%82%AF%E3%82%A8%E3%83%B3%E3%83%89%E5%AF%BE%E5%BF%9C%E3%81%AE%E8%AA%B2%E9%A1%8C">多言語・他バックエンド対応の課題</a><ul>
+<li><a href="#%E8%A8%80%E8%AA%9E%E3%82%92%E3%81%BE%E3%81%9F%E3%81%84%E3%81%A0udf%E5%AE%9A%E7%BE%A9%E5%AE%9F%E8%A1%8C%E3%81%8C%E5%8E%B3%E3%81%97%E3%81%84">言語をまたいだUDF定義・実行が厳しい</a></li>
+<li><a href="#engine%E3%81%94%E3%81%A8%E3%81%ABrunner%E3%82%92%E4%BD%9C%E3%82%8B%E5%BF%85%E8%A6%81%E3%81%8C%E3%81%82%E3%82%8B">EngineごとにRunnerを作る必要がある？</a></li>
+<li><a href="#runner%E5%AE%9F%E8%A3%85%E3%81%AE%E6%95%B0-sdk%E8%A8%80%E8%AA%9E%E3%81%AE%E6%95%B0-x-engine%E6%95%B0">Runner実装の数 &#x3D;&#x3D; SDK言語の数 x Engine数？</a></li>
+</ul>
+</li>
+<li><a href="#apache-beam%E3%81%8C%E5%A4%9A%E8%A8%80%E8%AA%9E%E5%A4%9A%E3%83%90%E3%83%83%E3%82%AF%E3%82%A8%E3%83%B3%E3%83%89%E5%87%A6%E7%90%86%E7%B3%BB%E3%82%92%E5%AE%9F%E7%8F%BE%E3%81%99%E3%82%8B%E4%BB%95%E7%B5%84%E3%81%BF">Apache Beamが多言語・多バックエンド処理系を実現する仕組み</a><ul>
+<li><a href="#%E7%90%86%E6%83%B3%E5%83%8F-portable-framework%E3%81%AE%E4%BB%95%E7%B5%84%E3%81%BF">[理想像] Portable Frameworkの仕組み</a></li>
+<li><a href="#202208-portable-framework-%E3%81%AE%E7%8F%BE%E7%8A%B6">[2022&#x2F;08] Portable Framework の現状</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="前提知識-beam入門">前提知識: Beam入門</span></h2><h3><span id="exampleコードからざっくり理解">Exampleコードからざっくり理解</span></h3><p>Exampleを見る前に、Beamのプログラミングをするのはどういうことかをざっくりと説明する。</p>
+<h4><span id="beamのプログラミング体験">Beamのプログラミング体験</span></h4><p>Beamでプログラミングをするということは、「BeamのSDKを介して下図のようなパイプラインを構成」すること。</p>
+<img src="/img/2022/08-31-design-your-pipeline-linear.png" alt="https://blog.gopheracademy.com/advent-2018/apache-beam/ より引用" width="auto" height="auto">
+
+
+<p>パイプラインの重要な構成要素は以下:</p>
+<ul>
+<li><strong>PCollection</strong>: レコードが入るテーブルやキュー。データの型は単なる String であったり、リレーショナルであったり、ArrayやObjectをネストすることもできる。</li>
+<li><strong>Transform</strong>: 基本的に、PCollection から PCollection への変換関数。InputをPCollectionに変換するものを特別に Read Transform , PCollectionをOutputへ変換するものを Write Transform と呼ぶ。</li>
+<li><strong>Input</strong>: 任意のデータ。Read Transform が頑張ってBeam実行系が扱えるPCollectionに変換する。<strong>バッチ処理用に始めから終わりが定義されているデータでも良いし、ストリーム処理用に（概念上）無限に流れるデータでも良い。</strong></li>
+<li><strong>Output</strong>: 任意のデータ。これもbounded dataでもunbounded dataでも良い。</li>
+</ul>
+<h4><span id="beamのコードを見てみる">Beamのコードを見てみる</span></h4><p><a target="_blank" rel="noopener" href="https://github.com/apache/beam/blob/3ede5b76e48b41e89bc67541ea5044ebe704e905/examples/java/src/main/java/org/apache/beam/examples/MinimalWordCount.java">JavaのMinimalWordCount example</a>を見る。</p>
+<p>コメントを短縮するとこんな感じ。<br><code>PCollection 出力PCollection = 入力PCollection.apply(Transform)</code> なメソッドチェーンが続く。</p>
+<figure class="highlight java"><figcaption><span>MinimalWordCount 抜粋</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">Pipeline</span> <span class="variable">p</span> <span class="operator">=</span> Pipeline.create(options);  <span class="comment">// 空のパイプラインを作成</span></span><br><span class="line"></span><br><span class="line">p.apply(  <span class="comment">// パイプラインにRead Transformを追加する</span></span><br><span class="line">    <span class="comment">// テキストファイルから読み取る Read Transform</span></span><br><span class="line">    TextIO.read().from(<span class="string">&quot;gs://apache-beam-samples/shakespeare/kinglear.txt&quot;</span>)</span><br><span class="line">)</span><br><span class="line">    <span class="comment">// この時点で PCollection が出来上がっている。</span></span><br><span class="line"><span class="comment">// PCollectionのレコード型は String で、テキストファイル1行ごとにレコードになっている。</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// レコードを、空白文字で更に区切る。</span></span><br><span class="line"><span class="comment">// ただ split するだけだと List&lt;List&lt;String&gt;&gt; みたいになってしまうので FlatMap する。</span></span><br><span class="line"><span class="comment">// FlatMapElements は一つの Transform。</span></span><br><span class="line">    .apply(</span><br><span class="line">        FlatMapElements.into(TypeDescriptors.strings())</span><br><span class="line">            .via((String line) -&gt; Arrays.asList(line.split(<span class="string">&quot;[^\\p&#123;L&#125;]+&quot;</span>))))</span><br><span class="line"></span><br><span class="line"><span class="comment">// Filter の Transformで空文字列を排除</span></span><br><span class="line">    .apply(Filter.by((String word) -&gt; !word.isEmpty()))</span><br><span class="line"></span><br><span class="line"><span class="comment">// Countはレコード列に関する集計をしてくれる便利 Transform。</span></span><br><span class="line"><span class="comment">// ここではレコード全体（すなわち単語）ごとに一意なものを取り、それらの個数を数えて key-value に変換。</span></span><br><span class="line">    .apply(Count.perElement())</span><br><span class="line"><span class="comment">// ここで出来上がった PCollection のレコード型は KV&lt;String, Long&gt;</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// KVだったレコードをhuman readableなStringに変換</span></span><br><span class="line">    .apply(</span><br><span class="line">        MapElements.into(TypeDescriptors.strings())</span><br><span class="line">            .via(</span><br><span class="line">                (KV&lt;String, Long&gt; wordCount) -&gt;</span><br><span class="line">                    wordCount.getKey() + <span class="string">&quot;: &quot;</span> + wordCount.getValue()))</span><br><span class="line"></span><br><span class="line"><span class="comment">// Write Transform を適用し、 wordcounts という名前のファイルにStringなレコードを書いていく</span></span><br><span class="line">    .apply(TextIO.write().to(<span class="string">&quot;wordcounts&quot;</span>));</span><br><span class="line"></span><br><span class="line"><span class="comment">// ここまでで出来上がったパイプライン p を実行し、結果を待つ。</span></span><br><span class="line">p.run().waitUntilFinish();</span><br></pre></td></tr></table></figure>
+
+<h4><span id="beamにおけるパイプライン実行">Beamにおけるパイプライン実行</span></h4><p>パイプラインは、SDKを介してRunnerに渡される。パイプラインはRunnerから更にEngineに渡されてEngineが実行するのが基本である。</p>
+<p>例えば、ストリーム処理系としてFlinkを利用し、コードはJavaで書く場合は下図のような構成になる。典型的にはRunnerはリモートサーバーで、Engineは別のリモートサーバーで稼働することになる。</p>
+<img src="/img/2022/08-31-01.drawio.svg" alt="SDK, Runner, Engine" width="600px" height="auto">
+
+<p>主にlocal環境での動作確認やテスト用に、Direct Runnerというのも用意されている。Engineの機能も果たし、パイプライン実行までしてくれるもの。</p>
+<img src="/img/2022/08-31-02.drawio.svg" alt="Direct Runner" width="600px" height="auto">
+
+<h3><span id="beamのプログラミングモデルをちゃんと理解">Beamのプログラミングモデルをちゃんと理解</span></h3><p><a target="_blank" rel="noopener" href="https://beam.apache.org/documentation/programming-guide/">Beam Programming Guide</a> を読むのが入門として一番良い。が、中々骨があるドキュメントなので、ここで「躓きやすい知識」について記載しておく。<br>本記事の趣旨とはずれるので、次のセクションまで読み飛ばしても良い。</p>
+<ul>
+<li><p><strong>Schema</strong></p>
+<ul>
+<li><code>6.1. What is a schema?</code> に書かれているようなデータ型は、スキーマに<strong>できる</strong>（明示的にしなければスキーマにはならない）。</li>
+<li>スキーマはPCollectionに紐付けられる。入力PCollectionがスキーマと紐付いている場合、PTransformとして schema transform (またの名を relational transform) が使える。</li>
+<li>Schema transform の出力はスキーマである（関係代数が閉包であるのと同様）ので、schema transformをつなげている部分パイプラインにおいては、スキーマ定義は最低1つで済む。</li>
+</ul>
+</li>
+<li><p><strong>Row</strong></p>
+<ul>
+<li>スキーマが付与されたPCollectionの1レコードのインスタンス。すなわち、あらゆるPTransformの中でrowを入力として扱えるわけではない点に注意。</li>
+</ul>
+</li>
+<li><p><strong>Coder</strong></p>
+<ul>
+<li>Runnerを流れるバイト列と、SDKと合わせて使うユーザー定義型（クライアントサイド）の変換を受け持つ。</li>
+<li>リッチなものだと、read transform が特定のフォーマットのデータ（例: JSON）をマッピングさせるのにCoder定義したり。</li>
+<li>もうちょっと些末なものだと、パイプラインの途中の PTransform が文字列データを入力とする時、パイプラインを流れるデータ列をUTF-8と仮定して <a target="_blank" rel="noopener" href="https://javadoc.io/static/org.apache.beam/beam-sdks-java-core/2.40.0/org/apache/beam/sdk/coders/StringUtf8Coder.html">StringUtf8Coder</a> を使ったり。</li>
+</ul>
+</li>
+</ul>
+<h2><span id="前提知識-beamでは複数種類のバックエンドが使える">前提知識: Beamでは複数種類のバックエンドが使える</span></h2><p><a target="_blank" rel="noopener" href="https://beam.apache.org/documentation/runners/capability-matrix/">Beam Capability Matrix</a> に列挙されているものはBeamに認知されていて公式にRunnerが用意されている処理系。</p>
+<p>「あなたが構成したパイプラインは DirectRunner でテストし、Google Cloud DataflowでもFlinkでも（他のでも）動かせますよ」という世界観。</p>
+<p>豆知識だが、最も注力されているRunnerはGoogle Cloud Dataflow。次いでOSSのFlinkと言った構造。Googlerの投資をOSS陣営のFlinkが追いかけるといった様相が<a target="_blank" rel="noopener" href="https://cloudplatform-jp.googleblog.com/2016/05/apache-beam-dataflow.html">2016年のGoogleのブログ</a>から読み取れるが、そのパワーバランスは2022年になっても継続している模様。</p>
+<h2><span id="前提知識-beamプログラムは多言語で記述できる">前提知識: Beamプログラムは多言語で記述できる</span></h2><p>JavaのMinimalWordCount exampleに触れたが、Java以外にもPython, Go, TypeScript用のSDKが用意されており、これらの言語でBeamパイプラインを構成することができる。</p>
+<p>ちなみにRust SDKもGooglerから要望が高いという話が<a target="_blank" rel="noopener" href="https://www.notion.so/Google-s-investment-on-Beam-and-internal-use-of-Beam-at-Google-b024c069205f419daf1d1c40dd9524b7">Beam Summit 2022の講演であった</a>ので、いつかサポートされるかも。</p>
+<h2><span id="多言語他バックエンド対応の課題">多言語・他バックエンド対応の課題</span></h2><h3><span id="言語をまたいだudf定義実行が厳しい">言語をまたいだUDF定義・実行が厳しい</span></h3><p>JavaのMinimalWordCount exampleに出てきたTransformの中には、UDF (User-Defined Function) が含まれていた。</p>
+<figure class="highlight java"><figcaption><span>MinimalWordCount 抜粋</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">.apply(</span><br><span class="line">    FlatMapElements.into(TypeDescriptors.strings())</span><br><span class="line">        .via(</span><br><span class="line">            <span class="comment">// このラムダ式とか</span></span><br><span class="line">            (String line) -&gt; Arrays.asList(line.split(<span class="string">&quot;[^\\p&#123;L&#125;]+&quot;</span>))))</span><br><span class="line"></span><br><span class="line">.apply(Filter.by(</span><br><span class="line">    <span class="comment">// これとか</span></span><br><span class="line">    (String word) -&gt; !word.isEmpty()))</span><br></pre></td></tr></table></figure>
+
+<p>Javaで定義されたラムダ式は、Java実装のRunnerなら実行できる（ただしSDKからRunnerにこのラムダ式を送信するための術は必要）。</p>
+<p>しかし他の言語（e.g. JVM言語でない Go, Python, TypeScript）で実装されたRunnerでJavaのラムダ式を実行するのは困難である。</p>
+<p>したがって、naiveに考えるとSDKを提供する言語の数だけRunner実装を作る必要がある。</p>
+<h3><span id="engineごとにrunnerを作る必要がある">EngineごとにRunnerを作る必要がある？</span></h3><p>Runnerの役割は、各Engineに対してBeamのパイプラインをsubmitし、結果を受けることである。</p>
+<p>各Engineのデータモデルに合わせてBeamパイプラインを変換しなければならないというのが基本路線であり、naiveに考えるとEngineの数だけRunnerを作る必要がある。</p>
+<h3><span id="runner実装の数-x3dx3d-sdk言語の数-x-engine数">Runner実装の数 &#x3D;&#x3D; SDK言語の数 x Engine数？</span></h3><p>実際のところ、途中まではそのような方針だった。Flink RunnerもDataflow Runnerも、JavaにもGoにもPythonにも実装されていたりする。 (2022&#x2F;08現在)</p>
+<p>これでは言語追加もEngine追加も全くやりたくないですね…</p>
+<img src="/img/2022/08-31-beam-reality-2018.png" alt="https://docs.google.com/presentation/d/1Yg8Xm4fb-oRjiLQjwLt5153hpwwTLclZrVOKP2hQifo/edit#slide=id.p より引用" width="auto" height="auto">
+
+<h2><span id="apache-beamが多言語多バックエンド処理系を実現する仕組み">Apache Beamが多言語・多バックエンド処理系を実現する仕組み</span></h2><p>上述の <code>Runner実装の数 == SDK言語の数 x Engine数</code> 問題を解決するため、2019年頃からBeamでは “Portability Framework” の導入が進められている。</p>
+<p>Portability Frameworkは現在も開発途上であり、細かい方針転換もあったりするようなので、このドキュメントを記載する上で参照したドキュメントをまず列挙する (いずれも 2022&#x2F;08&#x2F;31 時点参照)。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://beam.apache.org/contribute/runner-guide/">Runner Authoring Guide</a></li>
+<li>Fn APIの design doc<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.google.com/document/d/1XYzb1Fnt2sam7u2MsGFaZp-2qSIGxUn66VLer-bcXAk/edit#heading=h.p6lvszfbmyj6">Apache Beam Fn API Overview</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.google.com/document/d/1IGduUqmhWDi_69l9nG8kw73HZ5WI5wOps9Tshl5wpQA/edit#heading=h.gh88g5y0rekp">Apache Beam Fn API How to send and receive data</a></li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://github.com/apache/beam">apache&#x2F;beam</a> のJavaコード, Protobuf定義</li>
+</ul>
+<h3><span id="理想像-portable-frameworkの仕組み">[理想像] Portable Frameworkの仕組み</span></h3><p>ドキュメントなどから読み解ける理想像を記載。なお、まだ全然固まっていないところもあり一部筆者の推測も含む。</p>
+<p>Portable Runnerにより、例えば「JVMで動作するFlinkやDataflowなどのEngineを使いつつPythonで定義したパイプラインを実行」することが可能になる。</p>
+<img src="/img/2022/08-31-03.drawio.svg" alt="Portable Runner" width="600px" height="auto">
+
+<hr>
+<p>まず、UDFが登場しないパイプラインについて図解する。</p>
+<img src="/img/2022/08-31-04.drawio.svg" alt="UDFが登場しないパイプラインのPortable Runnerでの実行" width="600px" height="auto">
+
+<p>これが実現できれば、Portable Runnerの実装言語は何でも良くなり、かつRunnerはPortable Runnerが1つあれば事足りるようになる。</p>
+<hr>
+<p>しかし、Runner APIだけではだけではUDF実行ができない。<br>ProtocolBeffer（やgRPC）では「クライアント側で任意の言語で定義された関数を、別言語で実装されたサーバー側で実行する」という芸当はできないからだ。</p>
+<p>UDFが登場するパイプラインでは下図のようになる。</p>
+<img src="/img/2022/08-31-05.drawio.svg" alt="UDFが登場するパイプラインのPortable Runnerでの実行" width="600px" height="auto">
+
+<p>新たに SDK Harness というのが登場している。この実体はDockerコンテナであり、本例では「PythonのUDFが実行できるようにPython処理系 (とBeamランタイム) が入ったDockerコンテナ」である。</p>
+<p>Portable Runnerは、自分でもEngineでも実行できない多言語のUDF実行をSDK Harnessに委託する形である。</p>
+<h3><span id="2022x2f08-portable-framework-の現状">[2022&#x2F;08] Portable Framework の現状</span></h3><p>Portable Runner を各言語に定義する動きが見受けられる。</p>
+<ul>
+<li>Java: <a target="_blank" rel="noopener" href="https://github.com/apache/beam/blob/master/runners/portability/java/src/main/java/org/apache/beam/runners/portability/PortableRunner.java">https://github.com/apache/beam/blob/master/runners/portability/java/src/main/java/org/apache/beam/runners/portability/PortableRunner.java</a></li>
+<li>Python: <a target="_blank" rel="noopener" href="https://github.com/apache/beam/blob/master/sdks/python/apache_beam/runners/portability/portable_runner.py">https://github.com/apache/beam/blob/master/sdks/python/apache_beam/runners/portability/portable_runner.py</a></li>
+<li>TypeScript: <a target="_blank" rel="noopener" href="https://github.com/apache/beam/blob/master/sdks/typescript/src/apache_beam/runners/portable_runner/runner.ts">https://github.com/apache/beam/blob/master/sdks/typescript/src/apache_beam/runners/portable_runner/runner.ts</a></li>
+</ul>
+<p>※なぜGoに Portable Runner がないのかは未調査</p>
+<p>SDKからRunnerへのパイプライン受け渡し部分にはRunner APIは使われていない。</p>
+<img src="/img/2022/08-31-06.drawio.svg" alt="現状のPortable Runnerでの実行" width="600px" height="auto">
+
+<p>また、SDK Harnessの実装はGoogle Cloud Dataflow用のものだけ進んでいるように見えて、実質SDKとRunnerの言語は合わせる必要がある状況。</p>
+
+    
+  </div>
+  <footer class="entry-footer">
+    <div class="entry-meta-footer">
+      <span class="category">
+        
+      </span>
+      <span class="tags">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Apache-Beam/" rel="tag">Apache Beam</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E3%82%B9%E3%83%88%E3%83%AA%E3%83%BC%E3%83%A0%E5%87%A6%E7%90%86/" rel="tag">ストリーム処理</a></li></ul>
+
+      </span>
+    </div>
+  </footer>
+  
+  <footer class="author-info clearfix">
+    <img class="author-picture circle" src="https://www.gravatar.com/avatar/cb02a2b3f429b7c938d1fe2665e8e342">
+    <div class="author-content right">
+      <div class="author-caption">
+        <span class="label">author</span>
+        Sho Nakatani a.k.a. laysakura
+      </div>
+      <p class="author-description">
+        東京大学大学院 情報理工学系研究科 電子情報学専攻 修士課程で並列分散処理・ストリーム処理・データベースを研究。<br>
+        2014年4月に株式会社ディー・エヌ・エーにエンジニアスペシャリストとして入社し、ソーシャルゲームのサーバサイド共通基盤の開発に従事。<br>
+        2016年8月より、オンライン証券会社<a target="_blank" rel="noopener" href="https://folio-sec.com">株式会社FOLIO</a>に入社。バックエンドシステム開発・プロジェクトマネージメント・Engineering
+        Managementに従事。<br>
+        2020年3月より<a target="_blank" rel="noopener" href="https://idein.jp">Idein株式会社</a>所属。デバイス・高性能計算関連の研究開発。<br>
+        2021年9月よりトヨタ自動車株式会社所属。自動車データの収集〜分析基盤の研究開発に従事。<br>
+        その他個人事業主として、RDBMS開発やIntel SGXを利用するためのライブラリ開発などの活動。
+      </p>
+      <ul class="author-social-buttons">
+        <li class="author-social-button"><a class="fa fa-lg fa-twitter-square" target="_blank" rel="noopener" href="https://twitter.com/laysakura"></a>
+        </li>
+        <li class="author-social-button"><a class="fa fa-lg fa-github-square" target="_blank" rel="noopener" href="https://github.com/laysakura"></a>
+        </li>
+        <li class="author-social-button"><a class="fa fa-lg fa-facebook-square"
+            target="_blank" rel="noopener" href="https://www.facebook.com/lay.sakura"></a></li>
+      </ul>
+    </div>
+  </footer>
+  
+  
+  
+<nav id="article-nav">
+  
+    <a href="/2023/11/08/bscp/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          Webセキュリティ資格のBurp Suite Certified Practitioner (BSCP) に合格した
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2022/03/30/rust-RwLock-writer-starvation/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">
+        
+          Rustの std::sync::RwLock はLinuxでwriter starvation問題を起こす (macOSなら平気)
+        
+      </div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+<section id="comments">
+  <div id="disqus_thread">
+
+    <!-- comment service provided by disqus -->
+    <script>
+      /**
+       *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+       *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+       */
+      var disqus_config = function () {
+        this.page.url = https://laysakura.github.io/2022/08/31/beam-multi-lang-backend/;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = https://laysakura.github.io/2022/08/31/beam-multi-lang-backend/; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+      (function () {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//laysakura.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by
+        Disqus.</a></noscript>
+  </div>
+</section>
+
+
+    </div>
+    <div class="mb-search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:laysakura.github.io">
+  </form>
+</div>
+<footer id="footer">
+	<h1 class="footer-blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<span class="copyright">
+		&copy; 2023 Sho Nakatani a.k.a. laysakura<br>
+		Modify from <a href="https://sanographix.github.io/tumblr/apollo/" target="_blank">Apollo</a> theme, designed by <a href="https://www.sanographix.net/" target="_blank">SANOGRAPHIX.NET</a><br>
+		Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+	</span>
+</footer>
+
+    
+<script>
+  var disqus_shortname = 'laysakura';
+  
+  var disqus_url = 'https://laysakura.github.io/2022/08/31/beam-multi-lang-backend/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+
+  <!-- https://github.com/vfeskov/vanilla-back-to-top -->
+  <script src="https://unpkg.com/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js"></script>
+  <script>addBackToTop({
+    diameter: 50,
+    backgroundColor: '#33a6b880',
+    textColor: '#fff'
+  })</script>
+
+</body>
+</html>

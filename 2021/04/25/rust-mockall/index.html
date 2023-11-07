@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Rustでmockするならmockallで決まり！・・・でよろしいでしょうか？ | 俺とお前とlaysakura</title>
+  
+  <link rel="canonical" href="https://laysakura.github.io/2021/04/25/rust-mockall/"/>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="Rustで DI (Dependency Injection)、してますか？今日話題にするのはドメイン層でインターフェイスを定義してインフラ層でその実装を書くやつです。例えばドメイン層で trait UserRepository を書いて、インフラ層で struct UserRepositoryImpl するやつです。 テストを書くとき、 struct UserRepositoryImpl はDB">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rustでmockするならmockallで決まり！・・・でよろしいでしょうか？">
+<meta property="og:url" content="https://laysakura.github.io/2021/04/25/rust-mockall/index.html">
+<meta property="og:site_name" content="俺とお前とlaysakura">
+<meta property="og:description" content="Rustで DI (Dependency Injection)、してますか？今日話題にするのはドメイン層でインターフェイスを定義してインフラ層でその実装を書くやつです。例えばドメイン層で trait UserRepository を書いて、インフラ層で struct UserRepositoryImpl するやつです。 テストを書くとき、 struct UserRepositoryImpl はDB">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://laysakura.github.io/img/2021/04-21-unresolved-import.png">
+<meta property="article:published_time" content="2021-04-25T05:39:42.000Z">
+<meta property="article:modified_time" content="2023-11-07T19:54:06.436Z">
+<meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
+<meta property="article:tag" content="Rust">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laysakura.github.io/img/2021/04-21-unresolved-import.png">
+
+  <!-- favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" href="/favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22289437-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+  <!-- MathJax -->
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+  <div id="container">
+    <div class="mobile-nav-panel">
+	<i class="icon-reorder icon-large"></i>
+</div>
+<header id="header">
+	<h1 class="blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<nav class="nav">
+		<ul>
+			<li><a href="/archives">過去の投稿</a></li>
+			<li><a id="nav-search-btn" class="nav-icon" title="Search"></a></li>
+			<li><a target="_blank" rel="noopener" href="http://cloud.feedly.com/#subscription%2Ffeed%2Fhttps%3A%2F%2Flaysakura.github.io%2Fatom.xml" id="nav-rss-link" class="nav-icon" title="RSS Feed"></a></li>
+		</ul>
+	</nav>
+	<div id="search-form-wrap">
+		<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laysakura.github.io"></form>
+	</div>
+</header>
+    <div id="main">
+      <article id="post-Rustでmockするならmockallで決まり！・・・でよろしいでしょうか？" class="post">
+  <footer class="entry-meta-header">
+    <span class="meta-elements date">
+      <a href="/2021/04/25/rust-mockall/" class="article-date">
+  <time datetime="2021-04-25T05:39:42.000Z" itemprop="datePublished">2021-04-25</time>
+</a>
+    </span>
+  </footer>
+  
+  <header class="entry-header">
+    
+  
+    <h1 class="article-title entry-title" itemprop="name">
+      Rustでmockするならmockallで決まり！・・・でよろしいでしょうか？
+    </h1>
+  
+
+  </header>
+  <div class="entry-content">
+    
+    <p>Rustで DI (Dependency Injection)、してますか？<br>今日話題にするのはドメイン層でインターフェイスを定義してインフラ層でその実装を書くやつです。<br>例えばドメイン層で <code>trait UserRepository</code> を書いて、インフラ層で <code>struct UserRepositoryImpl</code> するやつです。</p>
+<p>テストを書くとき、 <code>struct UserRepositoryImpl</code> はDBアクセスなどしてしまうので取り回しが悪いから、mock を作って fixture を入出力したいことありますよね。<br>Rustでそういうことやるなら mockall がオススメだよという記事です。</p>
+<div style="text-align: center">
+  <div class="github-card" data-user="asomers" data-repo="mockall" data-height="200" data-width="400" data-theme="default" data-target data-client-id data-client-secret></div>
+</div>
+<script src="/github-card-lib/githubcard.js"></script>
+
+
+<p>そんなに不満はないのですが、もしベターなやり方があったら記事末尾のコメントや<a target="_blank" rel="noopener" href="https://twitter.com/laysakura">Twitter</a>やらもらえたら嬉しいです。</p>
+<p>前職のFOLIO時代の同僚で現CADDiの <a target="_blank" rel="noopener" href="https://caddi.tech/archives/2331">むらみんさんの記事</a> に</p>
+<blockquote>
+<p>外部通信のような比較的大きい副作用が絡むテストに於いて テストダブルを差し込むことは可能なのですが、かなりの労力が必要になる印象を持っています。</p>
+</blockquote>
+<p>と書いていたのを今更ながら発見して、自分はこうしてるけど皆はどうしてるんだろ？と思って筆（キーボード）を取りました。</p>
+<span id="more"></span>
+
+<h2><span id="目次">目次</span></h2><!-- toc -->
+
+<ul>
+<li><a href="#mockall-%E7%B4%B9%E4%BB%8B%E3%81%AE%E9%A1%8C%E6%9D%90">mockall 紹介の題材</a></li>
+<li><a href="#%E3%82%B3%E3%83%BC%E3%83%89%E3%83%AC%E3%83%99%E3%83%AB%E3%81%AE%E3%82%A2%E3%83%BC%E3%82%AD%E3%83%86%E3%82%AF%E3%83%81%E3%83%A3">コードレベルのアーキテクチャ</a></li>
+<li><a href="#mockall-%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6%E8%A7%A3%E8%AA%AC">mockall の使い方について解説</a><ul>
+<li><a href="#userrepository-usecase-%E5%AE%9F%E8%A3%85%E3%81%BE%E3%81%A7">UserRepository, UseCase 実装まで</a></li>
+<li><a href="#tips-domain%E5%B1%A4%E3%81%AE-trait-%E3%82%92%E9%96%A2%E9%80%A3%E5%9E%8B%E3%81%A7%E3%81%BE%E3%81%A8%E3%82%81%E3%81%9F-trait-%E3%82%92%E4%BD%9C%E3%81%A3%E3%81%A6%E3%81%8A%E3%81%8F%E3%81%A8-%E5%9E%8B%E3%83%91%E3%83%A9%E3%83%A1%E3%83%BC%E3%82%BF%E3%81%AE%E6%95%B0%E3%81%8C%E6%B8%9B%E3%82%89%E3%81%9B%E3%81%A6%E4%BE%BF%E5%88%A9">Tips: domain層の trait を関連型でまとめた trait を作っておくと、型パラメータの数が減らせて便利</a></li>
+<li><a href="#usecase-%E5%AE%9F%E8%A3%85%E3%82%92%E5%AE%8C%E6%88%90%E3%81%95%E3%81%9B%E3%81%A6%E3%83%86%E3%82%B9%E3%83%88%E3%82%92%E6%9B%B8%E3%81%93%E3%81%86%E3%81%A8%E3%81%97%E3%81%A6%E3%81%BF%E3%82%8B">UseCase 実装を完成させてテストを書こうとしてみる</a></li>
+<li><a href="#mockall-%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6-userrepositorylist-%E3%82%92%E3%83%A2%E3%83%83%E3%82%AF%E3%81%99%E3%82%8B">mockall を使って <code>UserRepository::list()</code> をモックする</a></li>
+<li><a href="#fixture-%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E8%A4%87%E6%95%B0%E3%81%AE-user-%E3%82%92%E8%BF%94%E3%81%99%E3%83%AA%E3%83%9D%E3%82%B8%E3%83%88%E3%83%AA%E3%81%AE%E3%83%A2%E3%83%83%E3%82%AF%E5%AE%9F%E8%A3%85%E3%82%92%E4%BD%9C%E3%82%8B">Fixture を使って複数の User を返すリポジトリのモック実装を作る</a></li>
+<li><a href="#%E3%83%A2%E3%83%83%E3%82%AF%E5%AE%9F%E8%A3%85%E3%81%8C%E5%BF%85%E8%A6%81%E3%81%8B%E3%82%92%E4%BE%9D%E5%AD%98%E5%85%88%E3%81%AB%E9%81%B8%E3%81%B0%E3%81%9B%E3%82%8B">モック実装が必要かを依存先に選ばせる</a></li>
+</ul>
+</li>
+<li><a href="#%E3%81%8A%E3%82%8F%E3%82%8A%E3%81%AB">おわりに</a></li>
+<li><a href="#%E3%81%8A%E3%81%BE%E3%81%91-rust-analyzer-%E3%82%92%E4%BD%BF%E3%81%A3%E3%81%A6%E3%81%84%E3%81%A6-use-mockfoo-%E3%81%8C-unresolved-import-%E3%82%A8%E3%83%A9%E3%83%BC%E3%81%AB%E3%81%AA%E3%82%8B%E3%81%A8%E3%81%8D">おまけ: rust-analyzer を使っていて <code>use ...::MockFoo</code> が unresolved import エラーになるとき</a></li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="mockall-紹介の題材">mockall 紹介の題材</span></h2><div style="text-align: center">
+  <div class="github-card" data-user="laysakura" data-repo="mockall-example-rs" data-height="200" data-width="400" data-theme="default" data-target data-client-id data-client-secret></div>
+</div>
+<script src="/github-card-lib/githubcard.js"></script>
+
+
+<p>mockallを紹介するためにクリーンアーキテクチャなアプリケーションを用意しました。<br>簡易的なメアド帳です。動かし方は <a target="_blank" rel="noopener" href="https://github.com/laysakura/mockall-example-rs">README.md</a> に書いています。</p>
+<h2><span id="コードレベルのアーキテクチャ">コードレベルのアーキテクチャ</span></h2><p><a target="_blank" rel="noopener" href="https://doc.rust-lang.org/edition-guide/rust-2018/cargo-and-crates-io/cargo-workspaces-for-multi-package-projects.html">Multi-package project</a> です。</p>
+<ul>
+<li><code>domain</code> : Enterprise Business Rules<ul>
+<li>Entity, Value Object, リポジトリインターフェイスを置いています。</li>
+</ul>
+</li>
+<li><code>app</code> : Application Business Rules<ul>
+<li>UseCaseと、 <code>tests</code> 以下にUseCaseのブラックボックステストを置いています。<br><strong>ここのテストで、mockall で自動生成したリポジトリインターフェイスのモックを使っています。</strong></li>
+</ul>
+</li>
+<li><code>interface-adapter</code> : Interface Adapters<ul>
+<li>ControllerやDTO (Data Transfer Object) を置いています。</li>
+</ul>
+</li>
+<li><code>infra</code> : Frameworks &amp; Drivers<ul>
+<li>UIとしてCLI実装を置いています。</li>
+<li>リポジトリ実装として、永続化層にYAMLファイルを使ったものを置いています。</li>
+</ul>
+</li>
+</ul>
+<h2><span id="mockall-の使い方について解説">mockall の使い方について解説</span></h2><p><code>app/tests</code> のテストにおいてモックを使っているので、 <code>app</code> と <code>domain</code> 層だけの解説になります。<br><code>interface-adapter</code> 層と <code>infra</code> 層は興味があればコードを見てみてください。</p>
+<h3><span id="userrepository-usecase-実装まで">UserRepository, UseCase 実装まで</span></h3><p>まず、 <code>User</code> の一覧・作成・更新を担当する <code>UserRepository</code> を作ります。永続化の方法などは <code>infra</code> 層に任せたいので、 <code>domain</code> 層に trait として作ります。</p>
+<figure class="highlight rust"><figcaption><span>domain/src/user/user_repository.rs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">UserRepository</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">list</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;User&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// # Failures</span></span><br><span class="line">    <span class="comment">///</span></span><br><span class="line">    <span class="comment">/// - `MyErrorType::Duplicate` : when user with given ID already exists.</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">create</span>(&amp;<span class="keyword">self</span>, user: User) <span class="punctuation">-&gt;</span> MyResult&lt;()&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="comment">/// # Failures</span></span><br><span class="line">    <span class="comment">///</span></span><br><span class="line">    <span class="comment">/// - `MyErrorType::NotFound` : when user with given ID (inside User) does not exist.</span></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">update</span>(&amp;<span class="keyword">self</span>, user: User) <span class="punctuation">-&gt;</span> MyResult&lt;()&gt;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>エラー型の詳細はコードを読んでみてください。シンプルなインターフェイスです。</p>
+<p>ユースケースにおいて、このアプリケーションの機能を列挙していきます。</p>
+<figure class="highlight rust"><figcaption><span>app/src/use_case.rs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">UseCase</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">UseCase</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">search_users</span>(</span><br><span class="line">        &amp;<span class="keyword">self</span>,</span><br><span class="line">        first_name: <span class="type">Option</span>&lt;&amp;UserFirstName&gt;,</span><br><span class="line">        last_name: <span class="type">Option</span>&lt;&amp;UserLastName&gt;,</span><br><span class="line">        email: <span class="type">Option</span>&lt;&amp;EmailAddress&gt;,</span><br><span class="line">    ) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;User&gt; &#123;</span><br><span class="line">        todo!()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">add_user</span>(&amp;<span class="keyword">self</span>, user: User) <span class="punctuation">-&gt;</span> MyResult&lt;()&gt; &#123;</span><br><span class="line">        todo!()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">update_user_by_email</span>(</span><br><span class="line">        &amp;<span class="keyword">self</span>,</span><br><span class="line">        email: &amp;EmailAddress,</span><br><span class="line">        first_name: <span class="type">Option</span>&lt;UserFirstName&gt;,</span><br><span class="line">        last_name: <span class="type">Option</span>&lt;UserLastName&gt;,</span><br><span class="line">    ) <span class="punctuation">-&gt;</span> MyResult&lt;()&gt; &#123;</span><br><span class="line">        todo!()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>ユースケースの各種機能を実現する一連の処理を記述すると、リポジトリを使うことになります。<br>例として <code>UseCase::search_users()</code> の実装をなんとなく書いてみましょう。</p>
+<figure class="highlight rust"><figcaption><span>app/src/use_case.rs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">UseCase</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">UseCase</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">search_users</span>(</span><br><span class="line">        &amp;<span class="keyword">self</span>,</span><br><span class="line">        first_name: <span class="type">Option</span>&lt;&amp;UserFirstName&gt;,</span><br><span class="line">        last_name: <span class="type">Option</span>&lt;&amp;UserLastName&gt;,</span><br><span class="line">        email: <span class="type">Option</span>&lt;&amp;EmailAddress&gt;,</span><br><span class="line">    ) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;User&gt; &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">users</span> = <span class="comment">// ... `UserRepository::list()` を叩いて User を全件取得</span></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">users</span> = users</span><br><span class="line">                .<span class="title function_ invoke__">into_iter</span>()</span><br><span class="line">                .<span class="title function_ invoke__">filter</span>(|user| &#123;</span><br><span class="line">                    <span class="comment">// first_name, last_name, email の引数を使い、特定の条件に合うものにだけ絞り込み</span></span><br><span class="line">                    <span class="comment">// ...</span></span><br><span class="line">                &#125;)</span><br><span class="line">                .<span class="title function_ invoke__">collect</span>();</span><br><span class="line">            users</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>UserRepository::list()</code> を呼び出す必要がありますね。<br>そのためには <code>UseCase</code> が <code>UserRepository</code> のインスタンスを得られる必要があります。<br>より正確には、 <code>UserRepository</code> は trait なので、型パラメーターを使って <code>&lt;R: UserRepository&gt;</code> のインスタンスが必要です。<br>ここでは <code>struct UseCase</code> のフィールドとして持たせることにします。</p>
+<figure class="highlight rust"><figcaption><span>app/src/use_case.rs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">UseCase</span>&lt;<span class="symbol">&#x27;r</span>, R: UserRepository&gt; &#123;</span><br><span class="line">    user_repo: &amp;<span class="symbol">&#x27;r</span> R,</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>UserRepository</code> の各関連関数は <code>&amp;self</code> しか取らない (<code>self</code> を取らない) ので、 <code>UseCase</code> が持つのは <code>&lt;R: UserRepository&gt;</code> の所有権ではなく参照で十分です。<br>結果として <code>&#39;r</code> というライフタイムパラメータも必要になってちょっと煩わしいですが、これがRustです。<br>Tipsですが、 <code>Rc</code> とか使うと struct の中のライフタイムパラメータを避けられるのでライフタイムパラメータで頭痛がしてきたときは使ってしまいます。</p>
+<p>さて、 <code>UseCase</code> が <code>user_repo</code> フィールドを持つようになったので、 <code>UseCase::search_users</code> 実装のコメントアウトしていた部分が書けます。</p>
+<figure class="highlight rust"><figcaption><span>app/src/use_case.rs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[derive(Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">UseCase</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">UseCase</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">search_users</span>(</span><br><span class="line">        &amp;<span class="keyword">self</span>,</span><br><span class="line">        first_name: <span class="type">Option</span>&lt;&amp;UserFirstName&gt;,</span><br><span class="line">        last_name: <span class="type">Option</span>&lt;&amp;UserLastName&gt;,</span><br><span class="line">        email: <span class="type">Option</span>&lt;&amp;EmailAddress&gt;,</span><br><span class="line">    ) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;User&gt; &#123;</span><br><span class="line">            <span class="keyword">let</span> <span class="variable">users</span> = <span class="keyword">self</span>.user_repo.<span class="title function_ invoke__">list</span>();  <span class="comment">// ここが書けた</span></span><br><span class="line">            <span class="keyword">let</span> <span class="variable">users</span> = users</span><br><span class="line">                .<span class="title function_ invoke__">into_iter</span>()</span><br><span class="line">                .<span class="title function_ invoke__">filter</span>(|user| &#123;</span><br><span class="line">                    <span class="comment">// first_name, last_name, email の引数を使い、特定の条件に合うものにだけ絞り込み</span></span><br><span class="line">                    <span class="comment">// ...</span></span><br><span class="line">                &#125;)</span><br><span class="line">                .<span class="title function_ invoke__">collect</span>();</span><br><span class="line">            users</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3><span id="tips-domain層の-trait-を関連型でまとめた-trait-を作っておくと-型パラメータの数が減らせて便利">Tips: domain層の trait を関連型でまとめた trait を作っておくと、型パラメータの数が減らせて便利</span></h3><p>mockall の紹介という意味では不要なのですが、Rustでクリーンアーキテクチャするときに個人的に便利だと思っているTipsです。</p>
+<p>今回 <code>domain</code> 層に <code>trait UserRepository</code> を置いてありますが、実際のアプリケーションだともっとたくさんの trait が出てくるはずです。<br><code>infra</code> 層ではその実装が全部出揃うので苦労しませんが、 <code>domain</code> , <code>app</code> , <code>interface-adapter</code> では <code>domain</code> 層の trait の型パラメーターだらけになるの、経験があるのではないでしょうか？</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">UseCase</span>&lt;UserRepo: UserRepository, ItemRepo: ItemRepository, ...&gt; &#123;</span><br><span class="line">    ...</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>みたいな感じで…</p>
+<p>型パラメーターを一本化するために、おまとめ trait を <code>domain</code> 層に置いておくと便利に感じます。このアプリケーションのコードにおいては以下のようなものを置いています。</p>
+<figure class="highlight rust"><figcaption><span>domain/src/repositories.rs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// UseCaseなどの各所で都度同じような型パラメータを定義しないで済むように、リポジトリtraitをこのtraitの関連型としてまとめる。</span></span><br><span class="line"><span class="comment">/// 例えば、 `ARepository` と `BRepository` を両方使う `XUseCase` があった場合、この trait がなければ</span></span><br><span class="line"><span class="comment">///  `XUseCase&lt;A: ARepository, B: BRepository&gt;` と2つの型パラメーターが必要なところ、</span></span><br><span class="line"><span class="comment">/// `XUseCase&lt;R: Repositories&gt;` の1つで済む。</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">Repositories</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">UserRepo</span>: UserRepository;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">user_repository</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> &amp;<span class="keyword">Self</span>::UserRepo;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>今回は使用している trait が <code>UserRepository</code> 1つなので若干ありがたみに書けますが、コメントにお気持ちを書いています。<br>有用そうなら真似してみてください。</p>
+<h3><span id="usecase-実装を完成させてテストを書こうとしてみる">UseCase 実装を完成させてテストを書こうとしてみる</span></h3><p><code>UseCase</code> のコンストラクタはこのように書けます。</p>
+<figure class="highlight rust"><figcaption><span>app/src/use_case.rs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">impl</span>&lt;<span class="symbol">&#x27;r</span>, R: Repositories&gt; UseCase&lt;<span class="symbol">&#x27;r</span>, R&gt; &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">new</span>(repositories: &amp;<span class="symbol">&#x27;r</span> R) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        <span class="keyword">Self</span> &#123;</span><br><span class="line">            user_repo: repositories.<span class="title function_ invoke__">user_repository</span>(),</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>その他の関数も含めて完成させたものが <a target="_blank" rel="noopener" href="https://github.com/laysakura/mockall-example-rs/blob/master/app/src/use_case.rs">app&#x2F;src&#x2F;use_case.rs</a> です。<br>ユースケースは複雑度も高い部分なので念入りにテストしたいですね。今回は <code>app/tests</code> 以下に、 <code>UseCase::search_users()</code> 関数のブラックボックステストを書くことにします。</p>
+<figure class="highlight rust"><figcaption><span>app/tests/test_use_case_search_users.rs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">test_with_blank_repository</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">repositories</span> = <span class="comment">// ... 先程 Tips で紹介したおまとめ trait の `Repositories` の実装をインスタンス化したもの</span></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">use_case</span> = UseCase::<span class="title function_ invoke__">new</span>(&amp;repositories);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">assert_eq!</span>(use_case.<span class="title function_ invoke__">search_users</span>(<span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span>), <span class="built_in">vec!</span>[]);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(</span><br><span class="line">        use_case.<span class="title function_ invoke__">search_users</span>(<span class="title function_ invoke__">Some</span>(&amp;UserFirstName::<span class="title function_ invoke__">new</span>(<span class="string">&quot;a&quot;</span>)), <span class="literal">None</span>, <span class="literal">None</span>),</span><br><span class="line">        <span class="built_in">vec!</span>[]</span><br><span class="line">    );</span><br><span class="line">    <span class="built_in">assert_eq!</span>(</span><br><span class="line">        use_case.<span class="title function_ invoke__">search_users</span>(<span class="literal">None</span>, <span class="title function_ invoke__">Some</span>(&amp;UserLastName::<span class="title function_ invoke__">new</span>(<span class="string">&quot;a&quot;</span>)), <span class="literal">None</span>),</span><br><span class="line">        <span class="built_in">vec!</span>[]</span><br><span class="line">    );</span><br><span class="line">    <span class="built_in">assert_eq!</span>(</span><br><span class="line">        use_case.<span class="title function_ invoke__">search_users</span>(<span class="literal">None</span>, <span class="literal">None</span>, <span class="title function_ invoke__">Some</span>(&amp;EmailAddress::<span class="title function_ invoke__">new</span>(<span class="string">&quot;a@b&quot;</span>))),</span><br><span class="line">        <span class="built_in">vec!</span>[]</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>「 <code>UserRepository</code> が空っぽの場合はどんなクエリを投げても検索結果は空」ということをテストしています。<br>ここで空っぽの <code>UserRepository</code> を作るためにモックを作りたいですね。<br>愚直にやるとこんな感じでしょうか。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">struct</span> <span class="title class_">EmptyUserRepository</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">UserRepository</span> <span class="keyword">for</span> <span class="title class_">EmptyUserRepository</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">list</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;User&gt; &#123;</span><br><span class="line">        <span class="built_in">vec!</span>[]</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">create</span>(&amp;<span class="keyword">self</span>, user: User) <span class="punctuation">-&gt;</span> MyResult&lt;()&gt; &#123;</span><br><span class="line">        <span class="built_in">unimplemented!</span>()</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">update</span>(&amp;<span class="keyword">self</span>, user: User) <span class="punctuation">-&gt;</span> MyResult&lt;()&gt; &#123;</span><br><span class="line">        <span class="built_in">unimplemented!</span>()</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>そしてこれを使い、おまとめ trait 実装も作ります。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">EmptyRepositories</span> &#123;</span><br><span class="line">    user_repo: EmptyUserRepository,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Repositories</span> <span class="keyword">for</span> <span class="title class_">EmptyRepositories</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">UserRepo</span> = EmptyUserRepository;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">user_repository</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> &amp;<span class="keyword">Self</span>::UserRepo &#123;</span><br><span class="line">        &amp;<span class="keyword">self</span>.user_repo</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">EmptyRepositories</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">new</span>(user_repo: EmptyUserRepository) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        <span class="keyword">Self</span> &#123; user_repo &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>これがあれば、テストコードのコメントアウト部分も埋められます。</p>
+<figure class="highlight rust"><figcaption><span>app/tests/test_use_case_search_users.rs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">test_with_blank_repository</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">user_repo</span> = EmptyUserRepository;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">repositories</span> = EmptyRepositories::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">use_case</span> = UseCase::<span class="title function_ invoke__">new</span>(&amp;repositories);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">assert_eq!</span>(use_case.<span class="title function_ invoke__">search_users</span>(<span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span>), <span class="built_in">vec!</span>[]);</span><br><span class="line">    <span class="comment">// ...</span></span><br></pre></td></tr></table></figure>
+
+<p>これでできる！できるのですが！以下の点が気に掛かります。</p>
+<ul>
+<li><code>UseCase::search_users()</code> が内部的に叩いていない <code>UserRepository::create()</code> , <code>UserRepository::update()</code> にまで <code>unimplemented!()</code> を書いて回る必要がある。</li>
+<li>やりたい動作（今回は「空っぽのユーザーリストを返す」）の数だけモックの <code>struct</code> を作る必要がある。<ul>
+<li>しかも今回はおまとめ trait も作っているので、おまとめ trait の数も増える。</li>
+</ul>
+</li>
+</ul>
+<p>mockall ならこれらの悩みを解決してくれます。</p>
+<h3><span id="mockall-を使って-userrepositorylist-をモックする">mockall を使って <code>UserRepository::list()</code> をモックする</span></h3><p>詳細な使い方は <a target="_blank" rel="noopener" href="https://docs.rs/mockall/0.9.1/mockall/">ドキュメント</a> を参照してください。ここでは自分の使い方を小ネタ含めてお伝えします。</p>
+<p>先程は <code>struct EmptyUserRepository</code> を手書きしましたが、mockall を使うと trait にアノテーションを書けば <code>MockUserRepository</code> をマクロで自動実装してくれます。</p>
+<figure class="highlight toml"><figcaption><span>domain/Cargo.toml</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="attr">mockall</span> = &#123;version = <span class="string">&quot;0.9&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight rust"><figcaption><span>domain/src/user/user_repository.rs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[mockall::automock]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">UserRepository</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">list</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;User&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">create</span>(&amp;<span class="keyword">self</span>, user: User) <span class="punctuation">-&gt;</span> MyResult&lt;()&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">update</span>(&amp;<span class="keyword">self</span>, user: User) <span class="punctuation">-&gt;</span> MyResult&lt;()&gt;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>自動実装された <code>MockUserRepository</code> をおまとめ trait に設定します。モックの挙動は都度自由に差し替えられるので、今回は <code>EmptyRepositories</code> という挙動を表す名前はやめて、 <code>TestRepositories</code> という汎用的な名前にします。</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">pub</span> <span class="keyword">struct</span> <span class="title class_">TestRepositories</span> &#123;</span><br><span class="line">    user_repo: TestUserRepository,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">Repositories</span> <span class="keyword">for</span> <span class="title class_">TestRepositories</span> &#123;</span><br><span class="line">    <span class="keyword">type</span> <span class="title class_">UserRepo</span> = MockUserRepository;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">user_repository</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> &amp;<span class="keyword">Self</span>::UserRepo &#123;</span><br><span class="line">        &amp;<span class="keyword">self</span>.user_repo</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">impl</span> <span class="title class_">EmptyRepositories</span> &#123;</span><br><span class="line">    <span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">new</span>(user_repo: MockUserRepository) <span class="punctuation">-&gt;</span> <span class="keyword">Self</span> &#123;</span><br><span class="line">        <span class="keyword">Self</span> &#123; user_repo &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p><code>TestRepositories</code> , <code>MockUserRepository</code> を使ってテストコ−ドを書いていきます。</p>
+<figure class="highlight rust"><figcaption><span>app/tests/test_use_case_search_users.rs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> domain::user::user_repository::MockUserRepository;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">test_with_blank_repository</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">user_repo</span> = MockUserRepository::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">repositories</span> = TestRepositories::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">use_case</span> = UseCase::<span class="title function_ invoke__">new</span>(&amp;repositories);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">assert_eq!</span>(use_case.<span class="title function_ invoke__">search_users</span>(<span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span>), <span class="built_in">vec!</span>[]);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(</span><br><span class="line">        use_case.<span class="title function_ invoke__">search_users</span>(<span class="title function_ invoke__">Some</span>(&amp;UserFirstName::<span class="title function_ invoke__">new</span>(<span class="string">&quot;a&quot;</span>)), <span class="literal">None</span>, <span class="literal">None</span>),</span><br><span class="line">        <span class="built_in">vec!</span>[]</span><br><span class="line">    );</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>これを実際に走らせると、 <code>MockUserRepository::list(): No matching expectation found</code> というランタイムエラーになります。<br>これは「 <code>list()</code> 関数のモック挙動が挿されていないぞ」という意味です。<br>空っぽのユーザーリストを返す挙動を挿しましょう。 <strong>テストコードのどこでも、クロージャーを使って挙動を差し替えられる</strong> のが便利ポイントです。</p>
+<figure class="highlight rust"><figcaption><span>app/tests/test_use_case_search_users.rs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> domain::user::user_repository::MockUserRepository;</span><br><span class="line"></span><br><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">test_with_blank_repository</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">user_repo</span> = MockUserRepository::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    user_repo.<span class="title function_ invoke__">expect_list</span>().<span class="title function_ invoke__">returning</span>(|| <span class="built_in">vec!</span>[]);  <span class="comment">// expect_list() 関数で、 list() 関数のモック挙動をクロージャーで挿し込む</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">repositories</span> = TestRepositories::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">use_case</span> = UseCase::<span class="title function_ invoke__">new</span>(&amp;repositories);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">assert_eq!</span>(use_case.<span class="title function_ invoke__">search_users</span>(<span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span>), <span class="built_in">vec!</span>[]);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(</span><br><span class="line">        use_case.<span class="title function_ invoke__">search_users</span>(<span class="title function_ invoke__">Some</span>(&amp;UserFirstName::<span class="title function_ invoke__">new</span>(<span class="string">&quot;a&quot;</span>)), <span class="literal">None</span>, <span class="literal">None</span>),</span><br><span class="line">        <span class="built_in">vec!</span>[]</span><br><span class="line">    );</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>これでテストケースの1個目が完成です。</p>
+<h3><span id="fixture-を使って複数の-user-を返すリポジトリのモック実装を作る">Fixture を使って複数の User を返すリポジトリのモック実装を作る</span></h3><figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">MockUserRepository::<span class="title function_ invoke__">new</span>().<span class="title function_ invoke__">expect_list</span>().<span class="title function_ invoke__">returning</span>(|| <span class="comment">/* お好みのUserリスト */</span>);</span><br></pre></td></tr></table></figure>
+
+<p>の形式でいろいろな状態のリポジトリを簡単にモック実装できることがを紹介しました。<br>いろいろな状態のリポジトリを作るには色々な <code>User</code> が必要なので、fixture を作っておくと便利です。</p>
+<p>実際に作った <a target="_blank" rel="noopener" href="https://github.com/laysakura/mockall-example-rs/blob/master/app/tests/fixture/mod.rs">fixture はこちら</a>です。<br><code>User</code> を変数の形で定義するのではなく、 <code>User</code> を返す関数を定義しているのがともすると特徴的に感じるかと思いますが、以下のような理由です。</p>
+<ul>
+<li>Rustの基本機能でグローバル変数のようなものを作ろうとすると <code>const</code> か <code>static</code> を使うが、いずれも基本的には <code>User</code> のようなプリミティブではない型を定義できない。</li>
+<li><a target="_blank" rel="noopener" href="https://docs.rs/once_cell/1.7.2/once_cell/">once_cell</a> などを使えば <code>static</code> でグローバル変数を作れるが、mockall が提供する <code>.expect_YOUR_METHOD().returning(|| /* ... */)</code> のクロージャーの中で <code>static</code> 変数を使おうとすると、 <code>Copy</code> 実装がされていない限りは都度 <code>.clone()</code> していかないと使えなかったりして取り回しが面倒。</li>
+</ul>
+<p>このように些細な理由ではありますが、 fixture は関数形式で作っておくことをおすすめします。</p>
+<p>横道に逸れましたが、この fixture を使って「ユーザーを3種類返すリポジトリ」のモック実装をし、その環境における <code>UseCase::search_users()</code> の挙動のテストをします。</p>
+<figure class="highlight rust"><figcaption><span>app/tests/test_use_case_search_users.rs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">use</span> domain::user::user_repository::MockUserRepository;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ...</span></span><br><span class="line"></span><br><span class="line"><span class="meta">#[test]</span></span><br><span class="line"><span class="keyword">fn</span> <span class="title function_">test_with_3users_repository</span>() &#123;</span><br><span class="line">    <span class="keyword">let</span> <span class="keyword">mut </span><span class="variable">user_repo</span> = MockUserRepository::<span class="title function_ invoke__">new</span>();</span><br><span class="line">    user_repo</span><br><span class="line">        .<span class="title function_ invoke__">expect_list</span>()</span><br><span class="line">        .<span class="title function_ invoke__">returning</span>(|| <span class="built_in">vec!</span>[User::<span class="title function_ invoke__">fx1</span>(), User::<span class="title function_ invoke__">fx2</span>(), User::<span class="title function_ invoke__">fx3</span>()]);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">let</span> <span class="variable">repositories</span> = TestRepositories::<span class="title function_ invoke__">new</span>(user_repo);</span><br><span class="line">    <span class="keyword">let</span> <span class="variable">use_case</span> = UseCase::<span class="title function_ invoke__">new</span>(&amp;repositories);</span><br><span class="line"></span><br><span class="line">    <span class="built_in">assert_eq!</span>(use_case.<span class="title function_ invoke__">search_users</span>(<span class="literal">None</span>, <span class="literal">None</span>, <span class="literal">None</span>), <span class="built_in">vec!</span>[]);</span><br><span class="line">    <span class="built_in">assert_eq!</span>(</span><br><span class="line">        use_case.<span class="title function_ invoke__">search_users</span>(<span class="title function_ invoke__">Some</span>(&amp;UserFirstName::<span class="title function_ invoke__">fx1</span>()), <span class="literal">None</span>, <span class="literal">None</span>),</span><br><span class="line">        <span class="built_in">vec!</span>[User::<span class="title function_ invoke__">fx1</span>()]</span><br><span class="line">    );</span><br><span class="line">    <span class="built_in">assert_eq!</span>(</span><br><span class="line">        use_case.<span class="title function_ invoke__">search_users</span>(<span class="title function_ invoke__">Some</span>(&amp;UserFirstName::<span class="title function_ invoke__">fx2</span>()), <span class="literal">None</span>, <span class="literal">None</span>),</span><br><span class="line">        <span class="built_in">vec!</span>[User::<span class="title function_ invoke__">fx2</span>(), User::<span class="title function_ invoke__">fx3</span>()]</span><br><span class="line">    );</span><br><span class="line">    <span class="built_in">assert_eq!</span>(</span><br><span class="line">        use_case.<span class="title function_ invoke__">search_users</span>(<span class="literal">None</span>, <span class="literal">None</span>, <span class="title function_ invoke__">Some</span>(&amp;EmailAddress::<span class="title function_ invoke__">fx1</span>())),</span><br><span class="line">        <span class="built_in">vec!</span>[User::<span class="title function_ invoke__">fx1</span>()]</span><br><span class="line">    );</span><br><span class="line">    <span class="built_in">assert_eq!</span>(</span><br><span class="line">        use_case.<span class="title function_ invoke__">search_users</span>(</span><br><span class="line">            <span class="title function_ invoke__">Some</span>(&amp;UserFirstName::<span class="title function_ invoke__">fx2</span>()),</span><br><span class="line">            <span class="literal">None</span>,</span><br><span class="line">            <span class="title function_ invoke__">Some</span>(&amp;EmailAddress::<span class="title function_ invoke__">fx2</span>())</span><br><span class="line">        ),</span><br><span class="line">        <span class="built_in">vec!</span>[User::<span class="title function_ invoke__">fx2</span>()]</span><br><span class="line">    );</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h3><span id="モック実装が必要かを依存先に選ばせる">モック実装が必要かを依存先に選ばせる</span></h3><p>先程 <code>domain</code> において</p>
+<figure class="highlight rust"><figcaption><span>domain/src/user/user_repository.rs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[mockall::automock]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">UserRepository</span> &#123;</span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">list</span>(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Vec</span>&lt;User&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">create</span>(&amp;<span class="keyword">self</span>, user: User) <span class="punctuation">-&gt;</span> MyResult&lt;()&gt;;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">fn</span> <span class="title function_">update</span>(&amp;<span class="keyword">self</span>, user: User) <span class="punctuation">-&gt;</span> MyResult&lt;()&gt;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>と書きましたが、この書き方だと <code>domain</code> crate に依存する crate は、テストも書かないかもしれないのに <code>MockUserRepository</code> が見えた状態になってしまいます。<br>気になる場合は <a target="_blank" rel="noopener" href="https://doc.rust-lang.org/cargo/reference/features.html">Cargo の Features</a> を使って制御すると良いでしょう。</p>
+<figure class="highlight toml"><figcaption><span>domain/Cargo.toml</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line"><span class="section">[features]</span></span><br><span class="line"><span class="attr">mock</span> = [<span class="string">&quot;mockall&quot;</span>]</span><br><span class="line"></span><br><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="attr">mockall</span> = &#123;version = <span class="string">&quot;0.9&quot;</span>, optional = <span class="literal">true</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight toml"><figcaption><span>app/Cargo.toml</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># ...</span></span><br><span class="line"></span><br><span class="line"><span class="section">[dependencies]</span></span><br><span class="line"><span class="attr">domain</span> = &#123;path = <span class="string">&quot;../domain&quot;</span>&#125;  <span class="comment"># app のテスト以外では Mock 実装不要だが</span></span><br><span class="line"></span><br><span class="line"><span class="section">[dev-dependencies]</span></span><br><span class="line"><span class="attr">domain</span> = &#123;path = <span class="string">&quot;../domain&quot;</span>, features = [<span class="string">&quot;mock&quot;</span>]&#125;  <span class="comment"># テストでは必要</span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight rust"><figcaption><span>domain/src/user/user_repository.rs</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#[cfg_attr(feature = <span class="string">&quot;mock&quot;</span>, mockall::automock)]</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">trait</span> <span class="title class_">UserRepository</span> &#123;</span><br><span class="line">    <span class="comment">// ...</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>このようにすれば、 <code>app</code> において <code>dev-dependencies</code> が有効になる <code>cargo test</code> のときなどだけ <code>MockUserRepository</code> がリンクされます。</p>
+<h2><span id="おわりに">おわりに</span></h2><p>今回は mockall の使い方の中でも、</p>
+<ul>
+<li>引数を取らない関数のモック</li>
+<li>自分自身で実装した trait にアノテーションを書く形式の自動モック実装</li>
+</ul>
+<p>を紹介しました。この他に使ったことのある便利機能として、</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://docs.rs/mockall/0.9.1/mockall/#matching-arguments">引数を取る関数について、「呼び出し時に引数はこの値にセットされているはずだ」と assert するモック</a></li>
+<li><a target="_blank" rel="noopener" href="https://docs.rs/mockall/0.9.1/mockall/#external-traits">自分でいじれない crate の中にある trait をモックする</a></li>
+</ul>
+<p>などありますので、ドキュメントを一読いただきよろしければ使ってみてください。</p>
+<h2><span id="おまけ-rust-analyzer-を使っていて-use-mockfoo-が-unresolved-import-エラーになるとき">おまけ: rust-analyzer を使っていて <code>use ...::MockFoo</code> が unresolved import エラーになるとき</span></h2><p>VSCodeで使っていると、 <code>use ...::MockFoo</code> をしているファイルを開いているときに rust-analyzer が unresolved import エラーを報告します。</p>
+<img src="/img/2021/04-21-unresolved-import.png" alt="rust-analyzer が unresolved import エラーを報告" width="auto" height="auto">
+
+<p><a target="_blank" rel="noopener" href="https://github.com/rust-analyzer/rust-analyzer/issues/6038">https://github.com/rust-analyzer/rust-analyzer/issues/6038</a> で報告されている問題と同根であると考えられ、<a target="_blank" rel="noopener" href="https://github.com/rust-analyzer/rust-analyzer/issues/6038#issuecomment-699670537">issue内のコメント</a>に従いVSCodeの場合は設定ファイルに</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">&quot;rust-analyzer.diagnostics.disabled&quot;</span><span class="punctuation">:</span> <span class="punctuation">[</span><span class="string">&quot;unresolved-import&quot;</span><span class="punctuation">]</span></span><br></pre></td></tr></table></figure>
+
+<p>を追記すれば解消します。</p>
+
+    
+  </div>
+  <footer class="entry-footer">
+    <div class="entry-meta-footer">
+      <span class="category">
+        
+      </span>
+      <span class="tags">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Rust/" rel="tag">Rust</a></li></ul>
+
+      </span>
+    </div>
+  </footer>
+  
+  <footer class="author-info clearfix">
+    <img class="author-picture circle" src="https://www.gravatar.com/avatar/cb02a2b3f429b7c938d1fe2665e8e342">
+    <div class="author-content right">
+      <div class="author-caption">
+        <span class="label">author</span>
+        Sho Nakatani a.k.a. laysakura
+      </div>
+      <p class="author-description">
+        東京大学大学院 情報理工学系研究科 電子情報学専攻 修士課程で並列分散処理・ストリーム処理・データベースを研究。<br>
+        2014年4月に株式会社ディー・エヌ・エーにエンジニアスペシャリストとして入社し、ソーシャルゲームのサーバサイド共通基盤の開発に従事。<br>
+        2016年8月より、オンライン証券会社<a target="_blank" rel="noopener" href="https://folio-sec.com">株式会社FOLIO</a>に入社。バックエンドシステム開発・プロジェクトマネージメント・Engineering
+        Managementに従事。<br>
+        2020年3月より<a target="_blank" rel="noopener" href="https://idein.jp">Idein株式会社</a>所属。デバイス・高性能計算関連の研究開発。<br>
+        2021年9月よりトヨタ自動車株式会社所属。自動車データの収集〜分析基盤の研究開発に従事。<br>
+        その他個人事業主として、RDBMS開発やIntel SGXを利用するためのライブラリ開発などの活動。
+      </p>
+      <ul class="author-social-buttons">
+        <li class="author-social-button"><a class="fa fa-lg fa-twitter-square" target="_blank" rel="noopener" href="https://twitter.com/laysakura"></a>
+        </li>
+        <li class="author-social-button"><a class="fa fa-lg fa-github-square" target="_blank" rel="noopener" href="https://github.com/laysakura"></a>
+        </li>
+        <li class="author-social-button"><a class="fa fa-lg fa-facebook-square"
+            target="_blank" rel="noopener" href="https://www.facebook.com/lay.sakura"></a></li>
+      </ul>
+    </div>
+  </footer>
+  
+  
+  
+<nav id="article-nav">
+  
+    <a href="/2021/09/01/joined-toyota/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          トヨタ自動車に入社し、自動車データの収集〜分析基盤の研究開発やっていきます
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2020/05/21/rust-static-lifetime-and-static-bounds/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">
+        
+          Rustの2種類の &#39;static
+        
+      </div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+<section id="comments">
+  <div id="disqus_thread">
+
+    <!-- comment service provided by disqus -->
+    <script>
+      /**
+       *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+       *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+       */
+      var disqus_config = function () {
+        this.page.url = https://laysakura.github.io/2021/04/25/rust-mockall/;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = https://laysakura.github.io/2021/04/25/rust-mockall/; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+      (function () {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//laysakura.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by
+        Disqus.</a></noscript>
+  </div>
+</section>
+
+
+    </div>
+    <div class="mb-search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:laysakura.github.io">
+  </form>
+</div>
+<footer id="footer">
+	<h1 class="footer-blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<span class="copyright">
+		&copy; 2023 Sho Nakatani a.k.a. laysakura<br>
+		Modify from <a href="https://sanographix.github.io/tumblr/apollo/" target="_blank">Apollo</a> theme, designed by <a href="https://www.sanographix.net/" target="_blank">SANOGRAPHIX.NET</a><br>
+		Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+	</span>
+</footer>
+
+    
+<script>
+  var disqus_shortname = 'laysakura';
+  
+  var disqus_url = 'https://laysakura.github.io/2021/04/25/rust-mockall/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+
+  <!-- https://github.com/vfeskov/vanilla-back-to-top -->
+  <script src="https://unpkg.com/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js"></script>
+  <script>addBackToTop({
+    diameter: 50,
+    backgroundColor: '#33a6b880',
+    textColor: '#fff'
+  })</script>
+
+</body>
+</html>
