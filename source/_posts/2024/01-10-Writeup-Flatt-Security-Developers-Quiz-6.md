@@ -9,7 +9,7 @@ date: 2024-01-10 12:56:57
 
 <blockquote class="twitter-tweet"><p lang="ja" dir="ltr">⚡️ Flatt Security Developers&#39; Quiz #6 開催！ ⚡️<br><br>解答は年明け1/5(金)11:59まで！Tシャツ獲得を目指して頑張ってください！<br><br>デモ環境: <a href="https://t.co/hXaNP2Ciwv">https://t.co/hXaNP2Ciwv</a><br>ソースコード: <a href="https://t.co/ejTKzpAp9D">https://t.co/ejTKzpAp9D</a><br>解答提出フォーム: <a href="https://t.co/jnc5Wv2Hi7">https://t.co/jnc5Wv2Hi7</a> <a href="https://t.co/uf3ZqHEdTK">pic.twitter.com/uf3ZqHEdTK</a></p>&mdash; 株式会社Flatt Security (@flatt_security) <a href="https://twitter.com/flatt_security/status/1740568322444288243?ref_src=twsrc%5Etfw">December 29, 2023</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-Flatt Security Developers' Quiz #6 に回答し、Tシャツ頂きしました👕
+Flatt Security Developers' Quiz #6 に回答し、Tシャツ頂きました👕
 
 Writeup書きます。
 
@@ -50,13 +50,13 @@ GoとRubyのJSONパーサーのパースロジックの差異を突いて、Go�
 Goではセッション管理と `admin` ブロックを主にしていて、Rubyで投票結果（とフラグ）を管理している。
 
 Goでの admin ブロックについて。
-ユーザー登録では `admin` 文字列は拒否されている。JSONなのでUTFエンコーディングなどは有効になり得るが、JSONパース後に `admin` 文字列との一致を見られているので、回避不可。
+ユーザー登録では `admin` 文字列は拒否されている。JSONなのでUnicodeエンコードなどは有効になり得るが、JSONパース後に `admin` 文字列との一致を見られているので、回避不可。
 
 ```json
 {"username":"admi\u006e"}
 ```
 
-`POST /result` では、JSONパースする前のリクエストボディをバイト列としてみて、 `admin` が含まれているかをチェックしている。これはUTFエンコーディングなどで回避可能。
+`POST /result` では、JSONパースする前のリクエストボディをバイト列としてみて、 `admin` が含まれているかをチェックしている。これはUnicodeエンコードなどで回避可能。
 だからといって単純に
 
 ```json
@@ -65,28 +65,15 @@ Goでの admin ブロックについて。
 
 のようなリクエストを送っても、Goのレイヤーで「`admin` ユーザーは作成されてない」とエラーになってしまう。
 
-```json
-{"username":"admi\u006e"}
-```
-
-UTFエンコーディング以外に、RubyのJSONパーサーでだけ `admin` に解釈される何かがないかを探り始める。
-Rubyで使われているJSONパーサーの <https://github.com/flori/json/blob/master/lib/json/pure/parser.rb> の実装を見つつ、
-
- `#{}` は特殊エスケープされることとか、
-
-```ruby
-irb(main):020:0> JSON.parse('{"username":"admin#{1+1}"}')['username']
-=> "admin\#{1+1}"
-```
-
-`\\` が消えることとか、
+Unicodeエンコード以外に、RubyのJSONパーサーでだけ `admin` に解釈される何かがないかを探り始める。
+Rubyで使われているJSONパーサーの <https://github.com/flori/json/blob/master/lib/json/pure/parser.rb> の実装を見つつ、`\\` が消えることを発見した。
 
 ```ruby
 irb(main):027:0> JSON.parse('{"username":"\\admin"}')['username']
 => "admin"
 ```
 
-を発見した。特に後者の `\\` 消える挙動を利用して愚直に `{"username":"\\admin"}` みたいなリクエストを送ったりもしたが、バックスラッシュがGoでのJSONエンコーディング時点で増幅したりしてうまく行かず（それが正しいJSONライブラリの挙動なのでそれはそう）。
+この挙動を利用して愚直に `{"username":"\\admin"}` みたいなリクエストを送ったりもしたが、バックスラッシュがGoでのJSONエンコーディング時点で増幅したりしてうまく行かず（それが正しいJSONライブラリの挙動なのでそれはそう）。
 
 ここでめちゃくちゃウンウン唸ってしまったが、ふとJSONキーを重複させる戦略を思いつく。
 
@@ -94,4 +81,4 @@ irb(main):027:0> JSON.parse('{"username":"\\admin"}')['username']
 {"username":"myuser","username":"admi\u006e"}
  ```
 
-とやって、Goには一個目の作成済みのユーザー名を食わせつつ、Rubyには二個目のa `admin` を食わせられないかなと思ったらできた。
+とやって、Goには一個目の作成済みのユーザー名を食わせつつ、Rubyには二個目の `admin` を食わせられないかなと思ったらできた。
