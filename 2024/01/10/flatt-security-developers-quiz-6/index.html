@@ -1,0 +1,304 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Writeup - Flatt Security Developers&#39; Quiz ＃6 | 俺とお前とlaysakura</title>
+  
+  <link rel="canonical" href="https://laysakura.github.io/2024/01/10/flatt-security-developers-quiz-6/"/>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="⚡️ Flatt Security Developers&#39; Quiz #6 開催！ ⚡️解答は年明け1&#x2F;5(金)11:59まで！Tシャツ獲得を目指して頑張ってください！デモ環境: https:&#x2F;&#x2F;t.co&#x2F;hXaNP2Ciwvソースコード: https:&#x2F;&#x2F;t.co&#x2F;ejTKzpAp9D解答提出フォーム: https:&#x2F;&#x2F;t.co&#x2F;jnc5Wv2Hi7 pic.twitter.com&#x2F;uf">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Writeup - Flatt Security Developers&#39; Quiz ＃6">
+<meta property="og:url" content="https://laysakura.github.io/2024/01/10/flatt-security-developers-quiz-6/index.html">
+<meta property="og:site_name" content="俺とお前とlaysakura">
+<meta property="og:description" content="⚡️ Flatt Security Developers&#39; Quiz #6 開催！ ⚡️解答は年明け1&#x2F;5(金)11:59まで！Tシャツ獲得を目指して頑張ってください！デモ環境: https:&#x2F;&#x2F;t.co&#x2F;hXaNP2Ciwvソースコード: https:&#x2F;&#x2F;t.co&#x2F;ejTKzpAp9D解答提出フォーム: https:&#x2F;&#x2F;t.co&#x2F;jnc5Wv2Hi7 pic.twitter.com&#x2F;uf">
+<meta property="og:locale" content="ja_JP">
+<meta property="article:published_time" content="2024-01-10T03:56:57.000Z">
+<meta property="article:modified_time" content="2024-01-10T04:42:50.832Z">
+<meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
+<meta property="article:tag" content="セキュリティ">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+
+  <!-- favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" href="/favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22289437-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+  <!-- MathJax -->
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+  <div id="container">
+    <div class="mobile-nav-panel">
+	<i class="icon-reorder icon-large"></i>
+</div>
+<header id="header">
+	<h1 class="blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<nav class="nav">
+		<ul>
+			<li><a href="/archives">過去の投稿</a></li>
+			<li><a id="nav-search-btn" class="nav-icon" title="Search"></a></li>
+			<li><a target="_blank" rel="noopener" href="http://cloud.feedly.com/#subscription%2Ffeed%2Fhttps%3A%2F%2Flaysakura.github.io%2Fatom.xml" id="nav-rss-link" class="nav-icon" title="RSS Feed"></a></li>
+		</ul>
+	</nav>
+	<div id="search-form-wrap">
+		<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laysakura.github.io"></form>
+	</div>
+</header>
+    <div id="main">
+      <article id="post-Writeup-Flatt-Security-Developers-Quiz-6" class="post">
+  <footer class="entry-meta-header">
+    <span class="meta-elements date">
+      <a href="/2024/01/10/flatt-security-developers-quiz-6/" class="article-date">
+  <time datetime="2024-01-10T03:56:57.000Z" itemprop="datePublished">2024-01-10</time>
+</a>
+    </span>
+  </footer>
+  
+  <header class="entry-header">
+    
+  
+    <h1 class="article-title entry-title" itemprop="name">
+      Writeup - Flatt Security Developers&#39; Quiz ＃6
+    </h1>
+  
+
+  </header>
+  <div class="entry-content">
+    
+    <blockquote class="twitter-tweet"><p lang="ja" dir="ltr">⚡️ Flatt Security Developers&#39; Quiz #6 開催！ ⚡️<br><br>解答は年明け1/5(金)11:59まで！Tシャツ獲得を目指して頑張ってください！<br><br>デモ環境: <a target="_blank" rel="noopener" href="https://t.co/hXaNP2Ciwv">https://t.co/hXaNP2Ciwv</a><br>ソースコード: <a target="_blank" rel="noopener" href="https://t.co/ejTKzpAp9D">https://t.co/ejTKzpAp9D</a><br>解答提出フォーム: <a target="_blank" rel="noopener" href="https://t.co/jnc5Wv2Hi7">https://t.co/jnc5Wv2Hi7</a> <a target="_blank" rel="noopener" href="https://t.co/uf3ZqHEdTK">pic.twitter.com/uf3ZqHEdTK</a></p>&mdash; 株式会社Flatt Security (@flatt_security) <a target="_blank" rel="noopener" href="https://twitter.com/flatt_security/status/1740568322444288243?ref_src=twsrc%5Etfw">December 29, 2023</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
+<p>Flatt Security Developers’ Quiz #6 に回答し、Tシャツ頂きしました👕</p>
+<p>Writeup書きます。</p>
+<span id="more"></span>
+
+<h2><span id="目次">目次</span></h2><!-- toc -->
+
+<ul>
+<li><a href="#%E5%95%8F%E9%A1%8C">問題</a></li>
+<li><a href="#%E8%A7%A3%E7%AD%94">解答</a></li>
+<li><a href="#%E8%A7%A3%E7%AD%94%E3%81%AE%E3%83%9D%E3%82%A4%E3%83%B3%E3%83%88">解答のポイント</a></li>
+<li><a href="#%E8%A7%A3%E7%AD%94%E3%81%BE%E3%81%A7%E3%81%AE%E9%81%93%E7%AD%8B">解答までの道筋</a></li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="問題">問題</span></h2><p><a target="_blank" rel="noopener" href="https://github.com/flatt-security/developers-quiz/tree/main/quiz6">https://github.com/flatt-security/developers-quiz/tree/main/quiz6</a> のリポジトリのコードと実稼働しているデモ環境を見てフラグを探す形式。</p>
+<p><code>compose.yml</code> によると、上流から</p>
+<ul>
+<li>Nginx</li>
+<li>APIサーバー (Go)</li>
+<li>レガシーAPIサーバー (Ruby)</li>
+</ul>
+<p>の三層構造。フラグはレガシーAPIサーバーの <code>FLAG</code> 環境変数にセットしてある。</p>
+<h2><span id="解答">解答</span></h2><ol>
+<li><p>任意のユーザー名 (<code>myuser</code> とする) と任意のセッションID (<code>mysession</code> とする) でユーザー作成 &amp; ログイン</p>
+</li>
+<li><p><code>POST /result</code> に、以下JSONをリクエストボディとしてリクエスト送信:</p>
+ <figure class="highlight json"><figcaption><span>解答リクエストボディ</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;myuser&quot;</span><span class="punctuation">,</span><span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;admi\u006e&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure></li>
+</ol>
+<h2><span id="解答のポイント">解答のポイント</span></h2><p><code>app.rb</code> を見ると、 <code>username[&quot;admin&quot;]</code> にフラグ文字列がセットされている。<br><code>POST /result</code> に <code>&#123;&quot;username&quot;:&quot;admin&quot;&#125;</code> を送信するとフラグがレスポンスで返ってくるのが本質だが、前段のGoサーバーでいくつか admin ユーザーによる操作をブロックされている。<br>GoとRubyのJSONパーサーのパースロジックの差異を突いて、Goには admin に見えず Ruby には admin に見えるリクエストを送信するのがポイント。</p>
+<h2><span id="解答までの道筋">解答までの道筋</span></h2><p>Goではセッション管理と <code>admin</code> ブロックを主にしていて、Rubyで投票結果（とフラグ）を管理している。</p>
+<p>Goでの admin ブロックについて。<br>ユーザー登録では <code>admin</code> 文字列は拒否されている。JSONなのでUTFエンコーディングなどは有効になり得るが、JSONパース後に <code>admin</code> 文字列との一致を見られているので、回避不可。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;admi\u006e&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>POST /result</code> では、JSONパースする前のリクエストボディをバイト列としてみて、 <code>admin</code> が含まれているかをチェックしている。これはUTFエンコーディングなどで回避可能。<br>だからといって単純に</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;admi\u006e&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>のようなリクエストを送っても、Goのレイヤーで「<code>admin</code> ユーザーは作成されてない」とエラーになってしまう。</p>
+<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;admi\u006e&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>UTFエンコーディング以外に、RubyのJSONパーサーでだけ <code>admin</code> に解釈される何かがないかを探り始める。<br>Rubyで使われているJSONパーサーの <a target="_blank" rel="noopener" href="https://github.com/flori/json/blob/master/lib/json/pure/parser.rb">https://github.com/flori/json/blob/master/lib/json/pure/parser.rb</a> の実装を見つつ、</p>
+<p> <code>#&#123;&#125;</code> は特殊エスケープされることとか、</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">irb(main):020:0&gt;</span> <span class="variable constant_">JSON</span>.parse(<span class="string">&#x27;&#123;&quot;username&quot;:&quot;admin<span class="subst">#&#123;<span class="number">1</span>+<span class="number">1</span>&#125;</span>&quot;&#125;&#x27;</span>)[<span class="string">&#x27;username&#x27;</span>]</span><br><span class="line">=&gt; <span class="string">&quot;admin\#&#123;1+1&#125;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p><code>\\</code> が消えることとか、</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">irb(main):027:0&gt;</span> <span class="variable constant_">JSON</span>.parse(<span class="string">&#x27;&#123;&quot;username&quot;:&quot;\\admin&quot;&#125;&#x27;</span>)[<span class="string">&#x27;username&#x27;</span>]</span><br><span class="line">=&gt; <span class="string">&quot;admin&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>を発見した。特に後者の <code>\\</code> 消える挙動を利用して愚直に <code>&#123;&quot;username&quot;:&quot;\\admin&quot;&#125;</code> みたいなリクエストを送ったりもしたが、バックスラッシュがGoでのJSONエンコーディング時点で増幅したりしてうまく行かず（それが正しいJSONライブラリの挙動なのでそれはそう）。</p>
+<p>ここでめちゃくちゃウンウン唸ってしまったが、ふとJSONキーを重複させる戦略を思いつく。</p>
+<figure class="highlight json"><figcaption><span>解答リクエストボディ</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;myuser&quot;</span><span class="punctuation">,</span><span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;admi\u006e&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
+
+<p>とやって、Goには一個目の作成済みのユーザー名を食わせつつ、Rubyには二個目のa <code>admin</code> を食わせられないかなと思ったらできた。</p>
+
+    
+  </div>
+  <footer class="entry-footer">
+    <div class="entry-meta-footer">
+      <span class="category">
+        
+      </span>
+      <span class="tags">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3/" rel="tag">セキュリティ</a></li></ul>
+
+      </span>
+    </div>
+  </footer>
+  
+  <footer class="author-info clearfix">
+    <img class="author-picture circle" src="https://www.gravatar.com/avatar/cb02a2b3f429b7c938d1fe2665e8e342">
+    <div class="author-content right">
+      <div class="author-caption">
+        <span class="label">author</span>
+        Sho Nakatani a.k.a. laysakura
+      </div>
+      <p class="author-description">
+        東京大学大学院 情報理工学系研究科 電子情報学専攻 修士課程で並列分散処理・ストリーム処理・データベースを研究。<br>
+        2014年4月に株式会社ディー・エヌ・エーにエンジニアスペシャリストとして入社し、ソーシャルゲームのサーバサイド共通基盤の開発に従事。<br>
+        2016年8月より、オンライン証券会社<a target="_blank" rel="noopener" href="https://folio-sec.com">株式会社FOLIO</a>に入社。バックエンドシステム開発・プロジェクトマネージメント・Engineering
+        Managementに従事。<br>
+        2020年3月より<a target="_blank" rel="noopener" href="https://idein.jp">Idein株式会社</a>所属。デバイス・高性能計算関連の研究開発。<br>
+        2021年9月よりトヨタ自動車株式会社所属。自動車データの収集〜分析基盤の研究開発に従事。<br>
+        その他個人事業主として、RDBMS開発やIntel SGXを利用するためのライブラリ開発などの活動。
+      </p>
+      <ul class="author-social-buttons">
+        <li class="author-social-button"><a class="fa fa-lg fa-twitter-square" target="_blank" rel="noopener" href="https://twitter.com/laysakura"></a>
+        </li>
+        <li class="author-social-button"><a class="fa fa-lg fa-github-square" target="_blank" rel="noopener" href="https://github.com/laysakura"></a>
+        </li>
+        <li class="author-social-button"><a class="fa fa-lg fa-facebook-square"
+            target="_blank" rel="noopener" href="https://www.facebook.com/lay.sakura"></a></li>
+      </ul>
+    </div>
+  </footer>
+  
+  
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2023/11/08/bscp/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">
+        
+          Webセキュリティ資格のBurp Suite Certified Practitioner (BSCP) に合格した
+        
+      </div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+<section id="comments">
+  <div id="disqus_thread">
+
+    <!-- comment service provided by disqus -->
+    <script>
+      /**
+       *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+       *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+       */
+      var disqus_config = function () {
+        this.page.url = https://laysakura.github.io/2024/01/10/flatt-security-developers-quiz-6/;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = https://laysakura.github.io/2024/01/10/flatt-security-developers-quiz-6/; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+      (function () {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//laysakura.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by
+        Disqus.</a></noscript>
+  </div>
+</section>
+
+
+    </div>
+    <div class="mb-search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:laysakura.github.io">
+  </form>
+</div>
+<footer id="footer">
+	<h1 class="footer-blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<span class="copyright">
+		&copy; 2024 Sho Nakatani a.k.a. laysakura<br>
+		Modify from <a href="https://sanographix.github.io/tumblr/apollo/" target="_blank">Apollo</a> theme, designed by <a href="https://www.sanographix.net/" target="_blank">SANOGRAPHIX.NET</a><br>
+		Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+	</span>
+</footer>
+
+    
+<script>
+  var disqus_shortname = 'laysakura';
+  
+  var disqus_url = 'https://laysakura.github.io/2024/01/10/flatt-security-developers-quiz-6/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+
+  <!-- https://github.com/vfeskov/vanilla-back-to-top -->
+  <script src="https://unpkg.com/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js"></script>
+  <script>addBackToTop({
+    diameter: 50,
+    backgroundColor: '#33a6b880',
+    textColor: '#fff'
+  })</script>
+
+</body>
+</html>

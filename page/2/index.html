@@ -75,6 +75,72 @@
     <div id="main">
       
   
+    <article id="post-自作CPU-自作OSをやっていく3-riscv-tests" class="post">
+  <footer class="entry-meta-header">
+    <span class="meta-elements date">
+      <a href="/2020/02/09/handcraft-cpu-os-3/" class="article-date">
+  <time datetime="2020-02-09T06:00:00.000Z" itemprop="datePublished">2020-02-09</time>
+</a>
+    </span>
+  </footer>
+  
+  <header class="entry-header">
+    
+  
+    <h1 itemprop="name" class="entry-title">
+      <a class="article-title" href="/2020/02/09/handcraft-cpu-os-3/">自作CPU &amp; 自作OSをやっていく (3) - riscv/riscv-tests の挙動を追う</a>
+    </h1>
+  
+
+  </header>
+  <div class="entry-content">
+    
+    <p>2020年1月から、趣味エンジニアリング活動として自作CPUと自作OSをやっていく。</p>
+<p>今回は、自作CPUのパフォーマンスベンチマークとして利用するつもりの <a target="_blank" rel="noopener" href="https://github.com/riscv/riscv-tests">riscv-tests</a> の挙動を追ってみる。<br>関心があるのは、命令セットやOSの機能をどこまで用意してあげればベンチマークが実行できるのかという点。とりわけ、以下の観点をチェックしていく。</p>
+<ul>
+<li>ISA (命令セット)<ul>
+<li>RV64F (単精度浮動小数点演算), RV64D (倍精度浮動小数点演算) を利用しているベンチマークはあるか。あるとしたらどれか。</li>
+<li>RV64V (ベクトル演算) を利用しているベンチマークはあるか。あるとしたらどれか。</li>
+<li>RV64A (アトミック命令) を利用しているベンチマークはあるか。あるとしたらどれか。</li>
+</ul>
+</li>
+<li>OS機能<ul>
+<li>ヒープ領域は必要か（スタック領域のみで十分か）。</li>
+<li>スレッドをCPUコアに割り当てるスケジューラは必要か。</li>
+</ul>
+</li>
+</ul>
+<p><a href="/tags/%E8%87%AA%E4%BD%9CCPU-%E8%87%AA%E4%BD%9COS/">自作CPU &amp; 自作OS</a> タグで、この前後の進捗とか目指しているもの（初回記事）とかを追えるようにしている。</p>
+    
+    <p class="article-more-link">
+      <a href="/2020/02/09/handcraft-cpu-os-3/#more">続きを読む</a>
+    </p>
+    
+    
+  </div>
+  <footer class="entry-footer">
+    <div class="entry-meta-footer">
+      <span class="category">
+        
+      </span>
+      <span class="tags">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%87%AA%E4%BD%9CCPU-%E8%87%AA%E4%BD%9COS/" rel="tag">自作CPU &amp; 自作OS</a></li></ul>
+
+      </span>
+    </div>
+  </footer>
+  
+  
+</article>
+
+
+<hr class="article-devider">
+
+
+
+
+  
     <article id="post-自作CPU-自作OSをやっていく2-riscv64imac-hello-rs" class="post">
   <footer class="entry-meta-header">
     <span class="meta-elements date">
@@ -658,65 +724,6 @@
 
 
   
-    <article id="post-Backlog-Worldにブログレポーター枠で参加しました" class="post">
-  <footer class="entry-meta-header">
-    <span class="meta-elements date">
-      <a href="/2018/02/18/backlog-world-2018/" class="article-date">
-  <time datetime="2018-02-18T14:00:00.000Z" itemprop="datePublished">2018-02-18</time>
-</a>
-    </span>
-  </footer>
-  
-  <header class="entry-header">
-    
-  
-    <h1 itemprop="name" class="entry-title">
-      <a class="article-title" href="/2018/02/18/backlog-world-2018/">Backlog Worldにブログレポーター枠で参加しました</a>
-    </h1>
-  
-
-  </header>
-  <div class="entry-content">
-    
-    <img src="/img/2018/02-18-backlog-world-banner.png" alt="Backlog Worldにブログレポーター枠で参加しました" width="auto" height="auto">
-
-<p>2018&#x2F;02&#x2F;18に開催された <a target="_blank" rel="noopener" href="https://nulab.connpass.com/event/72898/">Backlog World</a> にブログレポーター枠として参加してきました。</p>
-<blockquote>
-<p>■ Backlog Worldとは？</p>
-<p>Backlog Worldは、プロジェクト管理に関わる全ての方のための祭典です。一言でプロジェクト管理と言っても、業種や職種、チームの規模、プロジェクトの期間などは様々。それでも、どんなプロジェクトでも、「仲間とコラボレーションしてプロジェクトを進める」ということは必須です。</p>
-<p>Backlog Worldでは、どのようにプロジェクト管理を行なっているのか、様々な立場の方による知見のシェアが行われます。実例に基づいたセッションの中に、あなたのチームで取り入れられるヒントがきっとあるはず。</p>
-</blockquote>
-<p>この記事では自分の参加したセッションに触れ、その中でも特に印象に残った「アジャイル開発とプロジェクト管理ツールの相性」のセッションについて詳しく感想を書きます。</p>
-    
-    <p class="article-more-link">
-      <a href="/2018/02/18/backlog-world-2018/#more">続きを読む</a>
-    </p>
-    
-    
-  </div>
-  <footer class="entry-footer">
-    <div class="entry-meta-footer">
-      <span class="category">
-        
-      </span>
-      <span class="tags">
-        
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E3%83%81%E3%83%BC%E3%83%A0%E3%83%93%E3%83%AB%E3%83%87%E3%82%A3%E3%83%B3%E3%82%B0/" rel="tag">チームビルディング</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E3%83%97%E3%83%AD%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%83%9E%E3%83%8D%E3%82%B8%E3%83%A1%E3%83%B3%E3%83%88/" rel="tag">プロジェクトマネジメント</a></li></ul>
-
-      </span>
-    </div>
-  </footer>
-  
-  
-</article>
-
-
-<hr class="article-devider">
-
-
-
-
-  
   
     <nav id="page-nav">
       <a class="extend prev" rel="prev" href="/">« Prev</a><a class="page-number" href="/">1</a><span class="page-number current">2</span><a class="page-number" href="/page/3/">3</a><a class="page-number" href="/page/4/">4</a><a class="extend next" rel="next" href="/page/3/">Next »</a>
@@ -736,7 +743,7 @@
 		<a href="/">俺とお前とlaysakura</a>
 	</h1>
 	<span class="copyright">
-		&copy; 2023 Sho Nakatani a.k.a. laysakura<br>
+		&copy; 2024 Sho Nakatani a.k.a. laysakura<br>
 		Modify from <a href="https://sanographix.github.io/tumblr/apollo/" target="_blank">Apollo</a> theme, designed by <a href="https://www.sanographix.net/" target="_blank">SANOGRAPHIX.NET</a><br>
 		Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
 	</span>
