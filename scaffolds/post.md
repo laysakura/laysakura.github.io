@@ -13,6 +13,7 @@ tags:
   - Apache Beam
   - 機械学習
   - セキュリティ
+  - CTF
   - VPN
   - プロジェクトマネジメント
   - Engineering Management
