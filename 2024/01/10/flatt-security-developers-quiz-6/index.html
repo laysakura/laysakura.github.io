@@ -15,10 +15,10 @@
 <meta property="og:description" content="⚡️ Flatt Security Developers&#39; Quiz #6 開催！ ⚡️解答は年明け1&#x2F;5(金)11:59まで！Tシャツ獲得を目指して頑張ってください！デモ環境: https:&#x2F;&#x2F;t.co&#x2F;hXaNP2Ciwvソースコード: https:&#x2F;&#x2F;t.co&#x2F;ejTKzpAp9D解答提出フォーム: https:&#x2F;&#x2F;t.co&#x2F;jnc5Wv2Hi7 pic.twitter.com&#x2F;uf">
 <meta property="og:locale" content="ja_JP">
 <meta property="article:published_time" content="2024-01-10T03:56:57.000Z">
-<meta property="article:modified_time" content="2024-01-10T04:42:50.832Z">
+<meta property="article:modified_time" content="2024-01-10T20:41:14.577Z">
 <meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
-<meta property="article:tag" content="セキュリティ">
 <meta property="article:tag" content="CTF">
+<meta property="article:tag" content="セキュリティ">
 <meta name="twitter:card" content="summary">
 
   <!-- favicon -->
@@ -101,7 +101,7 @@
     
     <blockquote class="twitter-tweet"><p lang="ja" dir="ltr">⚡️ Flatt Security Developers&#39; Quiz #6 開催！ ⚡️<br><br>解答は年明け1/5(金)11:59まで！Tシャツ獲得を目指して頑張ってください！<br><br>デモ環境: <a target="_blank" rel="noopener" href="https://t.co/hXaNP2Ciwv">https://t.co/hXaNP2Ciwv</a><br>ソースコード: <a target="_blank" rel="noopener" href="https://t.co/ejTKzpAp9D">https://t.co/ejTKzpAp9D</a><br>解答提出フォーム: <a target="_blank" rel="noopener" href="https://t.co/jnc5Wv2Hi7">https://t.co/jnc5Wv2Hi7</a> <a target="_blank" rel="noopener" href="https://t.co/uf3ZqHEdTK">pic.twitter.com/uf3ZqHEdTK</a></p>&mdash; 株式会社Flatt Security (@flatt_security) <a target="_blank" rel="noopener" href="https://twitter.com/flatt_security/status/1740568322444288243?ref_src=twsrc%5Etfw">December 29, 2023</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
-<p>Flatt Security Developers’ Quiz #6 に回答し、Tシャツ頂きしました👕</p>
+<p>Flatt Security Developers’ Quiz #6 に回答し、Tシャツ頂きました👕</p>
 <p>Writeup書きます。</p>
 <span id="more"></span>
 
@@ -131,27 +131,21 @@
 </ol>
 <h2><span id="解答のポイント">解答のポイント</span></h2><p><code>app.rb</code> を見ると、 <code>username[&quot;admin&quot;]</code> にフラグ文字列がセットされている。<br><code>POST /result</code> に <code>&#123;&quot;username&quot;:&quot;admin&quot;&#125;</code> を送信するとフラグがレスポンスで返ってくるのが本質だが、前段のGoサーバーでいくつか admin ユーザーによる操作をブロックされている。<br>GoとRubyのJSONパーサーのパースロジックの差異を突いて、Goには admin に見えず Ruby には admin に見えるリクエストを送信するのがポイント。</p>
 <h2><span id="解答までの道筋">解答までの道筋</span></h2><p>Goではセッション管理と <code>admin</code> ブロックを主にしていて、Rubyで投票結果（とフラグ）を管理している。</p>
-<p>Goでの admin ブロックについて。<br>ユーザー登録では <code>admin</code> 文字列は拒否されている。JSONなのでUTFエンコーディングなどは有効になり得るが、JSONパース後に <code>admin</code> 文字列との一致を見られているので、回避不可。</p>
+<p>Goでの admin ブロックについて。<br>ユーザー登録では <code>admin</code> 文字列は拒否されている。JSONなのでUnicodeエンコードなどは有効になり得るが、JSONパース後に <code>admin</code> 文字列との一致を見られているので、回避不可。</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;admi\u006e&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 
-<p><code>POST /result</code> では、JSONパースする前のリクエストボディをバイト列としてみて、 <code>admin</code> が含まれているかをチェックしている。これはUTFエンコーディングなどで回避可能。<br>だからといって単純に</p>
+<p><code>POST /result</code> では、JSONパースする前のリクエストボディをバイト列としてみて、 <code>admin</code> が含まれているかをチェックしている。これはUnicodeエンコードなどで回避可能。<br>だからといって単純に</p>
 <figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;admi\u006e&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 
 <p>のようなリクエストを送っても、Goのレイヤーで「<code>admin</code> ユーザーは作成されてない」とエラーになってしまう。</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;admi\u006e&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
-
-<p>UTFエンコーディング以外に、RubyのJSONパーサーでだけ <code>admin</code> に解釈される何かがないかを探り始める。<br>Rubyで使われているJSONパーサーの <a target="_blank" rel="noopener" href="https://github.com/flori/json/blob/master/lib/json/pure/parser.rb">https://github.com/flori/json/blob/master/lib/json/pure/parser.rb</a> の実装を見つつ、</p>
-<p> <code>#&#123;&#125;</code> は特殊エスケープされることとか、</p>
-<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">irb(main):020:0&gt;</span> <span class="variable constant_">JSON</span>.parse(<span class="string">&#x27;&#123;&quot;username&quot;:&quot;admin<span class="subst">#&#123;<span class="number">1</span>+<span class="number">1</span>&#125;</span>&quot;&#125;&#x27;</span>)[<span class="string">&#x27;username&#x27;</span>]</span><br><span class="line">=&gt; <span class="string">&quot;admin\#&#123;1+1&#125;&quot;</span></span><br></pre></td></tr></table></figure>
-
-<p><code>\\</code> が消えることとか、</p>
+<p>Unicodeエンコード以外に、RubyのJSONパーサーでだけ <code>admin</code> に解釈される何かがないかを探り始める。<br>Rubyで使われているJSONパーサーの <a target="_blank" rel="noopener" href="https://github.com/flori/json/blob/master/lib/json/pure/parser.rb">https://github.com/flori/json/blob/master/lib/json/pure/parser.rb</a> の実装を見つつ、<code>\\</code> が消えることを発見した。</p>
 <figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_">irb(main):027:0&gt;</span> <span class="variable constant_">JSON</span>.parse(<span class="string">&#x27;&#123;&quot;username&quot;:&quot;\\admin&quot;&#125;&#x27;</span>)[<span class="string">&#x27;username&#x27;</span>]</span><br><span class="line">=&gt; <span class="string">&quot;admin&quot;</span></span><br></pre></td></tr></table></figure>
 
-<p>を発見した。特に後者の <code>\\</code> 消える挙動を利用して愚直に <code>&#123;&quot;username&quot;:&quot;\\admin&quot;&#125;</code> みたいなリクエストを送ったりもしたが、バックスラッシュがGoでのJSONエンコーディング時点で増幅したりしてうまく行かず（それが正しいJSONライブラリの挙動なのでそれはそう）。</p>
+<p>この挙動を利用して愚直に <code>&#123;&quot;username&quot;:&quot;\\admin&quot;&#125;</code> みたいなリクエストを送ったりもしたが、バックスラッシュがGoでのJSONエンコーディング時点で増幅したりしてうまく行かず（それが正しいJSONライブラリの挙動なのでそれはそう）。</p>
 <p>ここでめちゃくちゃウンウン唸ってしまったが、ふとJSONキーを重複させる戦略を思いつく。</p>
 <figure class="highlight json"><figcaption><span>解答リクエストボディ</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="punctuation">&#123;</span><span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;myuser&quot;</span><span class="punctuation">,</span><span class="attr">&quot;username&quot;</span><span class="punctuation">:</span><span class="string">&quot;admi\u006e&quot;</span><span class="punctuation">&#125;</span></span><br></pre></td></tr></table></figure>
 
-<p>とやって、Goには一個目の作成済みのユーザー名を食わせつつ、Rubyには二個目のa <code>admin</code> を食わせられないかなと思ったらできた。</p>
+<p>とやって、Goには一個目の作成済みのユーザー名を食わせつつ、Rubyには二個目の <code>admin</code> を食わせられないかなと思ったらできた。</p>
 
     
   </div>
