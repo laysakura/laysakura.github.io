@@ -182,7 +182,7 @@ PNG
 
 </aside>
 
-### elements
+### (解けず😭) elements
 
 <img src="/img/2024/03-27/Untitled%2011.png" width="550px" height="auto"> 
 
@@ -2985,3 +2985,7 @@ io.close()
 ⛳ picoCTF{gamer_leveluP_84600233}
 
 </aside>
+
+### (解けず😭) high frequency troubles
+
+問題チラ見しただけでやってない！
