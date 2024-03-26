@@ -7,23 +7,25 @@ tags:
 date: 2024-03-27 00:00:00
 ---
 
-<img src="/img/2024/02-25/Untitled.png" width="auto" height="auto">
+<img src="/img/2024/03-27/rank.png" width="auto" height="auto">
+<br>
 
-picoCTF 2024に個人参加し、6954チーム中**??位**でした。
+picoCTF 2024に個人参加し、6954チーム中**72位**でした。
 
 感想とwriteupを書きます。問題スクリーンショットは開催期間中のものなので、Solved数やLike数は参考程度に見てください。
-picoなので開催期間終了後もご自身で解けるはずなので是非挑戦してみてください。
+picoCTFの問題は開催期間終了後もご自身で解けるはずなので是非挑戦してみてください。
 
 <!-- more -->
 
 ## 目次
 <!-- toc -->
 
-## 順位・解けた問題
+## 解けた問題
 
-<img src="/img/2024/02-25/Untitled%201.png" width="auto" height="auto">
+<img src="/img/2024/03-27/score-summary.png" width="auto" height="auto">
 
-<img src="/img/2024/02-25/Untitled%202.png" width="auto" height="auto">
+Forensics, General Skills, Reverse Engineeringは全完。
+それ以外のBinary Exploitation (pwn), Cryptography, Web Exploitationはそれぞれ最難関問題が解けずという結果でした。
 
 ## 感想
 
@@ -129,7 +131,7 @@ export const POST = async (req: any) => {
 
 </aside>
 
-### **Trickster**
+### Trickster
 
 <img src="/img/2024/03-27/Untitled%2010.png" width="550px" height="auto"> 
 
@@ -1476,7 +1478,7 @@ index 0000000..96f7309
 
 </aside>
 
-### **Time Machine**
+### Time Machine
 
 <img src="/img/2024/03-27/Untitled%2040.png" width="550px" height="auto"> 
 
