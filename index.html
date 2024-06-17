@@ -75,6 +75,58 @@
     <div id="main">
       
   
+    <article id="post-OSCP合格体験記" class="post">
+  <footer class="entry-meta-header">
+    <span class="meta-elements date">
+      <a href="/2024/06/17/oscp/" class="article-date">
+  <time datetime="2024-06-17T08:26:42.000Z" itemprop="datePublished">2024-06-17</time>
+</a>
+    </span>
+  </footer>
+  
+  <header class="entry-header">
+    
+  
+    <h1 itemprop="name" class="entry-title">
+      <a class="article-title" href="/2024/06/17/oscp/">OSCP合格体験記</a>
+    </h1>
+  
+
+  </header>
+  <div class="entry-content">
+    
+    <p>2024&#x2F;06&#x2F;15(土)にOSCPの試験を受けて、無事に合格しました。合格体験記です。</p>
+<img src="/img/2024/06-17/certificate.png" alt="OSCP Certificate" width="auto" height="auto">
+    
+    <p class="article-more-link">
+      <a href="/2024/06/17/oscp/#more">続きを読む</a>
+    </p>
+    
+    
+  </div>
+  <footer class="entry-footer">
+    <div class="entry-meta-footer">
+      <span class="category">
+        
+      </span>
+      <span class="tags">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3/" rel="tag">セキュリティ</a></li></ul>
+
+      </span>
+    </div>
+  </footer>
+  
+  
+</article>
+
+
+<hr class="article-devider">
+
+
+
+
+  
     <article id="post-picoCTF2024-Writeup" class="post">
   <footer class="entry-meta-header">
     <span class="meta-elements date">
@@ -558,72 +610,6 @@
     
     <p class="article-more-link">
       <a href="/2021/04/25/rust-mockall/#more">続きを読む</a>
-    </p>
-    
-    
-  </div>
-  <footer class="entry-footer">
-    <div class="entry-meta-footer">
-      <span class="category">
-        
-      </span>
-      <span class="tags">
-        
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Rust/" rel="tag">Rust</a></li></ul>
-
-      </span>
-    </div>
-  </footer>
-  
-  
-</article>
-
-
-<hr class="article-devider">
-
-
-
-
-  
-    <article id="post-Rustの2種類のstatic" class="post">
-  <footer class="entry-meta-header">
-    <span class="meta-elements date">
-      <a href="/2020/05/21/rust-static-lifetime-and-static-bounds/" class="article-date">
-  <time datetime="2020-05-21T08:19:56.000Z" itemprop="datePublished">2020-05-21</time>
-</a>
-    </span>
-  </footer>
-  
-  <header class="entry-header">
-    
-  
-    <h1 itemprop="name" class="entry-title">
-      <a class="article-title" href="/2020/05/21/rust-static-lifetime-and-static-bounds/">Rustの2種類の &#39;static</a>
-    </h1>
-  
-
-  </header>
-  <div class="entry-content">
-    
-    <img src="/img/2020-05-21-19-04-46.png" alt="2種類の 'static" width="auto" height="auto">
-
-<p>Rustの <code>&#39;static</code> 、難しいですよね。</p>
-<p>「プログラム中ずっと生き残るライフタイムでしょ？簡単簡単」</p>
-<p>なるほど。では次の2つの <code>&#39;static</code> の違いがわかるでしょうか？</p>
-<figure class="highlight rust"><figcaption><span>1つめ</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">let</span> <span class="variable">x</span>: &amp;<span class="symbol">&#x27;static</span> <span class="type">str</span> = <span class="string">&quot;Hello, world.&quot;</span>;</span><br></pre></td></tr></table></figure>
-
-<figure class="highlight rust"><figcaption><span>2つめ</span></figcaption><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">/// Returns some reference to the boxed value if it is of type `T`, or</span></span><br><span class="line"><span class="comment">/// `None` if it isn&#x27;t.</span></span><br><span class="line"><span class="keyword">pub</span> <span class="keyword">fn</span> <span class="title function_">downcast_ref</span>&lt;T: Error + <span class="symbol">&#x27;static</span>&gt;(&amp;<span class="keyword">self</span>) <span class="punctuation">-&gt;</span> <span class="type">Option</span>&lt;&amp;T&gt; &#123; ... &#125;</span><br></pre></td></tr></table></figure>
-
-<p>「・・・2つめのなんだっけ？」<br>という人はぜひ読んでみてください🦀</p>
-<p>この記事では、Rustの2種類の <code>&#39;static</code> 、</p>
-<ul>
-<li><code>&#39;static</code> ライフタイム</li>
-<li><code>&#39;static</code> ライフタイム <strong>境界</strong></li>
-</ul>
-<p>を解説します。</p>
-    
-    <p class="article-more-link">
-      <a href="/2020/05/21/rust-static-lifetime-and-static-bounds/#more">続きを読む</a>
     </p>
     
     
