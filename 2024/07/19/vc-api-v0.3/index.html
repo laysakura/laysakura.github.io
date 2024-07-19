@@ -21,7 +21,7 @@
 <meta property="og:image" content="https://laysakura.github.io/img/2024/07-19/Untitled%203.png">
 <meta property="og:image" content="https://laysakura.github.io/img/2024/07-19/Untitled%204.png">
 <meta property="article:published_time" content="2024-07-19T06:43:05.000Z">
-<meta property="article:modified_time" content="2024-07-19T21:30:37.466Z">
+<meta property="article:modified_time" content="2024-07-19T21:38:27.200Z">
 <meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
 <meta property="article:tag" content="認証技術">
 <meta name="twitter:card" content="summary">
@@ -469,11 +469,11 @@
 <p>前述の通り、VC-APIを定義するのはサービスのコンポーネントです。</p>
 <p>「SaaSを通じてVC機能を提供できるように設計されている」の表現はどちらで解釈するのが良いか計りかねています:</p>
 <ul>
-<li>Service単独でSaaSになることが想定されている<ul>
+<li>Service単独でSaaSになることが想定されている（例: Issuer CoordinatorをユーザーとするIssuer Service SaaS）<ul>
 <li>ServiceはVC-APIを実装するだけの薄いものになる思想な気がしており、SaaSビジネスできるほどの付加価値生まないのでは？</li>
 </ul>
 </li>
-<li>CoordinatorはAPI GatewayのようにServiceのエンドポイントをそのまま露出するようなものが想定されている<ul>
+<li>CoordinatorはAPI GatewayのようにServiceのエンドポイントをそのまま露出するようなものが想定されている（例: Holder CoordinatorをユーザーとするIssuer Coordinator SaaS）<ul>
 <li>こちらのほうがしっくりくる</li>
 <li>一方で、ゴリゴリにVC-APIを隠蔽するようなCoordinatorもこの仕様記述全体には合致していそう</li>
 </ul>
