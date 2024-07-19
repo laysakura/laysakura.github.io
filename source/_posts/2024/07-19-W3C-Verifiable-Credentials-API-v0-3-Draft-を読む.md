@@ -3,7 +3,6 @@ title: W3C Verifiable Credentials API v0.3 (Draft) を読む
 id: vc-api-v0.3
 tags:
   - 認証技術
-  - (タグ追加したら scaffolds/post.md にも追加すること)
 date: 2024-07-19 15:43:05
 ---
 
@@ -334,7 +333,13 @@ Holder CoordinatorがIssuer CoordinatorとVerifier Coordinatorを呼び出す主
 
 前述の通り、VC-APIを定義するのはサービスのコンポーネントです。
 
-「SaaSを通じてVC機能を提供できるように設計されている」の表現を見ると、CoordinatorはAPI Gatewayのように（APIエンドポイントの変換のようなことはせず）にServiceのエンドポイントをそのまま露出するようなものが想定されているのでしょうか。もちろん、ゴリゴリにVC-APIを隠蔽するようなCoordinatorもこの仕様には合致しているものと思われますが。
+「SaaSを通じてVC機能を提供できるように設計されている」の表現はどちらで解釈するのが良いか計りかねています:
+
+- Service単独でSaaSになることが想定されている
+  - ServiceはVC-APIを実装するだけの薄いものになる思想な気がしており、SaaSビジネスできるほどの付加価値生まないのでは？
+- CoordinatorはAPI GatewayのようにServiceのエンドポイントをそのまま露出するようなものが想定されている
+  - こちらのほうがしっくりくる
+  - 一方で、ゴリゴリにVC-APIを隠蔽するようなCoordinatorもこの仕様記述全体には合致していそう
 
 > The Issuer Service takes requests to issue VCs from authorized Issuer Coordinators and returns well-formed, signed Verifiable Credentials. This service *MUST* have access to private keys (or key services which utilize private keys) in order to create the proofs for those VCs. The API between the Issuer service and its associated key service is believed to be out of scope for the VC API, but may be addressed by WebKMS or similar specifications.
 >
@@ -878,10 +883,11 @@ API定義にoptionalなフィールドがあって、それをサーバー側で
 
 少々腑に落ちないのは以下の点です。
 
-- Holder Coordinatorが直接 Issuer Service のAPIを呼び出す経路がある理由
+- Holder Coordinatorが直接 Issuer Service のAPIを呼び出す経路がある理由（[関連issue](https://github.com/w3c-ccg/vc-api/issues/405)）
   - このAPIのためだけに外向けのNW疎通が必要というのもつらい
 - Coordinatorのうち、Issuer Coordinatorだけがエンドポイントを持つ理由
   - この仕様書で規定するAPIは基本的にServiceのものである理解
+  - 各Coordinatorは（独自機能・エンドポイントも許容しつつ）Serviceと同様のエンドポイントを持つことが推奨されるべきと個人的には考えている（[関連issue](https://github.com/w3c-ccg/vc-api/issues/406)）
 
 このあたりはもしかしたら標準化の過程でブラッシュアップされるかもしれません。
 
