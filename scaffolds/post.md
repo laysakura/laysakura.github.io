@@ -14,6 +14,7 @@ tags:
   - 機械学習
   - セキュリティ
   - CTF
+  - 認証技術
   - VPN
   - プロジェクトマネジメント
   - Engineering Management
@@ -60,3 +61,4 @@ puts 'hello world'
   \sum_{k=0}^{\infty} \frac{(2k)!}{2^{2k}(k!)^2} \frac{1}{2k+1} =
   \prod_{k=1}^{\infty} \frac{4k^2}{4k^2 - 1}
 \\]
+とう
