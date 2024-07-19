@@ -75,6 +75,63 @@
     <div id="main">
       
   
+    <article id="post-W3C-Verifiable-Credentials-API-v0-3-Draft-を読む" class="post">
+  <footer class="entry-meta-header">
+    <span class="meta-elements date">
+      <a href="/2024/07/19/vc-api-v0.3/" class="article-date">
+  <time datetime="2024-07-19T06:43:05.000Z" itemprop="datePublished">2024-07-19</time>
+</a>
+    </span>
+  </footer>
+  
+  <header class="entry-header">
+    
+  
+    <h1 itemprop="name" class="entry-title">
+      <a class="article-title" href="/2024/07/19/vc-api-v0.3/">W3C Verifiable Credentials API v0.3 (Draft) を読む</a>
+    </h1>
+  
+
+  </header>
+  <div class="entry-content">
+    
+    <img src="/img/2024/07-19/Untitled%204.png" alt="VC-APIのコンポーネントとエンドポイント" width="auto" height="auto">
+
+<p>DID&#x2F;VCの周辺技術を調べています。DID&#x2F;VCの概要を知りたい方は <a target="_blank" rel="noopener" href="https://www.nri-secure.co.jp/blog/digital-identity-wallet">デジタルアイデンティティウォレットとは？｜注目される背景とサービス化の論点 | NRIセキュア ブログ</a> などご参照ください。</p>
+<p>今回は、Verifiable Credential API (VC-API) として知られる、VCのライフサイクルを管理するHTTP APIの仕様書を読んでいきます。</p>
+<p><a target="_blank" rel="noopener" href="https://w3c-ccg.github.io/vc-api/">https://w3c-ccg.github.io/vc-api/</a></p>
+<p>この記事は2024&#x2F;07&#x2F;16更新バージョンを対象に執筆しています。まだまだ正式仕様でないので、最新の仕様も合わせて各自ご確認お願いします。</p>
+<p>富士榮さんのブログ『IdM実験室』の <a target="_blank" rel="noopener" href="https://idmlab.eidentity.jp/2024/06/w3c-verifiable-credentials-overview.html">W3C Verifiable Credentials Overviewを読む シリーズ</a> を以前大いに参考にさせていただいたので、その形式（英文→DeepL和訳→たまに解説文）で記載します。</p>
+    
+    <p class="article-more-link">
+      <a href="/2024/07/19/vc-api-v0.3/#more">続きを読む</a>
+    </p>
+    
+    
+  </div>
+  <footer class="entry-footer">
+    <div class="entry-meta-footer">
+      <span class="category">
+        
+      </span>
+      <span class="tags">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E3%82%BF%E3%82%B0%E8%BF%BD%E5%8A%A0%E3%81%97%E3%81%9F%E3%82%89-scaffolds-post-md-%E3%81%AB%E3%82%82%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8/" rel="tag">(タグ追加したら scaffolds&#x2F;post.md にも追加すること)</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AA%8D%E8%A8%BC%E6%8A%80%E8%A1%93/" rel="tag">認証技術</a></li></ul>
+
+      </span>
+    </div>
+  </footer>
+  
+  
+</article>
+
+
+<hr class="article-devider">
+
+
+
+
+  
     <article id="post-OSCP合格体験記" class="post">
   <footer class="entry-meta-header">
     <span class="meta-elements date">
@@ -549,79 +606,6 @@
       <span class="tags">
         
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%BB%A2%E8%81%B7/" rel="tag">転職</a></li></ul>
-
-      </span>
-    </div>
-  </footer>
-  
-  
-</article>
-
-
-<hr class="article-devider">
-
-
-
-
-  
-    <article id="post-Rustでmockするならmockallで決まり！・・・でよろしいでしょうか？" class="post">
-  <footer class="entry-meta-header">
-    <span class="meta-elements date">
-      <a href="/2021/04/25/rust-mockall/" class="article-date">
-  <time datetime="2021-04-25T05:39:42.000Z" itemprop="datePublished">2021-04-25</time>
-</a>
-    </span>
-  </footer>
-  
-  <header class="entry-header">
-    
-  
-    <h1 itemprop="name" class="entry-title">
-      <a class="article-title" href="/2021/04/25/rust-mockall/">Rustでmockするならmockallで決まり！・・・でよろしいでしょうか？</a>
-    </h1>
-  
-
-  </header>
-  <div class="entry-content">
-    
-    <p>Rustで DI (Dependency Injection)、してますか？<br>今日話題にするのはドメイン層でインターフェイスを定義してインフラ層でその実装を書くやつです。<br>例えばドメイン層で <code>trait UserRepository</code> を書いて、インフラ層で <code>struct UserRepositoryImpl</code> するやつです。</p>
-<p>テストを書くとき、 <code>struct UserRepositoryImpl</code> はDBアクセスなどしてしまうので取り回しが悪いから、mock を作って fixture を入出力したいことありますよね。<br>Rustでそういうことやるなら mockall がオススメだよという記事です。</p>
-<div style="text-align: center">
-  <div class="github-card"
-    data-user="asomers"
-    data-repo="mockall"
-    data-height="200"
-    data-width="400"
-    data-theme="default"
-    data-target=""
-    data-client-id=""
-    data-client-secret=""
-  ></div>
-</div>
-<script src="/github-card-lib/githubcard.js"></script>
-
-
-<p>そんなに不満はないのですが、もしベターなやり方があったら記事末尾のコメントや<a target="_blank" rel="noopener" href="https://twitter.com/laysakura">Twitter</a>やらもらえたら嬉しいです。</p>
-<p>前職のFOLIO時代の同僚で現CADDiの <a target="_blank" rel="noopener" href="https://caddi.tech/archives/2331">むらみんさんの記事</a> に</p>
-<blockquote>
-<p>外部通信のような比較的大きい副作用が絡むテストに於いて テストダブルを差し込むことは可能なのですが、かなりの労力が必要になる印象を持っています。</p>
-</blockquote>
-<p>と書いていたのを今更ながら発見して、自分はこうしてるけど皆はどうしてるんだろ？と思って筆（キーボード）を取りました。</p>
-    
-    <p class="article-more-link">
-      <a href="/2021/04/25/rust-mockall/#more">続きを読む</a>
-    </p>
-    
-    
-  </div>
-  <footer class="entry-footer">
-    <div class="entry-meta-footer">
-      <span class="category">
-        
-      </span>
-      <span class="tags">
-        
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Rust/" rel="tag">Rust</a></li></ul>
 
       </span>
     </div>
