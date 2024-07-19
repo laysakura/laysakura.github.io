@@ -335,9 +335,9 @@ Holder CoordinatorがIssuer CoordinatorとVerifier Coordinatorを呼び出す主
 
 「SaaSを通じてVC機能を提供できるように設計されている」の表現はどちらで解釈するのが良いか計りかねています:
 
-- Service単独でSaaSになることが想定されている
+- Service単独でSaaSになることが想定されている（例: Issuer CoordinatorをユーザーとするIssuer Service SaaS）
   - ServiceはVC-APIを実装するだけの薄いものになる思想な気がしており、SaaSビジネスできるほどの付加価値生まないのでは？
-- CoordinatorはAPI GatewayのようにServiceのエンドポイントをそのまま露出するようなものが想定されている
+- CoordinatorはAPI GatewayのようにServiceのエンドポイントをそのまま露出するようなものが想定されている（例: Holder CoordinatorをユーザーとするIssuer Coordinator SaaS）
   - こちらのほうがしっくりくる
   - 一方で、ゴリゴリにVC-APIを隠蔽するようなCoordinatorもこの仕様記述全体には合致していそう
 
