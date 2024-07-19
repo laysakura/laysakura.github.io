@@ -21,10 +21,9 @@
 <meta property="og:image" content="https://laysakura.github.io/img/2024/07-19/Untitled%203.png">
 <meta property="og:image" content="https://laysakura.github.io/img/2024/07-19/Untitled%204.png">
 <meta property="article:published_time" content="2024-07-19T06:43:05.000Z">
-<meta property="article:modified_time" content="2024-07-19T07:24:51.680Z">
+<meta property="article:modified_time" content="2024-07-19T21:30:37.466Z">
 <meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
 <meta property="article:tag" content="認証技術">
-<meta property="article:tag" content="(タグ追加したら scaffolds&#x2F;post.md にも追加すること)">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://laysakura.github.io/img/2024/07-19/Untitled%204.png">
 
@@ -468,7 +467,18 @@
 <p><strong>サービスは</strong>、関連するアプリによって駆動される汎用的な<strong>VC API機能を提供する</strong>。 インフラ・プロバイダーがSaaSを通じてVC機能を提供できるように設計されている。 すべてのサービスは、認可されたCoordinatorにネットワークエンドポイントを公開する。 配備されたサービスは独自のHTMLインターフェースを提供してもよい[MAY]が、 そのようなインターフェースはVC APIの対象外である。 ここでは、サービスのネットワーク・エンドポイントのみを定義する。</p>
 </blockquote>
 <p>前述の通り、VC-APIを定義するのはサービスのコンポーネントです。</p>
-<p>「SaaSを通じてVC機能を提供できるように設計されている」の表現を見ると、CoordinatorはAPI Gatewayのように（APIエンドポイントの変換のようなことはせず）にServiceのエンドポイントをそのまま露出するようなものが想定されているのでしょうか。もちろん、ゴリゴリにVC-APIを隠蔽するようなCoordinatorもこの仕様には合致しているものと思われますが。</p>
+<p>「SaaSを通じてVC機能を提供できるように設計されている」の表現はどちらで解釈するのが良いか計りかねています:</p>
+<ul>
+<li>Service単独でSaaSになることが想定されている<ul>
+<li>ServiceはVC-APIを実装するだけの薄いものになる思想な気がしており、SaaSビジネスできるほどの付加価値生まないのでは？</li>
+</ul>
+</li>
+<li>CoordinatorはAPI GatewayのようにServiceのエンドポイントをそのまま露出するようなものが想定されている<ul>
+<li>こちらのほうがしっくりくる</li>
+<li>一方で、ゴリゴリにVC-APIを隠蔽するようなCoordinatorもこの仕様記述全体には合致していそう</li>
+</ul>
+</li>
+</ul>
 <blockquote>
 <p>The Issuer Service takes requests to issue VCs from authorized Issuer Coordinators and returns well-formed, signed Verifiable Credentials. This service <em>MUST</em> have access to private keys (or key services which utilize private keys) in order to create the proofs for those VCs. The API between the Issuer service and its associated key service is believed to be out of scope for the VC API, but may be addressed by WebKMS or similar specifications.</p>
 </blockquote>
@@ -866,12 +876,13 @@
 <p>のいずれかの呼び出しが基本かと思います。</p>
 <p>少々腑に落ちないのは以下の点です。</p>
 <ul>
-<li>Holder Coordinatorが直接 Issuer Service のAPIを呼び出す経路がある理由<ul>
+<li>Holder Coordinatorが直接 Issuer Service のAPIを呼び出す経路がある理由（<a target="_blank" rel="noopener" href="https://github.com/w3c-ccg/vc-api/issues/405">関連issue</a>）<ul>
 <li>このAPIのためだけに外向けのNW疎通が必要というのもつらい</li>
 </ul>
 </li>
 <li>Coordinatorのうち、Issuer Coordinatorだけがエンドポイントを持つ理由<ul>
 <li>この仕様書で規定するAPIは基本的にServiceのものである理解</li>
+<li>各Coordinatorは（独自機能・エンドポイントも許容しつつ）Serviceと同様のエンドポイントを持つことが推奨されるべきと個人的には考えている（<a target="_blank" rel="noopener" href="https://github.com/w3c-ccg/vc-api/issues/406">関連issue</a>）</li>
 </ul>
 </li>
 </ul>
@@ -1110,7 +1121,7 @@
       </span>
       <span class="tags">
         
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E3%82%BF%E3%82%B0%E8%BF%BD%E5%8A%A0%E3%81%97%E3%81%9F%E3%82%89-scaffolds-post-md-%E3%81%AB%E3%82%82%E8%BF%BD%E5%8A%A0%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8/" rel="tag">(タグ追加したら scaffolds&#x2F;post.md にも追加すること)</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AA%8D%E8%A8%BC%E6%8A%80%E8%A1%93/" rel="tag">認証技術</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AA%8D%E8%A8%BC%E6%8A%80%E8%A1%93/" rel="tag">認証技術</a></li></ul>
 
       </span>
     </div>
