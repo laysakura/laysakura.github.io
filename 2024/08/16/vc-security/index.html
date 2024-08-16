@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Verifiable Credentialsのセキュリティ的考慮事項 | 俺とお前とlaysakura</title>
+  
+  <link rel="canonical" href="https://laysakura.github.io/2024/08/16/vc-security/"/>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="DID&#x2F;VCの周辺技術を調べています。DID&#x2F;VCの概要を知りたい方は デジタルアイデンティティウォレットとは？｜注目される背景とサービス化の論点 | NRIセキュア ブログ などご参照ください。 今回は、VCを取り扱う上で注意すべきセキュリティ的考慮事項についてサーベイしました。仕様ドキュメント・論文・講演をスコープにして探し、以下の4つのドキュメントについてまとめま">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Verifiable Credentialsのセキュリティ的考慮事項">
+<meta property="og:url" content="https://laysakura.github.io/2024/08/16/vc-security/index.html">
+<meta property="og:site_name" content="俺とお前とlaysakura">
+<meta property="og:description" content="DID&#x2F;VCの周辺技術を調べています。DID&#x2F;VCの概要を知りたい方は デジタルアイデンティティウォレットとは？｜注目される背景とサービス化の論点 | NRIセキュア ブログ などご参照ください。 今回は、VCを取り扱う上で注意すべきセキュリティ的考慮事項についてサーベイしました。仕様ドキュメント・論文・講演をスコープにして探し、以下の4つのドキュメントについてまとめま">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/08-16/head.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/08-16/image.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/08-16/image%201.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/08-16/image%202.png">
+<meta property="article:published_time" content="2024-08-16T05:35:05.000Z">
+<meta property="article:modified_time" content="2024-08-16T06:25:37.972Z">
+<meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
+<meta property="article:tag" content="認証技術">
+<meta property="article:tag" content="Verifiable Credentials">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laysakura.github.io/img/2024/08-16/head.png">
+
+  <!-- favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" href="/favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22289437-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+  <!-- MathJax -->
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+  <div id="container">
+    <div class="mobile-nav-panel">
+	<i class="icon-reorder icon-large"></i>
+</div>
+<header id="header">
+	<h1 class="blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<nav class="nav">
+		<ul>
+			<li><a href="/archives">過去の投稿</a></li>
+			<li><a id="nav-search-btn" class="nav-icon" title="Search"></a></li>
+			<li><a target="_blank" rel="noopener" href="http://cloud.feedly.com/#subscription%2Ffeed%2Fhttps%3A%2F%2Flaysakura.github.io%2Fatom.xml" id="nav-rss-link" class="nav-icon" title="RSS Feed"></a></li>
+		</ul>
+	</nav>
+	<div id="search-form-wrap">
+		<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laysakura.github.io"></form>
+	</div>
+</header>
+    <div id="main">
+      <article id="post-Verifiable-Credentialsのセキュリティ的考慮事項" class="post">
+  <footer class="entry-meta-header">
+    <span class="meta-elements date">
+      <a href="/2024/08/16/vc-security/" class="article-date">
+  <time datetime="2024-08-16T05:35:05.000Z" itemprop="datePublished">2024-08-16</time>
+</a>
+    </span>
+  </footer>
+  
+  <header class="entry-header">
+    
+  
+    <h1 class="article-title entry-title" itemprop="name">
+      Verifiable Credentialsのセキュリティ的考慮事項
+    </h1>
+  
+
+  </header>
+  <div class="entry-content">
+    
+    <img src="/img/2024/08-16/head.png" alt="脅威シナリオ列挙" width="auto" height="auto">
+
+<br>
+
+<p>DID&#x2F;VCの周辺技術を調べています。DID&#x2F;VCの概要を知りたい方は <a target="_blank" rel="noopener" href="https://www.nri-secure.co.jp/blog/digital-identity-wallet">デジタルアイデンティティウォレットとは？｜注目される背景とサービス化の論点 | NRIセキュア ブログ</a> などご参照ください。</p>
+<p>今回は、VCを取り扱う上で注意すべきセキュリティ的考慮事項についてサーベイしました。仕様ドキュメント・論文・講演をスコープにして探し、以下の4つのドキュメントについてまとめました。</p>
+<ul>
+<li>仕様<ul>
+<li>W3C - <strong>“Verifiable Credentials Data Model v2.0”</strong> ドラフト</li>
+<li>W3C - <strong>“Verifiable Credentials Data Model v1.1”</strong> 勧告</li>
+</ul>
+</li>
+<li>論文<ul>
+<li><strong>“SoK: Trusting Self-Sovereign Identity”</strong> (Krul et al., 2024)</li>
+</ul>
+</li>
+<li>講演<ul>
+<li><strong>“Attacking Decentralized Identity”</strong> (DEFCON 31, 2023)</li>
+</ul>
+</li>
+</ul>
+<p>実装者として気付かされる点が多く最も有用だったのは “Verifiable Credentials Data Model v2.0” ドラフトでした。また、脅威シナリオの種類が一番豊富だったのは “SoK: Trusting Self-Sovereign Identity” でした。この2つに関しては厚めに取り上げています。</p>
+<p>それぞれのドキュメントのサーベイ結果はやや長くなっているので、まず始めにまとめを記載します。まとめは是非ご覧いただき、興味のあるドキュメントについては詳細を読んでいただければと思います。</p>
+<span id="more"></span>
+
+<h2><span id="目次">目次</span></h2><!-- toc -->
+
+<ul>
+<li><a href="#%E3%81%BE%E3%81%A8%E3%82%81">まとめ</a><ul>
+<li><a href="#vc%E3%81%AF%E4%B8%AD%E9%96%93%E8%80%85%E6%94%BB%E6%92%83%E3%83%AA%E3%83%97%E3%83%AC%E3%82%A4%E6%94%BB%E6%92%83%E3%82%B9%E3%83%97%E3%83%BC%E3%83%95%E3%82%A3%E3%83%B3%E3%82%B0%E3%81%AB%E8%84%86%E5%BC%B1">VCは中間者攻撃・リプレイ攻撃・スプーフィングに脆弱</a></li>
+<li><a href="#%E6%9C%89%E5%8A%B9%E3%81%AA%E3%82%AF%E3%83%AC%E3%83%BC%E3%83%A0%E3%82%92%E7%B5%84%E3%81%BF%E5%90%88%E3%82%8F%E3%81%9B%E3%81%A6-%E4%B8%8D%E6%AD%A3%E3%81%AA%E3%82%AF%E3%83%AC%E3%83%BC%E3%83%A0%E3%82%92%E6%A7%8B%E6%88%90%E3%81%99%E3%82%8B%E6%94%BB%E6%92%83%E3%81%8C%E3%81%82%E3%82%8B">有効なクレームを組み合わせて、不正なクレームを構成する攻撃がある</a></li>
+<li><a href="#holder%E3%81%8Cissuer%E3%81%AE%E3%83%97%E3%83%A9%E3%82%A4%E3%83%90%E3%82%B7%E3%83%BC%E3%82%92%E4%BE%B5%E5%AE%B3%E3%81%99%E3%82%8B%E6%94%BB%E6%92%83%E3%82%82%E3%81%82%E3%82%8B">HolderがIssuerのプライバシーを侵害する攻撃もある</a></li>
+</ul>
+</li>
+<li><a href="#w3c-verifiable-credentials-data-model-v20-%E3%83%89%E3%83%A9%E3%83%95%E3%83%88%E3%81%AE-9-security-considerations-%E3%82%92%E8%AA%AD%E3%82%80">W3C - “Verifiable Credentials Data Model v2.0” ドラフトの “9. Security Considerations” を読む</a><ul>
+<li><a href="#91-cryptography-suites-and-libraries">9.1 Cryptography Suites and Libraries</a></li>
+<li><a href="#92-key-management">9.2 Key Management</a></li>
+<li><a href="#93-content-integrity-protection">9.3 Content Integrity Protection</a></li>
+<li><a href="#94-unsigned-claims">9.4 Unsigned Claims</a></li>
+<li><a href="#95-man-in-the-middle-mitm-replay-and-cloning-attacks">9.5 Man-in-the-Middle (MITM), Replay, and Cloning Attacks</a><ul>
+<li><a href="#951-man-in-the-middle-mitm-attack">9.5.1 Man-in-the-Middle (MITM) Attack</a></li>
+</ul>
+</li>
+<li><a href="#952-replay-attack">9.5.2 Replay Attack</a></li>
+<li><a href="#953-spoofing-attack">9.5.3 Spoofing Attack</a></li>
+<li><a href="#96-bundling-dependent-claims">9.6 Bundling Dependent Claims</a></li>
+<li><a href="#97-highly-dynamic-information">9.7 Highly Dynamic Information</a></li>
+<li><a href="#98-device-theft-and-impersonation">9.8 Device Theft and Impersonation</a></li>
+<li><a href="#99-acceptable-use">9.9 Acceptable Use</a><ul>
+<li><a href="#991-unauthorized-use">9.9.1 Unauthorized Use</a></li>
+<li><a href="#992-inappropriate-use">9.9.2 Inappropriate Use</a></li>
+</ul>
+</li>
+<li><a href="#910-code-injection">9.10 Code Injection</a></li>
+</ul>
+</li>
+<li><a href="#w3c-verifiable-credentials-data-model-v11-%E5%8B%A7%E5%91%8A%E3%81%AE-8-security-considerations-%E3%81%A8%E3%81%AE%E5%B7%AE%E5%88%86">W3C - “Verifiable Credentials Data Model v1.1” 勧告の “8. Security Considerations” との差分</a></li>
+<li><a href="#sok-trusting-self-sovereign-identity-%E3%81%AE%E8%84%85%E5%A8%81%E6%83%B3%E5%AE%9A%E9%83%A8%E5%88%86%E3%82%92%E8%AA%AD%E3%82%80">“SoK: Trusting Self-Sovereign Identity” の脅威想定部分を読む</a><ul>
+<li><a href="#%E8%84%85%E5%A8%81%E3%82%B7%E3%83%8A%E3%83%AA%E3%82%AA%E5%88%97%E6%8C%99">脅威シナリオ列挙</a></li>
+<li><a href="#%E4%BF%A1%E9%A0%BC%E3%83%A2%E3%83%87%E3%83%AB">信頼モデル</a></li>
+</ul>
+</li>
+<li><a href="#defcon-31-2023%E5%B9%B48%E6%9C%88-crypto-privacy-village%E3%81%AE-attacking-decentralized-identity-%E3%82%92%E8%AA%AD%E3%82%80">DEFCON 31 (2023年8月), Crypto &amp; Privacy Villageの “Attacking Decentralized Identity” を読む</a></li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="まとめ">まとめ</span></h2><p>サーベイ対象を網羅的にまとめたものではなく、特に学びになったと感じたところをピックアップしています。</p>
+<h3><span id="vcは中間者攻撃リプレイ攻撃スプーフィングに脆弱">VCは中間者攻撃・リプレイ攻撃・スプーフィングに脆弱</span></h3><p>“Verifiable Credentials Data Model v2.0” の9.5章で触れられています。</p>
+<p>VCDM自体にはこれら攻撃に対する防御機構が存在しないため、実装や運用でカバーする必要があります。<br>このあたりは気をつけていても実装不備を起こしやすいところなので注意したいところです。</p>
+<p>攻撃シナリオとしてまとめると以下のような感じです。いずれもHolderが攻撃者、Verifierが被害者です。</p>
+<ul>
+<li><strong>中間者攻撃</strong>: Holderが他のHolderのVPを窃取し、Verifierに提示。Verifierから不正に権限を得る</li>
+<li><strong>リプレイ攻撃</strong>: Holderは正規のVPを、許可された利用回数を超えて提示。Verifierから不正な回数権限を得る</li>
+<li><strong>スプーフィング</strong>: HolderがVPの内容を偽造してVerifierに提示。Verifierから不正に権限を得る</li>
+</ul>
+<h3><span id="有効なクレームを組み合わせて-不正なクレームを構成する攻撃がある">有効なクレームを組み合わせて、不正なクレームを構成する攻撃がある</span></h3><p>“Verifiable Credentials Data Model v2.0” の9.6章で触れられています。</p>
+<ul>
+<li>クレーム1: 「計算機科学部」の「職員」</li>
+<li>クレーム2: 「経済学部」の「大学院生」</li>
+</ul>
+<p>がともに正規に発行されたVCに含まれるクレームだったとき、Holderがこれをガチャガチャして「経済学部」の「職員」であるというクレームにまとめあげ、VPにしてVerifierに提示することがあり得る。</p>
+<p>Issuerはクレームのまとまり・単位に気をつける必要がありますね。</p>
+<h3><span id="holderがissuerのプライバシーを侵害する攻撃もある">HolderがIssuerのプライバシーを侵害する攻撃もある</span></h3><p>“SoK: Trusting Self-Sovereign Identity” の3章で触れられています。</p>
+<p>例えば、以下のシチュエーションを考えます。</p>
+<ul>
+<li>Holder: 大学から推薦を受けて企業に入りたい学生</li>
+<li>Issuer: 大学</li>
+<li>Verifier: 企業</li>
+</ul>
+<p>IssuerとしてはHolder本人に推薦文を見せたくないケースがあるでしょう。しかし、VCに記載された推薦文の機密性がうまく守られていないと、VerifierだけでなくHolderも推薦文を見れてしまうかもしれません。<br>ユースケースによってはこういうことも考慮しないといけないのは面白いと感じました。</p>
+<h2><span id="w3c-verifiable-credentials-data-model-v20-ドラフトの-9-security-considerations-を読む">W3C - “Verifiable Credentials Data Model v2.0” ドラフトの “9. Security Considerations” を読む</span></h2><p><a target="_blank" rel="noopener" href="https://www.w3.org/TR/vc-data-model-2.0/#security-considerations">https://www.w3.org/TR/vc-data-model-2.0/#security-considerations</a> （9章）を読みます。</p>
+<p>ほとんどが素直な和訳を箇条書きにしたものですが、意訳・省略した箇所があります。適宜原文に当たってください。</p>
+<p>サブセクションに入る前の冒頭では、以下のことが述べられています。</p>
+<ul>
+<li>VCDM v2.0を扱う<strong>Issuer, Holder, Verifierの全て</strong>が気をつけないと脆弱性に繋がる</li>
+<li>できる限り広くセキュリティ考慮事項を取り上げているが、完全なリストではない<ul>
+<li>ミッションクリティカルなシステムでは別途セキュリティと暗号の専門家のアドバイスを受けるべき</li>
+</ul>
+</li>
+</ul>
+<h3><span id="91-cryptography-suites-and-libraries">9.1 Cryptography Suites and Libraries</span></h3><ul>
+<li>VC (Verifiable Credentials) や VP (Verifiable Presentations) には、暗号で保護される部分がある</li>
+<li>暗号システムの実装や監査には十分な経験が必要であり、レッドチームはセキュリティレビューの助けになる</li>
+<li>暗号スイートやライブラリは危殆化するので、簡易かつプロアクティブに切り替えられる仕組みを有する必要がある</li>
+<li>既存のVCを失効・置換えする仕組みも必要</li>
+<li>定常的なモニタリングが重要</li>
+</ul>
+<h3><span id="92-key-management">9.2 Key Management</span></h3><ul>
+<li>VC, VPの電子署名のセキュリティは、秘密鍵（署名鍵）の品質と保護に依存する<ul>
+<li>このテーマについては <a target="_blank" rel="noopener" href="https://doi.org/10.6028/NIST.SP.800-57pt1r5">NIST-SP-800-57-Part-1</a> を参照すべし</li>
+</ul>
+</li>
+<li><a target="_blank" rel="noopener" href="https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.186-5.pdf">FIPS-186-5</a> や <a target="_blank" rel="noopener" href="https://doi.org/10.6028/NIST.SP.800-57pt1r5">NIST-SP-800-57-Part-1</a> で強く推奨されているように、秘密鍵（署名鍵）は単一の目的で使用せねばならない<ul>
+<li>NG例: 署名鍵を署名だけでなく暗号化にも使ってしまう</li>
+</ul>
+</li>
+<li>NIST-SP-800-57-Part-1 では、秘密鍵（署名鍵）と公開鍵（検証鍵）の<strong>暗号期間 (cryptoperiods)</strong> を限定することを強く勧告している<ul>
+<li>暗号期間: 特定の鍵が正当なエンティティによる使用を許可される期間、または特定のシステムの鍵が有効であり続ける期間</li>
+</ul>
+</li>
+<li>NIST-SP-800-57-Part-1 は、鍵タイプ別の暗号期間についてガイダンスを示している<ul>
+<li>署名鍵の暗号期間は1～3年を推奨している</li>
+</ul>
+</li>
+<li>NIST-SP-800-57-Part-1 は、秘密鍵の危殆化の対処として、保護措置・危害の軽減・執行に関する推奨事項を示している<ul>
+<li>秘密鍵だけでなく、その他全ての検証資料 (verification material) について、使用前にその有効性を確認することが強く推奨されている</li>
+</ul>
+</li>
+</ul>
+<h3><span id="93-content-integrity-protection">9.3 Content Integrity Protection</span></h3><ul>
+<li>VCには外部リソースへのURLが含まれることが多い<ul>
+<li>画像・JSON-LD拡張コンテキスト・JSONスキーマ・その他の機械可読データ</li>
+</ul>
+</li>
+<li>外部リソースはVCのsecuring mechanismの外にあるので、デフォルトでは改ざんから保護されない</li>
+<li>“<a target="_blank" rel="noopener" href="https://www.w3.org/TR/vc-data-model-2.0/#integrity-of-related-resources">5.3 Integrity of Related Resources</a>“ において、外部リソースの完全性を保護する仕組みを提示している<ul>
+<li>（訳注: 外部リソースのハッシュダイジェストを <code>relatedResource</code> プロパティとしてIssuerがVCに含めるのが要旨）</li>
+<li>全ての外部リソースについて保護する必要はないが、変更されたらセキュリティ問題が発生する可能性がある外部リソースを保護することは強く推奨される</li>
+</ul>
+</li>
+</ul>
+<h3><span id="94-unsigned-claims">9.4 Unsigned Claims</span></h3><ul>
+<li>VCDM v2.0仕様では、署名・証明 (proof) によって保護されないクレデンシャルがあり得る<ul>
+<li>中間データや、Webフォームに記入した自己主張情報に有用であることが多い</li>
+<li>保護されないクレデンシャルは検証可能ではないことに注意</li>
+</ul>
+</li>
+</ul>
+<h3><span id="95-man-in-the-middle-mitm-replay-and-cloning-attacks">9.5 Man-in-the-Middle (MITM), Replay, and Cloning Attacks</span></h3><p>このサブセクションでは3種の攻撃例を取り上げています。いずれもVerifierが被害者になるケースです。</p>
+<ul>
+<li>VCDMは、中間者攻撃・リプレイ攻撃・スプーフィングを防止しない<ul>
+<li>オンライン・オフラインどちらでのVC利用においても、送信中・保存中において、傍受・改ざん・リプレイ・複製などの攻撃を受けやすい</li>
+</ul>
+</li>
+</ul>
+<h4><span id="951-man-in-the-middle-mitm-attack">9.5.1 Man-in-the-Middle (MITM) Attack</span></h4><ul>
+<li>Verifierは、自身が中間者攻撃の標的ではなく、意図通りのVP受領者であることを保証する必要があるかもしれない<ul>
+<li>（訳注: Holder-Verifier間の通信を傍受する攻撃者を想定している。攻撃者は、HolderからVPを奪い取り、それを所望のVerifierに提示することで、何らかの権限を得ることを目的とするのだろう）</li>
+<li>VC-JOSE-COSE や VC-DATA-INTEGRITY といったsecuring mechanismには、意図されたVP受領者を指定するオプションがあり、リスク低減に役立つ</li>
+</ul>
+</li>
+<li>その他のアプローチとしては、 <a target="_blank" rel="noopener" href="https://www.w3.org/TR/vc-data-model-2.0/#bib-rfc8471">RFC8471</a> のトークンバインディングがある<ul>
+<li>（訳注: VerifierがHolderにVP提示を要求し受領する一連のセッションにおいて、Holderがセッション固有のキーペア（署名鍵・検証鍵）を生成。Holderは検証鍵をセッションに紐づける。Holderはまた、VPを署名鍵で署名し、Verifierに提示。Verifierはセッションに紐づいた検証鍵で検証する。VP提示を要求されたエンティティと実際にVPを提示したエンティティの一致を担保する仕組み）</li>
+</ul>
+</li>
+<li>このような保護を行わないプロトコルは中間者攻撃に脆弱である</li>
+</ul>
+<h3><span id="952-replay-attack">9.5.2 Replay Attack</span></h3><ul>
+<li>VerifierはVPの利用回数を制限したい場合がある<ul>
+<li>例: イベントチケットをVCで表現する場合。同一チケットを複数人で使い回されるのを防ぎたい</li>
+</ul>
+</li>
+<li>リプレイ攻撃を防ぐため、VPにnonceを含めたり、有効期限を含めることができる</li>
+</ul>
+<h3><span id="953-spoofing-attack">9.5.3 Spoofing Attack</span></h3><ul>
+<li>VCDMはデータ構造と各要素の概要を示しているが、提示されたクレデンシャル（クレームの集合）が真に認可されたものであるか確認する術は示していない<ul>
+<li>（訳注: 攻撃者がVC, VPを偽造することができるというのを暗に言っている）</li>
+</ul>
+</li>
+<li>この懸念に対処するために、VCを強力な認証手段と紐づけたり、VPに proof of control となる追加のプロパティを設定することが必要かもしれない<ul>
+<li>（訳注: proof of controlとは、Issuerが示したクレームが完全性を保ってVerifierに届いていることの証明、だと思われる（自信なし））</li>
+</ul>
+</li>
+</ul>
+<h3><span id="96-bundling-dependent-claims">9.6 Bundling Dependent Claims</span></h3><p>（訳注: この章は文意がだいぶ曖昧に感じたので、多分に意訳が含まれます）</p>
+<ul>
+<li>Issuerは情報（クレーム）をatomize（原子化、ひとまとめにすること）がベストプラクティスとされている</li>
+<li>Issuerによる情報の原子化がセキュアに行われなかった場合、ホルダーは異なるクレームをIssuerの意図しない形でまとめあげるかもしれない<ul>
+<li>事例: ある大学がIssuerとなり、Holderに対して以下の2種類のクレームを発行する<ul>
+<li>クレーム1: 「計算機科学部」の「職員」</li>
+<li>クレーム2: 「経済学部」の「大学院生」</li>
+</ul>
+</li>
+<li>事例(続き): 上記のクレームが鍵括弧単位で原子化されていた場合、Holderはクレームを組み替えて「経済学部」の「職員」であるという別のクレームを作り上げて、Verifierに送付することができるかもしれない</li>
+</ul>
+</li>
+</ul>
+<h3><span id="97-highly-dynamic-information">9.7 Highly Dynamic Information</span></h3><ul>
+<li>非常に動的な情報に対してVCが発行される場合、有効期間が適切に設定されている必要がある<ul>
+<li>（訳注: 難解な技能試験の点数などが想定されそう）</li>
+<li>長過ぎる有効期間はVCの悪用に繋がる</li>
+</ul>
+</li>
+<li>逆に短すぎる有効期間は、HolderおよびVerifierに負担をかける</li>
+<li>ユースケースとVCに含まれるクレームに応じた、適切な有効期間の設定が重要</li>
+</ul>
+<h3><span id="98-device-theft-and-impersonation">9.8 Device Theft and Impersonation</span></h3><ul>
+<li>VCがデバイスに保存されている場合、そのデバイスが紛失・盗難された場合、攻撃者はVCを悪用してシステムにアクセスできる可能性がある</li>
+<li>軽減策には以下のようなものがある:<ul>
+<li>PIN, パターン, バイオメトリクス画面によるロック解除で<strong>デバイス</strong>を保護する</li>
+<li>パスワード, 生体認証, MFAで<strong>クレデンシャルリポジトリ</strong>を保護する</li>
+<li>パスワード, 生体認証, MFAで<strong>暗号鍵へのアクセス</strong>を保護する</li>
+<li>ハードウェアベースの署名デバイスを使用する<ul>
+<li>（訳注: YubiKeyとかかな？）</li>
+</ul>
+</li>
+<li>上記の全て、または一部の組み合わせ</li>
+</ul>
+</li>
+<li>VCに関する信頼とセキュリティレベルを高めるためには、なりすましの防止だけではなく、否認防止メカニズムも必要<ul>
+<li>エンティティの行動・トランザクションに対する責任を明確にし、説明責任を強化し、悪意ある行動を抑止するため</li>
+<li>否認防止には多面的なアプローチが必要<ul>
+<li>Securing mechanism</li>
+<li>所有証明</li>
+<li>認証スキーム</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h3><span id="99-acceptable-use">9.9 Acceptable Use</span></h3><ul>
+<li>エンティティの目的と、それに対する行動（VPの提示など）が整合していることを担保することが重要</li>
+<li>これが破られるケースとして、認可なき使用（Unauthorized Use）と不適切な使用（Inappropriate Use）が挙げられる</li>
+</ul>
+<h4><span id="991-unauthorized-use">9.9.1 Unauthorized Use</span></h4><ul>
+<li>VC, VPを、意図された用途以外で使用することは、認可なき使用と見なされる可能性がある</li>
+<li>一例は機密性の侵害:<ul>
+<li>Holderが年齢と在留資格を証明するためにVPをVerifierに共有した際、Verifierが同意を得ずにデータブローカーにデータを売却</li>
+</ul>
+</li>
+<li>緩和策として、Issuerは <code>termsOfUse</code> プロパティにより、クレデンシャルをいつどのように使用するかを規定できる</li>
+</ul>
+<h4><span id="992-inappropriate-use">9.9.2 Inappropriate Use</span></h4><ul>
+<li>有効なデジタル署名とステータスチェックにより、クレデンシャル自体の信頼性は担保されるが、クレデンシャルの示す情報があらゆるコンテキストで有効であるとは限らない</li>
+<li>Verifierは、関連し得るクレームが示す特権やサービスだけでなく、クレームの出所を検証することが極めて重要:<ul>
+<li>（訳注: Issuerの素性や、クレデンシャルサブジェクト（≒Holder）との関係性が重要かと思います）</li>
+<li>例: 認証を受けた機関による医療診断が必要なシナリオでは、完備な診断情報を含んではいるが、自己主張のクレデンシャルであっては不十分</li>
+</ul>
+</li>
+</ul>
+<h3><span id="910-code-injection">9.10 Code Injection</span></h3><ul>
+<li>VC内のデータに、実行可能コードやスクリプトが含まれる可能性がある<ul>
+<li>Issuerは、必要性があってかつリスクができる限り軽減されている場合を除いて、そのよなことは避けることが推奨される</li>
+</ul>
+</li>
+<li>例: 自然言語を多言語で含めたい場合にHTMLを使いたくなるかもしれないが、HTMLパーサーで実行されると <code>&lt;script&gt;</code> タグが実行される恐れもある</li>
+</ul>
+<h2><span id="w3c-verifiable-credentials-data-model-v11-勧告の-8-security-considerations-との差分">W3C - “Verifiable Credentials Data Model v1.1” 勧告の “8. Security Considerations” との差分</span></h2><p><a target="_blank" rel="noopener" href="https://www.w3.org/TR/vc-data-model/#security-considerations">VCDM v1.1勧告の8章</a> を、上述のVCDM v2.0ドラフト9章と比較しました。</p>
+<p>基本的には、VCDM v2.0のほうがVCDM v1.1時代に書かれたものを全て包含しており、かつ加筆されています。加筆されたサブセクションは以下です。いずれもデータモデル自体の差から来るものではなく、知見が溜まったので加筆されたものと考えられます。</p>
+<ul>
+<li>Key Management</li>
+<li>Man-in-the-Middle (MITM), Replay, and Cloning Attacks</li>
+<li>Acceptable Use</li>
+<li>Code Injection</li>
+</ul>
+<p>ただし、”Content Integrity Protection” のサブセクションだけは、VCDM v1.1時代のもののほうが実例を含んでいました。</p>
+<img src="/img/2024/08-16/image.png" alt="https://www.w3.org/TR/vc-data-model/#example-content-integrity-protection-for-links-to-external-data" width="600px" height="auto">
+
+<p><a target="_blank" rel="noopener" href="https://github.com/w3c/vc-data-model/commit/8c0775e150757a14577e915d430a9f002b31983f">実例が削除されたcommit</a>によると、VCDM v2.0に合わせて記述を新しくしたようです。外部リソースへのURL自体にハッシュダイジェストを含めるのではなく、 <code>relatedResource</code> を使うようになったということが肝だと思います。</p>
+<h2><span id="sok-trusting-self-sovereign-identity-の脅威想定部分を読む">“SoK: Trusting Self-Sovereign Identity” の脅威想定部分を読む</span></h2><p>Krul, Evan &amp; Paik, Hye-young &amp; Ruj, Sushmita &amp; Kanhere, Salil. (2024). SoK: Trusting Self-Sovereign Identity. Proceedings on Privacy Enhancing Technologies. 2024. 297-313. 10.56553&#x2F;popets-2024-0079. (<a target="_blank" rel="noopener" href="https://petsymposium.org/popets/2024/popets-2024-0079.pdf">PDF</a>)</p>
+<hr>
+<p>SSI (Self-Sovereign Identity) の信頼に関し分析し、今後の研究の基礎としようと試みた論文です。</p>
+<p>この記事ではVCのセキュリティ考慮事項をまとめる目的で、論文から以下をピックアップします。</p>
+<ul>
+<li><strong>メインテーマ</strong>: VC, VPの発行・保存・提示・検証における脅威シナリオ (2, 3章)</li>
+<li>おまけ: 想定する脅威シナリオで分類される信頼モデル (4章)</li>
+</ul>
+<p>なお、論文ではSSIらしい用語定義をしていますが、この記事では以下のように読み替えて説明します。</p>
+<ul>
+<li>Identity Owner → Holder</li>
+<li>Service Provider → Verifier</li>
+</ul>
+<img src="/img/2024/08-16/image%201.png" alt="SSIの用語でのVC, VPのライフサイクル" width="550px" height="auto">
+
+<h3><span id="脅威シナリオ列挙">脅威シナリオ列挙</span></h3><table>
+<thead>
+<tr>
+<th>ID</th>
+<th>誰にとっての脅威か</th>
+<th>何に対する脅威か</th>
+<th>脅威の内容</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>2.1</td>
+<td>明示されず<br>（訳注: Verifierと想定）</td>
+<td>Holder識別</td>
+<td>HolderがVerifierに、検証不可なクレデンシャルを送付する<br>（例: 運転資格がないのに運転免許を偽装して送付）</td>
+</tr>
+<tr>
+<td>2.2</td>
+<td>明示されず<br>（訳注: 主にVerifier, 次点でHolderと想定）</td>
+<td>Issuer識別</td>
+<td>Issuerが権限を超えたVCを発行する<br>（例: 州の運転免許発行権限しかないのに国際免許を発行）</td>
+</tr>
+<tr>
+<td>2.3</td>
+<td>明示されず<br>（訳注: Verifierと想定）</td>
+<td>譲渡不可</td>
+<td>他のHolder向けに発行されたVCを、他のHolderと共謀して共有したり、窃取したりして、Verifierに提示する</td>
+</tr>
+<tr>
+<td>2.4</td>
+<td>明示されず<br>（訳注: Issuer, Holder, Verifierと想定）</td>
+<td>保護された通信</td>
+<td>通信路のVC, VPに受動的（盗聴）または能動的（改ざん）に介入</td>
+</tr>
+<tr>
+<td>2.5</td>
+<td>明示されず<br>（訳注: Holder, Verifierと想定）</td>
+<td>保護された通信</td>
+<td>DID解決へ介入し、偽のDID Documentを参照させる</td>
+</tr>
+<tr>
+<td>3.1</td>
+<td>Issuer</td>
+<td>アイデンティティ登録</td>
+<td>Holderが偽の情報を用いてIssuerにアイデンティティ登録する</td>
+</tr>
+<tr>
+<td>3.2</td>
+<td>Issuer</td>
+<td>機密クレーム発行</td>
+<td>Holderが、閲覧権限のないクレームを閲覧・収集することで、Issuerのプライバシーを侵害する<br>（例: Issuerが推薦人、Verifierが推薦を要求する機関。Holderは推薦クレームの記載事項を閲覧する権限がない）</td>
+</tr>
+<tr>
+<td>3.3</td>
+<td>Holder</td>
+<td>選択的開示</td>
+<td>Verifierが（悪意の有無にかかわらず）目的にとって不要なクレームを収集する</td>
+</tr>
+<tr>
+<td>3.4</td>
+<td>Holder</td>
+<td>非連結性 (Unlinkability)</td>
+<td>Verifierが、複数回のクレデンシャル要求や、別のVerifierとの共謀により特定のHolderに関するクレデンシャルを収集し、連結した情報を得る</td>
+</tr>
+<tr>
+<td>3.5</td>
+<td>Holder</td>
+<td>暗号鍵・ウォレット管理</td>
+<td>ウォレットからVCや暗号鍵を窃取。またはHolder自身が暗号鍵を喪失<br>（訳注: 機種変更などは典型）</td>
+</tr>
+<tr>
+<td>3.6</td>
+<td>Holder</td>
+<td>暗号鍵・ウォレット管理</td>
+<td>ウォレットの不適切な管理によるVC, 暗号鍵の漏洩や、なりすまし</td>
+</tr>
+<tr>
+<td>3.7</td>
+<td>Verifier</td>
+<td>クレデンシャル有効性（失効）</td>
+<td>クレームで主張されている権利が既に失われているのに、クレデンシャルを提示</td>
+</tr>
+<tr>
+<td>3.8</td>
+<td>Verifier</td>
+<td>Holder識別</td>
+<td>信頼できるIssuerから発行されたVCではなく、自分で発行したVCを提示</td>
+</tr>
+<tr>
+<td>3.9</td>
+<td>Verifier</td>
+<td>Holder識別</td>
+<td>Holderに例外的な事象が発生した際に、自身の権限を他のHolderに移譲する必要があり得る（それができないことが脅威）<br>（訳注: 事故等で意識不明になった際に家族に移譲）</td>
+</tr>
+<tr>
+<td>3.10</td>
+<td>Verifier</td>
+<td>信用 (Recourse)</td>
+<td>正当に発行されたVCであっても、Holderに認可を与えてよいか必ずしもわからない<br>（例: 運転免許証があっても安全運転をする保証はない）</td>
+</tr>
+<tr>
+<td>3.11</td>
+<td>Verifier</td>
+<td>オフライン検証</td>
+<td>HolderとVerifierがネットワークで繋がっておらず、オフラインで検証する必要がある（それができないことが脅威）</td>
+</tr>
+</tbody></table>
+<h3><span id="信頼モデル">信頼モデル</span></h3><p>下記3種類の信頼モデルが提示されます。</p>
+<ol>
+<li>Trustful<ul>
+<li>信頼の想定<ul>
+<li>Issuerは信頼できる</li>
+<li>Verifierは信頼できる</li>
+</ul>
+</li>
+<li>ユースケース<ul>
+<li>機密データの取り扱いには不適切</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Intermediate Trust<ul>
+<li>信頼の想定<ul>
+<li>（訳注: 明示的に記載されていないが、Issuerは信頼できる想定と思われる）</li>
+<li>Verifierは信頼できない</li>
+</ul>
+</li>
+<li>ユースケース<ul>
+<li>機密データを扱える</li>
+<li>例えば、政府がIssuerになるようなアイデンティティシステム</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Zero-Trust<ul>
+<li>信頼の想定<ul>
+<li>信頼できるIssuerは存在しない<ul>
+<li>（訳注: 各Holder、というかSSIの用語で言うIdentity Ownerが自らのクレデンシャルを発行する世界）</li>
+</ul>
+</li>
+<li>（訳注: 明示的に記載されていないが、Verifierも信頼できない想定と思われる）</li>
+<li>PKI (Public Key Infrastructure) も使えない</li>
+<li>オプショナルだが、VDR (Verifiable Data Registry) をトラストアンカーとして使えることがある</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+<p>各信頼モデルが想定する（あるいはしない）脅威をマークしたのが下記の表3です。</p>
+<img src="/img/2024/08-16/image%202.png" alt="信頼モデル" width="800px" height="auto">
+
+<p>例えば以下のようなことが読み取れます。</p>
+<ul>
+<li>全てのモデルで想定しなければならない脅威（何に対する脅威か）<ul>
+<li>2.1: Holder識別（HolderによるVC偽装）</li>
+<li>2.3: 譲渡不可</li>
+<li>2.4, 2.5: 保護された通信</li>
+</ul>
+</li>
+<li>全てのモデルが、optional extensionなレベルでしか想定しない脅威（何に対する脅威か）<ul>
+<li>3.9: Holder識別（権限の移譲が必要な例外事象）</li>
+<li>3.11: オフライン検証</li>
+</ul>
+</li>
+<li>Trustfulモデルのみが、optional extensionなレベルでしか想定しない脅威（何に対する脅威か）<ul>
+<li>3.10: 信用 (Recourse)</li>
+<li>3.3: 選択的開示</li>
+<li>3.4: 非連結製 (Unlinkability)</li>
+<li>3.5, 3.6: 暗号鍵・ウォレット管理</li>
+</ul>
+</li>
+<li>Intermediate Trustモデルからは考慮すべき (likely) または考慮必須 (required) になる脅威（何に対する脅威か）<ul>
+<li>考慮すべき<ul>
+<li>3.10: 信用 (Recourse)</li>
+<li>3.5, 3.6: 暗号鍵・ウォレット管理</li>
+</ul>
+</li>
+<li>考慮必須<ul>
+<li>3.3: 選択的開示</li>
+<li>非連結性 (Unlinkability)</li>
+</ul>
+</li>
+</ul>
+</li>
+<li>Zero-Trustでは想定してはならない脅威（何に対する脅威か）<ul>
+<li>2.2: Issuer識別<ul>
+<li>（訳注: Issuer、すなわち各Identity Ownerがどのような権限を持つか、想定ができないということと思われる）</li>
+</ul>
+</li>
+<li>3.1: アイデンティティ登録<ul>
+<li>（訳注: 信頼できる機関としてのIssuerが存在しない世界なので、登録先がないということと思われる）</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2><span id="defcon-31-2023年8月-crypto-amp-privacy-villageの-attacking-decentralized-identity-を読む">DEFCON 31 (2023年8月), Crypto &amp; Privacy Villageの “Attacking Decentralized Identity” を読む</span></h2><p><a target="_blank" rel="noopener" href="https://www.slideshare.net/slideshow/attacking-decentralized-identitypdf/259803268">slideshare</a></p>
+<hr>
+<p>タイトルや発表された場所から、具体的な攻撃事例が見れるかと思ったのですが、もう少しライトに「こんな脆弱性があるから」「こんな攻撃（あるいは嫌な思い）が発生しそう」くらいなことを説明したものでした。</p>
+<p>長くなってきた（疲れた）ので、リンクの紹介に留めます。</p>
+
+    
+  </div>
+  <footer class="entry-footer">
+    <div class="entry-meta-footer">
+      <span class="category">
+        
+      </span>
+      <span class="tags">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Verifiable-Credentials/" rel="tag">Verifiable Credentials</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AA%8D%E8%A8%BC%E6%8A%80%E8%A1%93/" rel="tag">認証技術</a></li></ul>
+
+      </span>
+    </div>
+  </footer>
+  
+  <footer class="author-info clearfix">
+    <img class="author-picture circle" src="https://www.gravatar.com/avatar/cb02a2b3f429b7c938d1fe2665e8e342">
+    <div class="author-content right">
+      <div class="author-caption">
+        <span class="label">author</span>
+        Sho Nakatani a.k.a. laysakura
+      </div>
+      <p class="author-description">
+        トヨタ自動車株式会社所属。プリンシパル・リサーチャーとして、セキュリティ・プライバシー・データ基盤に関する業務に従事。<br>
+        OSCP/BSCP/CISSP/情報処理安全確保支援士(合格) 等の資格保有。CTF出場やセキュリティ関連の講演活動も行っている。<br>
+        （<a target="_blank" rel="noopener" href="https://github.com/laysakura/resume-jp">詳細プロフィール</a>）
+      </p>
+      <ul class="author-social-buttons">
+        <li class="author-social-button"><a class="fa fa-lg fa-twitter-square" target="_blank" rel="noopener" href="https://twitter.com/laysakura"></a>
+        </li>
+        <li class="author-social-button"><a class="fa fa-lg fa-github-square" target="_blank" rel="noopener" href="https://github.com/laysakura"></a>
+        </li>
+      </ul>
+    </div>
+  </footer>
+  
+  
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2024/07/19/vc-api-v0.3/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">
+        
+          W3C Verifiable Credentials API v0.3 (Draft) を読む
+        
+      </div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+<section id="comments">
+  <div id="disqus_thread">
+
+    <!-- comment service provided by disqus -->
+    <script>
+      /**
+       *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+       *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+       */
+      var disqus_config = function () {
+        this.page.url = https://laysakura.github.io/2024/08/16/vc-security/;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = https://laysakura.github.io/2024/08/16/vc-security/; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+      (function () {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//laysakura.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by
+        Disqus.</a></noscript>
+  </div>
+</section>
+
+
+    </div>
+    <div class="mb-search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:laysakura.github.io">
+  </form>
+</div>
+<footer id="footer">
+	<h1 class="footer-blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<span class="copyright">
+		&copy; 2024 Sho Nakatani a.k.a. laysakura<br>
+		Modify from <a href="https://sanographix.github.io/tumblr/apollo/" target="_blank">Apollo</a> theme, designed by <a href="https://www.sanographix.net/" target="_blank">SANOGRAPHIX.NET</a><br>
+		Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+	</span>
+</footer>
+
+    
+<script>
+  var disqus_shortname = 'laysakura';
+  
+  var disqus_url = 'https://laysakura.github.io/2024/08/16/vc-security/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+
+  <!-- https://github.com/vfeskov/vanilla-back-to-top -->
+  <script src="https://unpkg.com/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js"></script>
+  <script>addBackToTop({
+    diameter: 50,
+    backgroundColor: '#33a6b880',
+    textColor: '#fff'
+  })</script>
+
+</body>
+</html>
