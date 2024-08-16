@@ -3,6 +3,7 @@ title: W3C Verifiable Credentials API v0.3 (Draft) を読む
 id: vc-api-v0.3
 tags:
   - 認証技術
+  - Verifiable Credentials
 date: 2024-07-19 15:43:05
 ---
 

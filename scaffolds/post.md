@@ -15,6 +15,7 @@ tags:
   - セキュリティ
   - CTF
   - 認証技術
+  - Verifiable Credentials
   - VPN
   - プロジェクトマネジメント
   - Engineering Management
