@@ -39,8 +39,8 @@ date: 2024-09-08 22:53:40
 - 自動車知識が必要な問題は3~4割ほど？
 - 自動車関連はあまり強くないので、昨年の同CTFの過去問で対策してた。しかし過去問はUDS中心だったが今年はcandumpのログ解析中心で、対策は足りなかった
   - 過去問対策の成果:
-    - 知識まとめ: [https://laysakura.notion.site/CTF-Automotive-car-vehicle-deca002ee9de42f89ba18ddcdb5c183a](https://www.notion.so/deca002ee9de42f89ba18ddcdb5c183a?pvs=21)
-    - writeup: [https://laysakura.notion.site/Automotive-CTF-2023-Proving-Grounds-writeup-8428584750dc47e0bf83b92525eb1b4a](https://www.notion.so/8428584750dc47e0bf83b92525eb1b4a?pvs=21)
+    - 知識まとめ: <https://laysakura.notion.site/CTF-Automotive-car-vehicle-deca002ee9de42f89ba18ddcdb5c183a>
+    - writeup: <https://laysakura.notion.site/Automotive-CTF-2023-Proving-Grounds-writeup-8428584750dc47e0bf83b92525eb1b4a>
 - 問題の構造を解析しきるところまではうまくできた。しかしそこから出題意図を読み切ってのフラグ獲得まで至れない問題がいくつかあった。「解き切る力」が今後の課題（新書タイトルっぽい）
 - チーム戦ってすごい。「ここまではできたんだけどこっからわからん…」と投げたら解いてもらえたりして心強い。寝て起きただけで得点上がってるのすごい
   - またチーム戦やりたいのでお気軽にお声がけください…！
