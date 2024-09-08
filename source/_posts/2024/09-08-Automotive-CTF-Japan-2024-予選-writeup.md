@@ -388,9 +388,7 @@ vcan0に流れるメッセージを眺めているだけではこれ以上の進
 <img src="/img/2024/09-08/image%2021.png" alt="image.png" width="500px" height="auto">
 
 <aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
-⛳
-
-bh{aut0s4r_e2e_encryp73d!}
+⛳ bh{aut0s4r_e2e_encryp73d!}
 
 </aside>
 
