@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Automotive CTF Japan 2024 予選 - writeup | 俺とお前とlaysakura</title>
+  
+  <link rel="canonical" href="https://laysakura.github.io/2024/09/08/automotive-ctf-2024-qual/"/>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="（↑順位確定時点のスコア画像） Automotive CTF Japanの予選にチーム参加し、5位で予選を突破しました。（※所属とは無関係に個人活動として参加） 全問正解できましたが、先着順で順位が上になるのでこの順位です。 基本今まではCTF1人参加だったので、チーム参加は新鮮でした。お誘いくださったbeaさん、一緒に戦った hamayanhamayanさん、kusano_kさん、tkito">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Automotive CTF Japan 2024 予選 - writeup">
+<meta property="og:url" content="https://laysakura.github.io/2024/09/08/automotive-ctf-2024-qual/index.html">
+<meta property="og:site_name" content="俺とお前とlaysakura">
+<meta property="og:description" content="（↑順位確定時点のスコア画像） Automotive CTF Japanの予選にチーム参加し、5位で予選を突破しました。（※所属とは無関係に個人活動として参加） 全問正解できましたが、先着順で順位が上になるのでこの順位です。 基本今まではCTF1人参加だったので、チーム参加は新鮮でした。お誘いくださったbeaさん、一緒に戦った hamayanhamayanさん、kusano_kさん、tkito">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%201.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%202.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%203.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%204.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%205.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%206.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%207.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%208.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%209.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2010.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2011.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2012.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2013.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2014.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2015.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2016.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2017.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2018.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2019.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2020.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2021.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2022.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2023.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2025.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2026.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2027.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2028.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2029.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2030.png">
+<meta property="article:published_time" content="2024-09-08T13:53:40.000Z">
+<meta property="article:modified_time" content="2024-09-08T14:18:17.618Z">
+<meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laysakura.github.io/img/2024/09-08/image.png">
+
+  <!-- favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" href="/favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22289437-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+  <!-- MathJax -->
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+  <div id="container">
+    <div class="mobile-nav-panel">
+	<i class="icon-reorder icon-large"></i>
+</div>
+<header id="header">
+	<h1 class="blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<nav class="nav">
+		<ul>
+			<li><a href="/archives">過去の投稿</a></li>
+			<li><a id="nav-search-btn" class="nav-icon" title="Search"></a></li>
+			<li><a target="_blank" rel="noopener" href="http://cloud.feedly.com/#subscription%2Ffeed%2Fhttps%3A%2F%2Flaysakura.github.io%2Fatom.xml" id="nav-rss-link" class="nav-icon" title="RSS Feed"></a></li>
+		</ul>
+	</nav>
+	<div id="search-form-wrap">
+		<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laysakura.github.io"></form>
+	</div>
+</header>
+    <div id="main">
+      <article id="post-Automotive-CTF-Japan-2024-予選-writeup" class="post">
+  <footer class="entry-meta-header">
+    <span class="meta-elements date">
+      <a href="/2024/09/08/automotive-ctf-2024-qual/" class="article-date">
+  <time datetime="2024-09-08T13:53:40.000Z" itemprop="datePublished">2024-09-08</time>
+</a>
+    </span>
+  </footer>
+  
+  <header class="entry-header">
+    
+  
+    <h1 class="article-title entry-title" itemprop="name">
+      Automotive CTF Japan 2024 予選 - writeup
+    </h1>
+  
+
+  </header>
+  <div class="entry-content">
+    
+    <img src="/img/2024/09-08/image.png" alt="image.png" width="auto" height="auto">
+
+<p>（↑順位確定時点のスコア画像）</p>
+<p><a target="_blank" rel="noopener" href="https://vicone.com/jp/automotive-ctf">Automotive CTF Japan</a>の予選にチーム参加し、5位で予選を突破しました。<br>（※所属とは無関係に個人活動として参加）</p>
+<p>全問正解できましたが、先着順で順位が上になるのでこの順位です。</p>
+<p>基本今まではCTF1人参加だったので、チーム参加は新鮮でした。お誘いくださったbeaさん、一緒に戦った hamayanhamayanさん、kusano_kさん、tkitoさん、ありがとうございました！</p>
+<p>自分が解いた問題、途中まで触った問題についてwriteupを書きます。</p>
+<span id="more"></span>
+
+<h2><span id="目次">目次</span></h2><!-- toc -->
+
+<ul>
+<li><a href="#%E5%A4%A7%E4%BC%9A%E4%BA%88%E9%81%B8%E5%BD%A2%E5%BC%8F">大会（予選）形式</a></li>
+<li><a href="#%E6%84%9F%E6%83%B3%E5%8F%8D%E7%9C%81">感想・反省</a></li>
+<li><a href="#stego">Stego</a><ul>
+<li><a href="#vcan">VCAN</a></li>
+</ul>
+</li>
+<li><a href="#xnexus">xNexus</a><ul>
+<li><a href="#can-bus-anomaly-2">Can bus anomaly #2</a></li>
+</ul>
+</li>
+<li><a href="#well-see-in-the-mach-e">We’ll See in the Mach-E</a><ul>
+<li><a href="#did-access">DID Access</a></li>
+<li><a href="#what-is-the-vin">What is the VIN?</a></li>
+<li><a href="#steering-angle">Steering Angle</a></li>
+<li><a href="#when-were-we-driving">When were we driving?</a></li>
+<li><a href="#radio">Radio</a></li>
+<li><a href="#street-names">Street Names</a></li>
+<li><a href="#where-were-we-driving">Where were we driving?</a></li>
+</ul>
+</li>
+<li><a href="#crypto">Crypto</a><ul>
+<li><a href="#autosar-e2e">Autosar E2E</a></li>
+</ul>
+</li>
+<li><a href="#reversing">Reversing</a><ul>
+<li><a href="#power-%E8%87%AA%E5%8A%9B%E9%83%A8%E5%88%86%E3%81%BE%E3%81%A7%E3%81%AE%E3%83%A1%E3%83%A2">Power [自力部分までのメモ]</a><ul>
+<li><a href="#%E3%81%93%E3%81%AE%E5%95%8F%E9%A1%8C%E3%81%AE%E5%8E%84%E4%BB%8B%E3%81%AA%E3%81%A8%E3%81%93%E3%82%8D">この問題の厄介なところ</a></li>
+<li><a href="#%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0%E3%81%8C%E8%A1%A8%E7%8F%BE%E3%81%97%E3%81%A6%E3%81%84%E3%82%8B%E3%82%82%E3%81%AE%E6%A6%82%E8%A6%81">プログラムが表現しているもの概要</a></li>
+<li><a href="#%E3%83%97%E3%83%AD%E3%82%B0%E3%83%A9%E3%83%A0%E3%81%AE%E6%A7%8B%E9%80%A0%E5%87%A6%E7%90%86%E3%81%AE%E6%B5%81%E3%82%8C">プログラムの構造・処理の流れ</a></li>
+<li><a href="#%E3%83%A1%E3%83%A2%E3%83%AA%E9%85%8D%E7%BD%AE">メモリ配置</a></li>
+<li><a href="#r5%E3%81%AB%E3%83%95%E3%82%A1%E3%82%A4%E3%83%AB%E5%90%8D%E3%81%8C">R5にファイル名が…</a></li>
+<li><a href="#8%E6%96%87%E5%AD%97%E3%83%87%E3%82%A3%E3%83%AC%E3%82%AF%E3%83%88%E3%83%AA%E3%81%8C%E3%81%82%E3%82%8B%E3%81%A8%E3%81%8D%E3%81%AE%E6%8C%99%E5%8B%95%E3%82%92%E8%BF%BD%E3%81%86">8文字ディレクトリがあるときの挙動を追う</a></li>
+<li><a href="#wip-vm%E5%91%BD%E4%BB%A4%E3%81%AE%E8%A7%A3%E6%9E%90">[WIP] VM命令の解析</a></li>
+<li><a href="#ptrdentry%E3%81%AE%E5%A4%89%E9%81%B7">ptrDentryの変遷</a></li>
+<li><a href="#nothing-happened-%E3%82%92%E4%BD%9C%E3%81%A3%E3%81%A6%E3%81%84%E3%82%8B%E3%81%A8%E3%81%93%E3%82%8D%E5%86%8D%E8%A8%AA">“nothing happened…” を作っているところ再訪</a></li>
+<li><a href="#thestring%E3%81%AE%E3%82%BD%E3%83%BC%E3%82%B9%E6%96%87%E5%AD%97%E3%81%AE%E5%A4%89%E9%81%B7%E3%82%92%E8%BF%BD%E3%81%86">TheStringのソース文字の変遷を追う</a></li>
+<li><a href="#%E4%BB%AE%E8%AA%ACtrue-getdentry%E7%B5%90%E6%9E%9C%E3%81%8C%E5%87%BA%E3%82%8B%E3%81%BE%E3%81%A7-thestring%E3%81%AF%E4%B8%80%E6%96%87%E5%AD%97%E3%82%82%E7%A2%BA%E5%AE%9A%E3%81%97%E3%81%A6%E3%81%84%E3%81%AA%E3%81%84">[仮説→true]: getdentry結果が出るまで、TheStringは一文字も確定していない</a></li>
+<li><a href="#%E4%BB%AE%E8%AA%AC-true-vmupdater4byupdatedvmr0-%E3%81%A7r13%E3%81%AE%E5%80%A4%E3%81%A7%E6%9D%A1%E4%BB%B6%E5%88%86%E5%B2%90%E3%81%99%E3%82%8B%E7%AE%87%E6%89%80-r13-in-1-2-3-%E3%81%AE%E3%81%84%E3%81%9A%E3%82%8C%E3%81%8B">[仮説 → true] <code>vmUpdateR4ByUpdatedvmR0,...()</code> でR13の値で条件分岐する箇所、R13 in (1, 2, 3) のいずれか</a></li>
+<li><a href="#%E4%BB%AE%E8%AA%AC-false-vmupdater4byupdatedvmr0-%E3%81%A7-r132%E3%81%AE%E5%87%A6%E7%90%86%E3%82%92r131%E3%81%A8%E5%90%8C%E3%81%98%E3%81%AB%E3%81%99%E3%82%8C%E3%81%B0%E3%83%95%E3%83%A9%E3%82%B0%E3%81%8C%E5%BE%97%E3%82%89%E3%82%8C%E3%82%8B">[仮説 → false]  <code>vmUpdateR4ByUpdatedvmR0,...()</code> で、R13&#x3D;&#x3D;2の処理をR13&#x3D;&#x3D;1と同じにすればフラグが得られる</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="大会予選形式">大会（予選）形式</span></h2><p>詳しくは<a target="_blank" rel="noopener" href="https://ctf.blockharbor.io/rules/jp">公式ルール</a>をご参照。</p>
+<ul>
+<li>2024&#x2F;08&#x2F;24~09&#x2F;08の2週間、オンライン開催</li>
+<li>1~5名のチームを組んでのチーム戦</li>
+<li>Jeopardy形式。初期状態では全問1000点だが、解いたチームが多い問題ほど配点が低く調整される<ul>
+<li>解いた順は獲得点数には影響なし</li>
+</ul>
+</li>
+<li>獲得点数が同じ場合は、早くその点数に達したほうが高順位</li>
+</ul>
+<h2><span id="感想反省">感想・反省</span></h2><ul>
+<li>自動車知識が必要な問題は3~4割ほど？</li>
+<li>自動車関連はあまり強くないので、昨年の同CTFの過去問で対策してた。しかし過去問はUDS中心だったが今年はcandumpのログ解析中心で、対策は足りなかった<ul>
+<li>過去問対策の成果:<ul>
+<li>知識まとめ: <a target="_blank" rel="noopener" href="https://www.notion.so/deca002ee9de42f89ba18ddcdb5c183a?pvs=21">https://laysakura.notion.site/CTF-Automotive-car-vehicle-deca002ee9de42f89ba18ddcdb5c183a</a></li>
+<li>writeup: <a target="_blank" rel="noopener" href="https://www.notion.so/8428584750dc47e0bf83b92525eb1b4a?pvs=21">https://laysakura.notion.site/Automotive-CTF-2023-Proving-Grounds-writeup-8428584750dc47e0bf83b92525eb1b4a</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>問題の構造を解析しきるところまではうまくできた。しかしそこから出題意図を読み切ってのフラグ獲得まで至れない問題がいくつかあった。「解き切る力」が今後の課題（新書タイトルっぽい）</li>
+<li>チーム戦ってすごい。「ここまではできたんだけどこっからわからん…」と投げたら解いてもらえたりして心強い。寝て起きただけで得点上がってるのすごい<ul>
+<li>またチーム戦やりたいのでお気軽にお声がけください…！</li>
+</ul>
+</li>
+</ul>
+<h2><span id="stego">Stego</span></h2><h3><span id="vcan">VCAN</span></h3><img src="/img/2024/09-08/image%201.png" alt="image.png" width="500px" height="auto">
+
+<p>チームメンバーが途中まで見てくれてたのに途中から参戦して解き切った。</p>
+<hr>
+<p>candumpのログが与えられる。</p>
+<p>CAN IDが <code>VO1</code> とおかしなものだけを対象に、ASCIIを見てみる。Savvy CANを使った。</p>
+<p><code>bh&#123;</code> はすぐに見つかるが、フラグとしての全体像はむずい。ぐっと睨むと、先頭3バイトを繋げると意味がありそう…？</p>
+<img src="/img/2024/09-08/image%202.png" alt="image.png" width="500px" height="auto">
+
+<p>以下のフラグで正解。</p>
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⛳ bh{4N4LYZ1NG_C4N_1S_34SY}
+
+</aside>
+
+<h2><span id="xnexus">xNexus</span></h2><h3><span id="can-bus-anomaly-2">Can bus anomaly #2</span></h3><img src="/img/2024/09-08/image%203.png" alt="image.png" width="500px" height="auto">
+
+<p>チームメンバーが途中まで見てくれていて途中から参戦し、解き切った。</p>
+<p>弊チームとして最後に解けた問題。</p>
+<hr>
+<p>xNexusという、自動車のログから脆弱性レポートやら異常検知やらしてくれるRUMみたいなWebサービスのアカウントが渡される。</p>
+<p>CAN ID 0x0645 を中心に見て、車種かVINあたりを当てれば良いらしい。</p>
+<hr>
+<p>チームメンバーも自分も、ログ集めたり整形したりするスクリプト色々書いてウンウンしてたのだが、そういう問題ではなかった模様…</p>
+<hr>
+<p>基本に立ち返り、問題文を参考に <code>disable esp power assisted system &quot;can&quot; &quot;attack&quot;</code> でググったら、Blackhatの↓の論文がヒット。</p>
+<p><a target="_blank" rel="noopener" href="https://www.blackhat.com/docs/us-17/thursday/us-17-Nie-Free-Fall-Hacking-Tesla-From-Wireless-To-CAN-Bus-wp.pdf">https://www.blackhat.com/docs/us-17/thursday/us-17-Nie-Free-Fall-Hacking-Tesla-From-Wireless-To-CAN-Bus-wp.pdf</a></p>
+<p>この中にあるCANバスへの攻撃で今回のログと類似したのあるかな〜と思って読み始めたら、1ページ目にテスラのモデル名が攻撃ターゲットとして記載してある。</p>
+<p>まさかねぇと思いつつこれをフラグとして入力したら、あっさり正解… 実質OSINT問題だった。</p>
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⛳ bh{Tesla Model S} か bh{Tesla Model S P85} のどちらか（うろ覚え）
+
+</aside>
+
+<h2><span id="well-see-in-the-mach-e">We’ll See in the Mach-E</span></h2><p>このカテゴリは自分が一人で初日に解き切った。</p>
+<hr>
+<p>wsme.zip というcandumpログが入ったzipを渡されるので、それを解析して諸々の質問に答えていくカテゴリ。</p>
+<p>後知恵としては、↓の解き方が良さげだと思っている。</p>
+<ol>
+<li>前処理（データクレンジング、SavvyCANで読めるようにGVRETへ変換）する</li>
+<li>SavvyCANでASCII部分を睨み、気合でVINを特定</li>
+<li>VINからメーカーを特定。<a target="_blank" rel="noopener" href="https://github.com/commaai/opendbc/blob/master/opendbc/dbc/ford_lincoln_base_pt.dbc">https://github.com/commaai/opendbc/blob/master/opendbc/dbc/ford_lincoln_base_pt.dbc</a> を入手し、SavvyCANに適用</li>
+<li>問題の情報を得られる各CAN IDを丁寧に1つずつ絞り込む</li>
+</ol>
+<hr>
+<p>ログファイルに破損？があるので、前処理としてクレンジングしておく。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">rm</span> wellsee_mache.log ; unzip wsme.zip</span><br><span class="line"></span><br><span class="line"><span class="comment"># can2 には `##5` が紛れており、これは `#` に置換</span></span><br><span class="line">sed -i <span class="string">&#x27;s/##5/#/g&#x27;</span> wellsee_mache.log</span><br></pre></td></tr></table></figure>
+
+<p>更に、SavvyCANで読み込めるように、GVRET Logs (CSV) 形式に変換する。</p>
+<p>該当スクリプト: <a target="_blank" rel="noopener" href="https://gist.github.com/laysakura/5647720f545e334f7f9dc9cb77c474d5">https://gist.github.com/laysakura/5647720f545e334f7f9dc9cb77c474d5</a></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% python analyze.py csvout &lt; wellsee_mache.log &gt; wellsee_mache.csv</span><br></pre></td></tr></table></figure>
+
+<h3><span id="did-access">DID Access</span></h3><img src="/img/2024/09-08/image%204.png" alt="image.png" width="500px" height="auto">
+
+<p>Read Data By Identifiers (0x22) で、問題文のDID 0x4915を呼んでいる箇所を探す。</p>
+<p><code>224915</code> でgrepするとヒットする。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">can3 7E4<span class="comment">#03224915CCCCCCCC</span></span><br></pre></td></tr></table></figure>
+
+<p>ソースCAN IDが 7E4。これはUDSの匂い。UDSとすると、デスティネーションCAN IDは +8 の 7EC だと予想できる。</p>
+<p><code>7EC#</code> でgrepすると↓ヒット。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">can3 7EC<span class="comment">#037F223100000000</span></span><br></pre></td></tr></table></figure>
+
+<p>やはりUDSのレスポンスとして解釈できる。</p>
+<ul>
+<li>03バイトの</li>
+<li>7F（negative response）の</li>
+<li>22サービスに対しての</li>
+<li>31ネガティブレスポンスコード</li>
+</ul>
+<p>ということ。</p>
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⛳ 0x31 (フラグ形式うろ覚え)
+
+</aside>
+
+<h3><span id="what-is-the-vin">What is the VIN?</span></h3><img src="/img/2024/09-08/image%205.png" alt="image.png" width="500px" height="auto">
+
+<p>CANフレームをASCIIデコードして眺めていると、CAN ID 40A にVINの断片を感じた。断片を繋げてビンゴ。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 自作スクリプトにて CAN ID 0x40A のログをASCIIで観察</span></span><br><span class="line"><span class="comment"># 後知恵としては、これ使わないでもSavvyCANで同じことできる</span></span><br><span class="line">% python analyze.py -i 40A longascii &lt; wellsee_mache.log</span><br><span class="line">&#123;<span class="string">&quot;interface&quot;</span>: <span class="string">&quot;can3&quot;</span>, <span class="string">&quot;canid&quot;</span>: <span class="string">&quot;40A&quot;</span>, <span class="string">&quot;dataLen&quot;</span>: <span class="number">8</span>, <span class="string">&quot;dataHex&quot;</span>: <span class="string">&quot;C10033464D544B34&quot;</span>, <span class="string">&quot;dataAscii&quot;</span>: <span class="string">&quot;..3FMTK4&quot;</span>&#125;</span><br><span class="line">&#123;<span class="string">&quot;interface&quot;</span>: <span class="string">&quot;can0&quot;</span>, <span class="string">&quot;canid&quot;</span>: <span class="string">&quot;40A&quot;</span>, <span class="string">&quot;dataLen&quot;</span>: <span class="number">8</span>, <span class="string">&quot;dataHex&quot;</span>: <span class="string">&quot;C10033464D544B34&quot;</span>, <span class="string">&quot;dataAscii&quot;</span>: <span class="string">&quot;..3FMTK4&quot;</span>&#125;</span><br><span class="line">&#123;<span class="string">&quot;interface&quot;</span>: <span class="string">&quot;can2&quot;</span>, <span class="string">&quot;canid&quot;</span>: <span class="string">&quot;40A&quot;</span>, <span class="string">&quot;dataLen&quot;</span>: <span class="number">8</span>, <span class="string">&quot;dataHex&quot;</span>: <span class="string">&quot;C10033464D544B34&quot;</span>, <span class="string">&quot;dataAscii&quot;</span>: <span class="string">&quot;..3FMTK4&quot;</span>&#125;</span><br><span class="line">&#123;<span class="string">&quot;interface&quot;</span>: <span class="string">&quot;can1&quot;</span>, <span class="string">&quot;canid&quot;</span>: <span class="string">&quot;40A&quot;</span>, <span class="string">&quot;dataLen&quot;</span>: <span class="number">8</span>, <span class="string">&quot;dataHex&quot;</span>: <span class="string">&quot;C10033464D544B34&quot;</span>, <span class="string">&quot;dataAscii&quot;</span>: <span class="string">&quot;..3FMTK4&quot;</span>&#125;</span><br><span class="line">&#123;<span class="string">&quot;interface&quot;</span>: <span class="string">&quot;can3&quot;</span>, <span class="string">&quot;canid&quot;</span>: <span class="string">&quot;40A&quot;</span>, <span class="string">&quot;dataLen&quot;</span>: <span class="number">8</span>, <span class="string">&quot;dataHex&quot;</span>: <span class="string">&quot;C1015358384D4D45&quot;</span>, <span class="string">&quot;dataAscii&quot;</span>: <span class="string">&quot;..SX8MME&quot;</span>&#125;</span><br><span class="line">&#123;<span class="string">&quot;interface&quot;</span>: <span class="string">&quot;can2&quot;</span>, <span class="string">&quot;canid&quot;</span>: <span class="string">&quot;40A&quot;</span>, <span class="string">&quot;dataLen&quot;</span>: <span class="number">8</span>, <span class="string">&quot;dataHex&quot;</span>: <span class="string">&quot;C1015358384D4D45&quot;</span>, <span class="string">&quot;dataAscii&quot;</span>: <span class="string">&quot;..SX8MME&quot;</span>&#125;</span><br><span class="line">&#123;<span class="string">&quot;interface&quot;</span>: <span class="string">&quot;can0&quot;</span>, <span class="string">&quot;canid&quot;</span>: <span class="string">&quot;40A&quot;</span>, <span class="string">&quot;dataLen&quot;</span>: <span class="number">8</span>, <span class="string">&quot;dataHex&quot;</span>: <span class="string">&quot;C1015358384D4D45&quot;</span>, <span class="string">&quot;dataAscii&quot;</span>: <span class="string">&quot;..SX8MME&quot;</span>&#125;</span><br><span class="line">&#123;<span class="string">&quot;interface&quot;</span>: <span class="string">&quot;can1&quot;</span>, <span class="string">&quot;canid&quot;</span>: <span class="string">&quot;40A&quot;</span>, <span class="string">&quot;dataLen&quot;</span>: <span class="number">8</span>, <span class="string">&quot;dataHex&quot;</span>: <span class="string">&quot;C1015358384D4D45&quot;</span>, <span class="string">&quot;dataAscii&quot;</span>: <span class="string">&quot;..SX8MME&quot;</span>&#125;</span><br><span class="line">&#123;<span class="string">&quot;interface&quot;</span>: <span class="string">&quot;can3&quot;</span>, <span class="string">&quot;canid&quot;</span>: <span class="string">&quot;40A&quot;</span>, <span class="string">&quot;dataLen&quot;</span>: <span class="number">8</span>, <span class="string">&quot;dataHex&quot;</span>: <span class="string">&quot;C1023030383738FF&quot;</span>, <span class="string">&quot;dataAscii&quot;</span>: <span class="string">&quot;..00878.&quot;</span>&#125;</span><br><span class="line">&#123;<span class="string">&quot;interface&quot;</span>: <span class="string">&quot;can2&quot;</span>, <span class="string">&quot;canid&quot;</span>: <span class="string">&quot;40A&quot;</span>, <span class="string">&quot;dataLen&quot;</span>: <span class="number">8</span>, <span class="string">&quot;dataHex&quot;</span>: <span class="string">&quot;C1023030383738FF&quot;</span>, <span class="string">&quot;dataAscii&quot;</span>: <span class="string">&quot;..00878.&quot;</span>&#125;</span><br><span class="line">&#123;<span class="string">&quot;interface&quot;</span>: <span class="string">&quot;can1&quot;</span>, <span class="string">&quot;canid&quot;</span>: <span class="string">&quot;40A&quot;</span>, <span class="string">&quot;dataLen&quot;</span>: <span class="number">8</span>, <span class="string">&quot;dataHex&quot;</span>: <span class="string">&quot;C1023030383738FF&quot;</span>, <span class="string">&quot;dataAscii&quot;</span>: <span class="string">&quot;..00878.&quot;</span>&#125;</span><br><span class="line">&#123;<span class="string">&quot;interface&quot;</span>: <span class="string">&quot;can0&quot;</span>, <span class="string">&quot;canid&quot;</span>: <span class="string">&quot;40A&quot;</span>, <span class="string">&quot;dataLen&quot;</span>: <span class="number">8</span>, <span class="string">&quot;dataHex&quot;</span>: <span class="string">&quot;C1023030383738FF&quot;</span>, <span class="string">&quot;dataAscii&quot;</span>: <span class="string">&quot;..00878.&quot;</span>&#125;</span><br></pre></td></tr></table></figure>
+
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⛳ 3FMTK4SX8MME00878
+
+</aside>
+
+<hr>
+<p><strong>この問題でVINが分かったので、車種特定 → DBC入手 により、謎のcandumpに意味づけして読むことができるようになる。</strong></p>
+<p><a target="_blank" rel="noopener" href="https://vpic.nhtsa.dot.gov/decoder/Decoder">https://vpic.nhtsa.dot.gov/decoder/Decoder</a> で検索すると、Fordの2021年の車であることが分かった。</p>
+<img src="/img/2024/09-08/image%206.png" alt="image.png" width="500px" height="auto">
+
+<p>対応するDBCファイルとして <a target="_blank" rel="noopener" href="https://github.com/commaai/opendbc/blob/master/opendbc/dbc/ford_lincoln_base_pt.dbc">https://github.com/commaai/opendbc/blob/master/opendbc/dbc/ford_lincoln_base_pt.dbc</a> を見つけた。以下の問題はこのファイルをSavvyCANに読み込ませた状態で解いていく。</p>
+<h3><span id="steering-angle">Steering Angle</span></h3><img src="/img/2024/09-08/image%207.png" alt="image.png" width="500px" height="auto">
+
+<p>SavvyCANでCAN IDを一つずつ眺めていくと、Steering AngleはCAN ID 0x07Eのものとわかる。</p>
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⛳ 0x07E
+
+</aside>
+
+<h3><span id="when-were-we-driving">When were we driving?</span></h3><img src="/img/2024/09-08/image%208.png" alt="image.png" width="500px" height="auto">
+
+<p>相変わらずCAN ID を一つずつ昇順に見ていく。CANID 0x084 が GlobalClock_Data_FD1 というやつ。</p>
+<p>2024年で、1&#x2F;1から178日後らしい。6&#x2F;26だって。</p>
+<img src="/img/2024/09-08/image%209.png" alt="image.png" width="500px" height="auto">
+
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⛳ 26/06/2024
+
+</aside>
+
+<h3><span id="radio">Radio</span></h3><img src="/img/2024/09-08/image%2010.png" alt="image.png" width="500px" height="auto">
+
+<p>CAN ID 0x1E9 、なんかやたらと自然言語っぽい。</p>
+<img src="/img/2024/09-08/image%2011.png" alt="image.png" width="500px" height="auto">
+
+<p>95.5っていうのがFMの周波数？と思ったら当たった。</p>
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⛳ 95.5
+
+</aside>
+
+<h3><span id="street-names">Street Names</span></h3><img src="/img/2024/09-08/image%2012.png" alt="image.png" width="500px" height="auto">
+
+<p>CAN ID 0x2C0 に何やら通りの名前？が。</p>
+<img src="/img/2024/09-08/image%2013.png" alt="image.png" width="500px" height="auto">
+
+<p>Piedmont,Acacia,Wheaton,Rochester かな？こういうアメリカ自信ニキに有利問題やめてくれ〜</p>
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⛳ Piedmont,Acacia,Wheaton,Rochester
+
+</aside>
+
+<h3><span id="where-were-we-driving">Where were we driving?</span></h3><img src="/img/2024/09-08/image%2014.png" alt="image.png" width="500px" height="auto">
+
+<p>CAN ID 0x462にGPSの緯度経度発見。</p>
+<img src="/img/2024/09-08/image%2015.png" alt="image.png" width="500px" height="auto">
+
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⛳ 42.33,-83.07
+
+</aside>
+
+<h2><span id="crypto">Crypto</span></h2><h3><span id="autosar-e2e">Autosar E2E</span></h3><img src="/img/2024/09-08/image%2016.png" alt="image.png" width="500px" height="auto">
+
+<p>問題の解析・解法の指針示しまではできたが、解き切れずチームメンバーに解いてもらった。</p>
+<hr>
+<p>シミュレーターのシェル環境が与えられる。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">candump -a vcan0</span><br></pre></td></tr></table></figure>
+
+<p>でCANメッセージを観測。最初に以下に気づく。</p>
+<ul>
+<li>CAN ID &#x3D; 101, 102, 103 が登場</li>
+<li>140個のメッセージごとにスリープする</li>
+<li>140 * 3 個のメッセージごとに周期性がある（元のメッセージの繰り返しになる）</li>
+</ul>
+<hr>
+<p>更に眺めると、↓の法則性に気づく。</p>
+<table>
+<thead>
+<tr>
+<th>CAN ID</th>
+<th>0-7bit</th>
+<th>8-11bit</th>
+<th>12-15bit</th>
+<th>16-19bit + 20-23bit</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>共通</td>
+<td>140行セット同士を比べると、<strong>あるバイトが出てくる行は同じ</strong>(101, 102, 103すべて)。</td>
+<td>E or F</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>行番号で決まっている</td>
+<td>0, 1, …, A, B, …, E</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>の15進数周期</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>(※Fはない)</td>
+<td>-</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>101</td>
+<td>8-15bit目と1:1対応</td>
+<td>E, Fが交互に繰り返し？</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>102</td>
+<td>同上</td>
+<td>わからん</td>
+<td>-</td>
+<td>-</td>
+</tr>
+<tr>
+<td>103</td>
+<td>わからん</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>（規則性があるようには思えない。乱数かも）</td>
+<td>常にF</td>
+<td>-</td>
+<td><code>J09LJw==</code> 固定</td>
+<td></td>
+</tr>
+<tr>
+<td>→ base64decすると <code>&#39;OK&#39;</code></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<hr>
+<p>チームメンバーに相談しつつ更に更にウンウンすると、102の8-11bit目は、 <code>E</code> を <code>0</code>, <code>F</code> を <code>1</code> に対応させて8つ組を1つのASCIIとして読むと、Base64エンコードされた <code>&#39;SEND FLG&#39;</code> であることが分かった。</p>
+<p>つまり、</p>
+<ul>
+<li>102: リクエスト。 <code>&#39;SEND FLG&#39;</code> と言っている</li>
+<li>103: レスポンス。 <code>&#39;OK&#39;</code> と言っている</li>
+<li>101: リクエスト・レスポンスの開始・終了時に挟まる制御的な何か</li>
+</ul>
+<p>とわかった。</p>
+<hr>
+<p>まだフラグには届かないので探索を続ける。</p>
+<p>問題タイトルからAutosar E2Eという規格が関係することは推測がつく。ググって</p>
+<p><a target="_blank" rel="noopener" href="https://www.autosar.org/fileadmin/standards/R23-11/FO/AUTOSAR_FO_PRS_E2EProtocol.pdf%E3%81%AE%E4%BB%95%E6%A7%98%E6%96%87%E6%9B%B8%E3%81%AB%E8%A1%8C%E3%81%8D%E7%9D%80%E3%81%8F%E3%80%82">https://www.autosar.org/fileadmin/standards/R23-11/FO/AUTOSAR_FO_PRS_E2EProtocol.pdfの仕様文書に行き着く。</a></p>
+<p>vcan0を流れるCANメッセージがこの仕様書の何かしらのフォーマットに該当するはずと仮定して読み進めると、Profile 1というのが該当しそうなのこと分かった。特に、2バイト目の15進カウンタのところがプンプンする。</p>
+<img src="/img/2024/09-08/image%2017.png" alt="image.png" width="500px" height="auto">
+
+<p>仕様書に従ってCANメッセージに当てはめていくと、<strong>1バイト目は Data ID &#x3D;&#x3D; 0x2 とした場合のCRC</strong> と考えて矛盾ないことが分かった。</p>
+<p>Data IDの特定に使ったコードは↓</p>
+<p><a target="_blank" rel="noopener" href="https://gist.github.com/laysakura/b087efe4da122a85cd0e006b130a37ae">https://gist.github.com/laysakura/b087efe4da122a85cd0e006b130a37ae</a></p>
+<p>CRC計算は下図の通りに実装した。</p>
+<img src="/img/2024/09-08/image%2018.png" alt="image.png" width="500px" height="auto">
+
+<hr>
+<p>ここまで分かったところで、まだフラグに届かない。CRCはチェックサムでしかなく、情報量は増えなかったので…</p>
+<p>vcan0に流れるメッセージを眺めているだけではこれ以上の進展はないと見切り、CANのブロードキャストかつ無認証な性質を踏まえ、自分自身がリクエストに<strong>なりすます</strong>問題なのだと看破した。</p>
+<p>102に成り代わって、好きな Data ID で <code>&#39;SEND FLG&#39;</code> の代わりの好きなメッセージを送れるスクリプトを書いた↓</p>
+<p><a target="_blank" rel="noopener" href="https://gist.github.com/laysakura/ed7537b82b6af3e69f9f27468a175152">https://gist.github.com/laysakura/ed7537b82b6af3e69f9f27468a175152</a></p>
+<p>が・・・・・駄目っ・・・・・！</p>
+<p>103はなりすましに反応はしてくれるが、 <code>&#39;OK&#39;</code> か <code>&#39;ERR&#39;</code> しか言ってくれない。</p>
+<hr>
+<p>これでフラグに届かないってどういうことよと絶望しつつ、見落としがないかを見極めるために完全掌握した（つもりの）プロトコルに沿ったメッセージやり取りについて、ステートマシンを仮定してロギングするスクリプトを書いた↓</p>
+<p><a target="_blank" rel="noopener" href="https://gist.github.com/laysakura/4b24d809b68e0c8b54100ed683e846c8">https://gist.github.com/laysakura/4b24d809b68e0c8b54100ed683e846c8</a></p>
+<p>苦労して作っただけのことはあり、vcan0で何が起きているのかは一目瞭然になった。</p>
+<img src="/img/2024/09-08/image%2019.png" alt="image.png" width="500px" height="auto">
+
+<hr>
+<p>しかしここからいくらリクエストをガチャガチャなりすましてもフラグに届かず、チームメンバーに引き継いだ。</p>
+<p>102のリクエストになりすますのではなく、103のレスポンスになりすますゲームだった….</p>
+<img src="/img/2024/09-08/image%2020.png" alt="image.png" width="500px" height="auto">
+
+<img src="/img/2024/09-08/image%2021.png" alt="image.png" width="500px" height="auto">
+
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⛳
+
+<p>bh{aut0s4r_e2e_encryp73d!}</p>
+</aside>
+
+<h2><span id="reversing">Reversing</span></h2><h3><span id="power-自力部分までのメモ">Power [自力部分までのメモ]</span></h3><img src="/img/2024/09-08/image%2022.png" alt="image.png" width="500px" height="auto">
+
+<p>バイナリの動的解析・静的解析を合わせ、このバイナリがVMMを表しており、VMのバイトコードでやっていることを解析すべき問題であるところの特定までした。</p>
+<p>しかし肝心のバイトコード解析が綺麗にいかず、チームメンバーがバイトコードのディスアセンブラを書いた上で華麗に解いてくれた。</p>
+<p>問題の過程でGhidraとgdb力を上げることができたし、好きな問題。これからは自力でも解ききれるようになりたい。</p>
+<p>以下、自分が取り組んだメモを書き残す。<strong>不正確な箇所を含むことが分かっているので、他の人のwriteupを参考にしてください。</strong></p>
+<hr>
+<p>PowerPCのバイナリを解析する問題。</p>
+<ul>
+<li>Ghidraで静的解析</li>
+<li>qemu-ppc + gdb (pwndbgおすすめ) で動的解析</li>
+</ul>
+<p>していく。</p>
+<hr>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">% file power</span><br><span class="line">power: ELF <span class="number">32</span>-bit MSB executable, PowerPC <span class="keyword">or</span> cisco <span class="number">4500</span>, version <span class="number">1</span> (SYSV), statically linked, stripped</span><br></pre></td></tr></table></figure>
+
+<img src="/img/2024/09-08/image%2023.png" alt="image.png" width="500px" height="auto">
+
+<hr>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">% qemu-ppc ./power</span><br><span class="line">nothing happened...</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>QEMU + gdb (pwndbg) での解析:</p>
+<p><a target="_blank" rel="noopener" href="https://mariokartwii.com/showthread.php?tid=1998">https://mariokartwii.com/showthread.php?tid=1998</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% qemu-ppc -g <span class="number">1234</span> ./power</span><br></pre></td></tr></table></figure>
+
+<p>この問題に有効なGDB Python Scriptを書いたのでこれを <a target="_blank" rel="noopener" href="http://hook.py/">hook.py</a> として指定し使う。</p>
+<p>hook.py: <a target="_blank" rel="noopener" href="https://gist.github.com/laysakura/ec4a4834a93a4c566ae3a088b76b1973">https://gist.github.com/laysakura/ec4a4834a93a4c566ae3a088b76b1973</a></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">% gdb-multiarch -q --nh \</span><br><span class="line">  -x ~/.ghq/src/github.com/pwndbg/pwndbg/gdbinit.py \</span><br><span class="line">  -x hook.py \</span><br><span class="line">  -ex <span class="string">&#x27;set architecture powerpc:common&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;set sysroot /usr/powerpc-linux-gnu&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;file power&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;target remote localhost:1234&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;set can-use-hw-watchpoint 0&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;set show-compact-regs on&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;set show-compact-regs-columns 4&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;custom-hooks&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<h4><span id="この問題の厄介なところ">この問題の厄介なところ</span></h4><ul>
+<li>PowerPC<ul>
+<li>慣れればCISCなx86, x64より読みやすい…?</li>
+</ul>
+</li>
+<li>関数が少なく、ブロック&amp;ラベルでジャンプ（bctr）しまくっている<ul>
+<li>Ghidraのデコンパイラに頼りきれない</li>
+</ul>
+</li>
+</ul>
+<h4><span id="プログラムが表現しているもの概要">プログラムが表現しているもの概要</span></h4><ul>
+<li>VM (CISC: 1byte or 4byte 命令)<ul>
+<li>基本的に1byteずつ実行</li>
+<li>4byte命令が始まるきっかけ → <code>\0x4</code> 命令</li>
+</ul>
+</li>
+<li>0x1810ae4 からの謎バイト列 → VMが実行する命令列</li>
+</ul>
+<h4><span id="プログラムの構造処理の流れ">プログラムの構造・処理の流れ</span></h4><aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⚠️ めちゃくちゃ書きかけ
+
+</aside>
+
+<p>重要処理</p>
+<p>| アドレス</p>
+<table>
+<thead>
+<tr>
+<th>1800 ???</th>
+<th>処理</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>708</td>
+<td>guestPushFromR3</td>
+</tr>
+<tr>
+<td>838</td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>a1c</td>
+<td>LAB_vmR0&#x3D;instruction2</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<ul>
+<li><p>ホストは0x18000e0 のブロックから、概ね2つのブロックの組の単位で実行を進めることで、ゲスト処理を進行させる</p>
+<ul>
+<li><p>1つめブロック:</p>
+<ul>
+<li>2つ目ブロックのアドレスを VMStack にpush</li>
+<li>ゲスト処理進行<ul>
+<li>ホスト変化: R12, R13レジスタが更新される</li>
+<li>ゲスト変化: この過程で VMRegs や VMStack が変更される</li>
+</ul>
+</li>
+<li>2つ目ブロックのアドレスを VMStack からpopし、そのアドレスにジャンプ</li>
+</ul>
+</li>
+<li><p>2つめブロック:</p>
+<ul>
+<li>R3 または R1レジスタが保持するアドレスをderef。その値を書き換える</li>
+<li>VMStack からpopし、そのアドレスにジャンプ</li>
+</ul>
+</li>
+<li><p>2つのブロック組の例↓</p>
+<pre><code>&lt;img src=&quot;/img/2024/09-08/image%2024.png&quot; alt=&quot;image.png&quot; width=&quot;500px&quot; height=&quot;auto&quot;&gt;
+</code></pre>
+</li>
+</ul>
+</li>
+<li><p>ブロックにおけるr3は、vmR0がセットされている</p>
+</li>
+<li><p>R12, R3&#x3D;&#x3D;vmR0, (たまにR1, R4) が guest → ホストへの通信</p>
+</li>
+<li><p>R12, R13 がホスト→guestへの通信</p>
+</li>
+</ul>
+<hr>
+<ul>
+<li>実行の過程で、ホストOSで <code>ls /</code> 的にするシステムコール呼び出し (sc) をしている<ul>
+<li><p>ホストOS側の <code>/</code> の中身で挙動（少なくともメモリの値）が変わる</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">% QEMU_STRACE=<span class="number">1</span> qemu-ppc ./power</span><br><span class="line"><span class="number">3027092</span> <span class="built_in">open</span>(<span class="string">&quot;/&quot;</span>,O_RDONLY) = <span class="number">3</span>                    <span class="comment"># システムコール番号 5</span></span><br><span class="line"><span class="number">3027092</span> getdents(<span class="number">3</span>,<span class="number">0x2368fcb</span>,<span class="number">1024</span>) = <span class="number">408</span>          <span class="comment"># システムコール番号 141 = 0x8d</span></span><br><span class="line"><span class="number">3027092</span> write(<span class="number">0</span>,<span class="number">0x236934b</span>,<span class="number">21</span>)nothing happened...  <span class="comment"># システムコール番号 4</span></span><br><span class="line"> = <span class="number">21</span></span><br><span class="line"><span class="number">3027092</span> exit_group(<span class="number">0</span>)</span><br></pre></td></tr></table></figure></li>
+</ul>
+</li>
+</ul>
+<h4><span id="メモリ配置">メモリ配置</span></h4><p>概要</p>
+<table>
+<thead>
+<tr>
+<th><strong>アドレス</strong></th>
+<th><strong>仮命名</strong></th>
+<th><strong>何が入ってる</strong></th>
+<th><strong>誰が指している</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x1810c84 ~</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+<td><strong>vmIP</strong>が指す先</td>
+<td></td>
+</tr>
+<tr>
+<td>つまりVMRegsのoffset</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x22ec3cf ~</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x22ec403</td>
+<td></td>
+<td>VMRegs</td>
+<td>初期化後のR10</td>
+</tr>
+<tr>
+<td>0x2368fcb ~</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+<td>ls &#x2F; 結果</td>
+<td></td>
+</tr>
+<tr>
+<td>0x236934b</td>
+<td><strong>TheString</strong></td>
+<td>“nothing happened…\n”</td>
+<td></td>
+</tr>
+<tr>
+<td>0x0236938b ~</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x0236938c</td>
+<td></td>
+<td>0x0000000</td>
+<td></td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x2f000000</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x023693bb ~</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x023693cf</td>
+<td><strong>VmStack</strong></td>
+<td>5段のスタック</td>
+<td></td>
+</tr>
+</tbody></table>
+<p>0x22ec3cf (R10) ~ 0x22ec403 VMRegs構造体</p>
+<table>
+<thead>
+<tr>
+<th>アドレス</th>
+<th><strong>仮命名</strong></th>
+<th><strong>値推移メモ (interesting1開始時)</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x22ec3cf</td>
+<td>vmR0Offset{R0}</td>
+<td>0x00000197</td>
+</tr>
+<tr>
+<td>0x22ec3eb (+0x1c)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x00000040</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x22ec3fb (+0x2c)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x22ec3db (+0xc)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x00000000</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>0x000000fa |<br>| 0x22ec3d3 (+0x4) | vmR4 | 0x00000000<br>…</p>
+<p>0x236934b |<br>| 0x22ec3d7 (+0x8) | … | 0x00000000<br>…</p>
+<p>0x0236938b |<br>| 0x22ec3db (+0xc) | … | 0x00000000<br>…<br>0x00000001<br>…</p>
+<p>0x00000000 |<br>|  |  |  |<br>| 0x22ec3df (+0x10) | … | 0x00000000<br>… |<br>| 0x22ec3e3 (+0x14) | … | 0x00000000<br>…<br>0x0236938b<br>…</p>
+<p>0x00000000 |<br>| 0x22ec3e7 (+0x18) | … | 0x023693cf<br>…</p>
+<p>0x00000000 |<br>| 0x22ec3eb (+0x1c) | <strong>vmSP</strong> | 0x023693cb<br>… |<br>|  |  |  |<br>| 0x22ec3ef (+0x20) | <strong>TheStringSrc</strong> | 0x00000000<br>…</p>
+<p>0x00000198 |<br>| 0x22ec3f3 (+0x24) | **ptrDentry</p>
+<p>8ずつ+されている雰囲気** | 0x00000000<br>…</p>
+<p>0x0236916b |<br>| 0x22ec3f7 (+0x28) | <strong>vmIP</strong><br> | 0x01810c83 (const data)<br>0x01810c88 (const data)<br>0x01810c8e (const data)<br>0x01810c93 (const data)<br>0x01810ca2 (const data)<br>0x01810cac |<br>| 0x22ec3fb (+0x2c) |  | 0x00000000<br>0x023693cb<br>0x0236938b<br>… |<br>|  |  |  |<br>| 0x22ec3ff (+0x30) |  | 0x00000000<br>… |<br>| 0x22ec403 (+0x34) |  | 0x01800ad8<br>(initの中で再帰的にinitを呼んだ後、返る際のアドレス)<br>… |</p>
+<hr>
+<p>0x023693bb  ~ 0x023693cb VmStack</p>
+<p>5段しかないスタック。</p>
+<table>
+<thead>
+<tr>
+<th>アドレス</th>
+<th><strong>仮命名</strong></th>
+<th><strong>何が入ってる</strong></th>
+<th><strong>値推移メモ (interesting1開始時)</strong></th>
+</tr>
+</thead>
+<tbody><tr>
+<td>0x023693bb</td>
+<td></td>
+<td></td>
+<td>0x00000000</td>
+</tr>
+<tr>
+<td>….</td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<p>0x22ec3df (+0x10) |<br>| 0x023693bf (+0x4) |  |  | 0x00000000<br>….<br>0x22ec3db (+0xc)<br>… |<br>| 0x023693c3 (+0x8) |  |  | 0x00000000<br>0x01800a1c (LAB_VMRegs.0&#x3D;constDataU32)<br>…<br>0x22ec3e3 (+0x14)<br>…</p>
+<p>0x22ec3d7 (+0x8) |<br>| 0x023693c7 (+0xc) |  |  | 0x00000000<br>0x22ec3fb (+0x2c)<br>…<br>0x22ec3e3 (+0x14)<br>0x01800a1c<br>0x0236938c</p>
+<p>0x0236938b |<br>|  |  |  |  |<br>| 0x023693cb (+0x10) |  |  | 0x018004f4 (LAB_018004f4)<br>0x01800290 (LAB_01800290)<br>0x018004f4 (LAB_018004f4)<br>0x01800338 (LAB_TheString(nothing)を作りがち)<br>0x018004c4 (LAB_TheString[i]&#x3D;r4)<br>0x018004f4 |</p>
+<h4><span id="r5にファイル名が">R5にファイル名が…</span></h4><p>test-… みたいなディレクトリ消したら見れなくなったな?</p>
+<img src="/img/2024/09-08/image%2025.png" alt="image.png" width="500px" height="auto">
+
+<hr>
+<p>再現条件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">b *<span class="number">0x18000f8</span></span><br><span class="line">c</span><br><span class="line">c</span><br><span class="line"><span class="meta">... </span> <span class="comment"># R5レジスタを見る</span></span><br></pre></td></tr></table></figure>
+
+<p><strong>8文字以上のディレクトリが必要？</strong></p>
+<ul>
+<li><p><input checked disabled type="checkbox"> 
+<code>for i in $(seq 10) ; do sudo mkdir /test-$i ; done</code></p>
+</li>
+<li><p><input checked disabled type="checkbox"> 
+<code>% for i in seq 1000 ; do sudo mkdir /TEST-$i ; done</code></p>
+  <img src="/img/2024/09-08/image%2026.png" alt="image.png" width="500px" height="auto">
+</li>
+<li><p><input disabled type="checkbox"> 
+<code>for i in $(seq 10) ; do sudo mkdir /TES$i ; done</code></p>
+<ul>
+<li><input disabled type="checkbox"> NG</li>
+</ul>
+</li>
+<li><p><input disabled type="checkbox"> 
+<code>for i in $(seq 10) ; do sudo mkdir /TES-$i ; done</code></p>
+<ul>
+<li><input disabled type="checkbox"> NG</li>
+</ul>
+</li>
+<li><p><input checked disabled type="checkbox"> 
+<code>% for i in $(seq 10) ; do sudo mkdir /TE-$i-ST ; done</code></p>
+  <img src="/img/2024/09-08/image%2027.png" alt="image.png" width="500px" height="auto">
+</li>
+<li><p><input checked disabled type="checkbox"> 
+<code>sudo mkdir /TE-10-ST</code></p>
+</li>
+<li><p><input disabled type="checkbox"> 
+<code>sudo mkdir /TE-1-ST</code></p>
+<ul>
+<li><input disabled type="checkbox"> NG</li>
+</ul>
+</li>
+<li><p><input disabled type="checkbox"> 
+<code>sudo mkdir /$(cyclic 128)</code></p>
+<ul>
+<li><input disabled type="checkbox"> NG</li>
+</ul>
+</li>
+<li><p><input disabled type="checkbox"> 
+<code>sudo mkdir /test</code></p>
+<ul>
+<li><input disabled type="checkbox"> NG</li>
+</ul>
+</li>
+<li><p><input disabled type="checkbox"> 
+<code>sudo mkdir /testtes</code></p>
+<ul>
+<li><input disabled type="checkbox"> NG</li>
+</ul>
+</li>
+<li><p><input checked disabled type="checkbox"> 
+<code>sudo mkdir /testtest</code></p>
+</li>
+<li><p><input checked disabled type="checkbox"> 
+<code>sudo mkdir /$(cyclic 8)</code></p>
+<ul>
+<li><input disabled type="checkbox"> NG</li>
+</ul>
+</li>
+</ul>
+<h4><span id="8文字ディレクトリがあるときの挙動を追う">8文字ディレクトリがあるときの挙動を追う</span></h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">sudo mkdir /<span class="number">12345678</span></span><br><span class="line"></span><br><span class="line">...</span><br><span class="line"></span><br><span class="line">record full</span><br></pre></td></tr></table></figure>
+
+<h4><span id="wip-vm命令の解析">[WIP] VM命令の解析</span></h4><p>vmIPの使用箇所と、後続の動的な用途を観測。VMの命令列がいかなる意味かを探る。</p>
+<hr>
+<p>もしかしたら命令列だけで意味は確定しないかも。2つの <code>[vm][main]</code> のどっち駆動で命令解釈が始まったかで処理結果が変わる可能性を感じる</p>
+<hr>
+<p><code>SUB_pushNextSub_...</code> <code>SUB_(next sub)</code>  の先頭にブレークを貼っていってcontinueし、2つ組のブロックの間で起こったことを観測すると、各命令がどう解釈され、スタック状態がどう変化したのかをマクロに見れそう<br>→ この単位で見ている限り、スタックの状態は気にしないで良さそう。常にbottom付近。stackはローカル変数と見れる</p>
+<hr>
+<p>命令セットまとめ (* <code>&lt;varName_N&gt;</code> の N は何バイトかを表す)</p>
+<ul>
+<li><code>01 &lt;regNoA_1&gt; &lt;regNoB_1&gt;</code> :<ul>
+<li><code>vmR0 = *(byte *)vmGetRegAddr(regNoA_1) + *(byte *)vmGetRegAddr(regNoB_1)</code></li>
+<li>計算過程で、vmGetRegAddr(regNoA_1), vmGetRegAddr(regNoB_1) のアドレス値がstackにpush&#x2F;popされる</li>
+</ul>
+</li>
+<li><code>02 &lt;regNo_1&gt;</code>: <strong>get reg addr</strong><ul>
+<li><code>vmR0 = vmGetRegAddr(regNo_1)</code></li>
+<li>副作用として、0x01800a1c が一瞬push&#x2F;pop される</li>
+</ul>
+</li>
+<li><code>03 01 &lt;jmpOffset_1&gt;</code> : <strong>jump near</strong><ul>
+<li>vmR0 &#x3D; jmpOffset_1; vmIP +&#x3D; vmR0</li>
+</ul>
+</li>
+<li><code>03 04 &lt;jmpOffset_4&gt;</code> : <strong>jump far</strong><ul>
+<li>vmR0 &#x3D; jmpOffset_4; vmIP +&#x3D; vmR0</li>
+</ul>
+</li>
+<li><strong>host jump to sub nth</strong> ホストのCTRに次のSUBアドレス入れる命令（hostに制御戻す割り込み？）<ul>
+<li><code>&lt;nth_1&gt;</code> : R12 &#x3D; CTR &#x3D; 0x1800074 + nth_1 * 4; bctr<ul>
+<li>where nth_1 &#x3D;&#x3D; 0x12, 0x1a, …? （仮説: 上述の決まった命令セット以外？)</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<p>📝 <code>02 2c</code> 命令における vmR2c &#x3D;&#x3D; 0x0 の用途<br>vmR0 &#x3D; &amp;vmR2c (0x22ec3fb)  にしたのは観測した。これをstackにpushまでする感じ？</p>
+<ul>
+<li>1a:<ul>
+<li>先頭の 1810ae4 にある。他にも7000件超。</li>
+<li>先頭のは hostInitで処理されている。 0x1800074 + <strong>1a</strong> * 4 &#x3D; 0x18000dc (SUB_pushNextSub_… のアドレスへのポインタ) を定数計算するためっぽい</li>
+<li>で、その後は SUB_pushNextSub_… が実行されて、nextSubのアドレスがpushされる</li>
+<li>仮説: push <code>1a</code>-th sub routine address?</li>
+</ul>
+</li>
+<li>12:</li>
+<li>0x07, 0x12, 0x2c: nop; vmIP++</li>
+</ul>
+<hr>
+<p>vmIP, vmSPの変化点でしっかり観測</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">watch *<span class="number">0x22ec3f7</span></span><br><span class="line">watch *<span class="number">0x22ec3eb</span></span><br><span class="line"></span><br><span class="line">commands <span class="number">1</span>-<span class="number">2</span></span><br><span class="line">&gt; x/2i $pc-<span class="number">4</span></span><br><span class="line">&gt; end</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>使用箇所</p>
+<img src="/img/2024/09-08/image%2028.png" alt="image.png" width="500px" height="auto">
+
+<hr>
+<p>| <strong>使用箇所</strong> | <strong>利用パターン</strong> | vmIP 遷移 (#) | *vmIP 遷移</p>
+<p>(4byte。有効箇所太字) |<br>| — | — | — | — |<br>| 18006f4<br>SUB_vmIP+&#x3D;r3→pop→bctr | vmIP +&#x3D; r3 | 0x1810c82 (5)<br>← (4) + vmR0<br>&#x3D; 0x1810aeb + 0x197 | 0x12    0x02    0x2c    0x02 |<br>| 1800764<br>vmR12&#x3D;1_vmReg→pop→bctr | vmIP++ | 0x1810c87 (11) | 0x07    0x02    0x2c    0x03 |<br>| 180076c<br>vmR12&#x3D;1_vmReg→pop→bctr | vmGetRegAddr(instruction) | 0x1810c85 (9) | <strong>0x02</strong>    0x1c    0x07    0x02 |<br>| 18007b0<br>vmR12&#x3D;2_vmRegs(+)-&gt;pop-&gt;bctr | vmGetRegAddr(instruction) |  |  |<br>| 18007e8<br>vmR12&#x3D;2_vmRegs(+)-&gt;pop-&gt;bctr | vmGetRegAddr(instruction) |  |  |<br>| 1800840<br>vmUpdateR12Indirectly-&gt;pop-&gt;bctr | r12&#x3D;*(byte <em>)vmIP vmIP++; vm…()<br>(インクリメント前のinstructionは、次に呼び出されるvm…()関数の入力として使われる) | 0x1810ae5 (1) | <strong>0x03</strong>    <strong>0x04</strong>    0x00    0x00 |<br>| 18008a8<br>vmUpdateR4ByUpdatedvmR0,DependingOnR13&#x3D;&#x3D;1,2,3-&gt;pop-&gt;bctr | vmIP++; vm…()<br>(インクリメント前のinstructionは、次に呼び出されるvm…関数の入力として使われる) | 0x1810c84 (8) | 0x2c    0x02    0x1c    0x07 |<br>| 18008e0<br>vmUpdateR4ByUpdatedvmR0,DependingOnR13&#x3D;&#x3D;1,2,3-&gt;pop-&gt;bctr | vmIP++ | 0x1810c86 (10) | 0x1c    0x07    0x02    0x2c |<br>| 180094c<br>vmUpdateR4ByUpdatedvmR0,DependingOnR13&#x3D;&#x3D;1,2,3-&gt;pop-&gt;bctr<br>R13&#x3D;&#x3D;1のケース |</em>(byte <em>)vmIP &#x3D;&#x3D; 1 |  | 先頭バイトは0x1のはず |<br>| 1800954<br>vmUpdateR4ByUpdatedvmR0,DependingOnR13&#x3D;&#x3D;1,2,3-&gt;pop-&gt;bctr<br>R13&#x3D;&#x3D;1のケース |</em>(byte <em>)vmIP &#x3D;&#x3D; 2 |  | 先頭バイトは0x2のはず |<br>| 1800944<br>vmUpdateR4ByUpdatedvmR0,DependingOnR13&#x3D;&#x3D;1,2,3-&gt;pop-&gt;bctr<br>R13&#x3D;&#x3D;1のケース |</em>(byte <em>)vmIP &#x3D;&#x3D; 3 |  | 先頭バイトは0x3のはず |<br>| 18009b8<br>vmUpdateR12&amp;vmR0,DependingOn</em>vmIP&#x3D;&#x3D;1,2,3 | *(byte <em>)vmIP &#x3D;&#x3D; 1or2or3? | 0x1810ae6 (2) | <strong>0x04</strong>   0x00    0x00    0x01 |<br>| 18009e0<br>vmUpdateR12&amp;vmR0,DependingOn</em>vmIP&#x3D;&#x3D;1,2,3<br>*(byte <em>)vmIP &#x3D;&#x3D; 1 のケース |</em>(byte <em>)vmIP &#x3D;&#x3D; 1 |  |  |<br>| 1800a00<br>vmUpdateR12&amp;vmR0,DependingOn</em>vmIP&#x3D;&#x3D;1,2,3<br><em>(byte</em>)vmIP &#x3D;&#x3D; 4 のケース | <em>(byte</em>)vmIP &#x3D;&#x3D; 4 then<br>  R12 &#x3D; *(uint <em>)vmIP ; vmIP +&#x3D; 4 | 0x1810ae7 (3) | <strong>0x00    0x00    0x01    0x97</strong> |<br>| 1800a1c<br>vmUpdateR12&amp;vmR0,DependingOn</em>vmIP&#x3D;&#x3D;1,2,3 | vmR0 &#x3D; instruction | 0x1810aeb (4) | 0x12    0x02    0x2c    0x02 |<br>| 1800a98<br>hostInit | vmIP++ | 0x1810c83 (7) | 0x02    0x2c    0x02    0x1c |</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">% gdb-multiarch -q --nh \</span><br><span class="line">  -x ~/.ghq/src/github.com/pwndbg/pwndbg/gdbinit.py \</span><br><span class="line">  -x hook.py \</span><br><span class="line">  -ex <span class="string">&#x27;set architecture powerpc:common&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;set sysroot /usr/powerpc-linux-gnu&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;file power&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;target remote localhost:1234&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;set can-use-hw-watchpoint 0&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;set show-compact-regs on&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;set show-compact-regs-columns 4&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;custom-hooks&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;b *0x180076c&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;b *0x18007b0&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;b *0x18007e8&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;b *0x1800840&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;b *0x18008a8&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;b *0x180094c&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;b *0x1800954&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;b *0x1800944&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;b *0x18009e0&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;b *0x18009b8&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;b *0x1800a00&#x27;</span> \</span><br><span class="line">  -ex <span class="string">&#x27;b *0x1800a1c&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<hr>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">[regs] R0: <span class="number">25168048</span>     R1: <span class="number">37131215</span>    R3: <span class="number">36619255</span>    R12: <span class="number">2</span>  R13 (<span class="number">1</span>-<span class="number">3</span>): <span class="number">0</span></span><br><span class="line"></span><br><span class="line">[VMRegs] vmR0: <span class="number">0x22ec3fb</span>        vmIP: <span class="number">0x1810c86</span> vmSP: <span class="number">0x23693c7</span></span><br><span class="line"><span class="number">0x22ec3cf</span>:      <span class="number">0x022ec3fb</span>      <span class="number">0x00000000</span>      <span class="number">0x00000000</span>      <span class="number">0x00000000</span></span><br><span class="line"><span class="number">0x22ec3df</span>:      <span class="number">0x00000000</span>      <span class="number">0x00000000</span>      <span class="number">0x023693cf</span>      <span class="number">0x023693c7</span></span><br><span class="line"><span class="number">0x22ec3ef</span>:      <span class="number">0x00000000</span>      <span class="number">0x00000000</span>      <span class="number">0x01810c86</span>      <span class="number">0x00000000</span></span><br><span class="line"><span class="number">0x22ec3ff</span>:      <span class="number">0x00000000</span>      <span class="number">0x01800ad8</span></span><br><span class="line"></span><br><span class="line">[VMStack] vmSP: <span class="number">0x23693c7</span></span><br><span class="line"><span class="number">0x23693bb</span>:      <span class="number">0x00000000</span></span><br><span class="line"><span class="number">0x23693bf</span>:      <span class="number">0x00000000</span></span><br><span class="line"><span class="number">0x23693c3</span>:      <span class="number">0x00000000</span></span><br><span class="line"><span class="number">0x23693c7</span>:      <span class="number">0x022ec3fb</span></span><br><span class="line"><span class="number">0x23693cb</span>:      <span class="number">0x018004f4</span></span><br><span class="line"></span><br><span class="line">[VMInstructions] vmIP: <span class="number">0x1810c86</span></span><br><span class="line"><span class="number">0x1810c7e</span>:      <span class="number">0x00</span>    <span class="number">0xad</span>    <span class="number">0xb7</span>    <span class="number">0x4c</span>    <span class="number">0x12</span>    <span class="number">0x02</span>    <span class="number">0x2c</span>    <span class="number">0x02</span></span><br><span class="line"><span class="number">0x1810c86</span>:      <span class="number">0x1c</span>    <span class="number">0x07</span>    <span class="number">0x02</span>    <span class="number">0x2c</span>    <span class="number">0x03</span>    <span class="number">0x01</span>    <span class="number">0x40</span>    <span class="number">0x12</span></span><br><span class="line"><span class="number">0x1810c8e</span>:      <span class="number">0x02</span>    <span class="number">0x14</span>    <span class="number">0x02</span>    <span class="number">0x2c</span>    <span class="number">0x0a</span>    <span class="number">0x02</span>    <span class="number">0x0c</span>    <span class="number">0x02</span></span><br><span class="line"></span><br><span class="line">---</span><br><span class="line"></span><br><span class="line">[regs] R0: <span class="number">25168108</span>     R1: <span class="number">37131215</span>    R3: <span class="number">36619255</span>    R12: <span class="number">28</span> R13 (<span class="number">1</span>-<span class="number">3</span>): <span class="number">2</span></span><br><span class="line"></span><br><span class="line">[VMRegs] vmR0: <span class="number">0x22ec3fb</span>        vmIP: <span class="number">0x1810c87</span> vmSP: <span class="number">0x23693c3</span></span><br><span class="line"><span class="number">0x22ec3cf</span>:      <span class="number">0x022ec3fb</span>      <span class="number">0x00000000</span>      <span class="number">0x00000000</span>      <span class="number">0x00000000</span></span><br><span class="line"><span class="number">0x22ec3df</span>:      <span class="number">0x00000000</span>      <span class="number">0x00000000</span>      <span class="number">0x023693cf</span>      <span class="number">0x023693c3</span></span><br><span class="line"><span class="number">0x22ec3ef</span>:      <span class="number">0x00000000</span>      <span class="number">0x00000000</span>      <span class="number">0x01810c87</span>      <span class="number">0x00000000</span></span><br><span class="line"><span class="number">0x22ec3ff</span>:      <span class="number">0x00000000</span>      <span class="number">0x01800ad8</span></span><br><span class="line"></span><br><span class="line">[VMStack] vmSP: <span class="number">0x23693c3</span></span><br><span class="line"><span class="number">0x23693bb</span>:      <span class="number">0x00000000</span></span><br><span class="line"><span class="number">0x23693bf</span>:      <span class="number">0x00000000</span></span><br><span class="line"><span class="number">0x23693c3</span>:      <span class="number">0x01800a1c</span></span><br><span class="line"><span class="number">0x23693c7</span>:      <span class="number">0x022ec3fb</span></span><br><span class="line"><span class="number">0x23693cb</span>:      <span class="number">0x018004f4</span></span><br><span class="line"></span><br><span class="line">[VMInstructions] vmIP: <span class="number">0x1810c87</span></span><br><span class="line"><span class="number">0x1810c7f</span>:      <span class="number">0xad</span>    <span class="number">0xb7</span>    <span class="number">0x4c</span>    <span class="number">0x12</span>    <span class="number">0x02</span>    <span class="number">0x2c</span>    <span class="number">0x02</span>    <span class="number">0x1c</span></span><br><span class="line"><span class="number">0x1810c87</span>:      <span class="number">0x07</span>    <span class="number">0x02</span>    <span class="number">0x2c</span>    <span class="number">0x03</span>    <span class="number">0x01</span>    <span class="number">0x40</span>    <span class="number">0x12</span>    <span class="number">0x02</span></span><br><span class="line"><span class="number">0x1810c8f</span>:      <span class="number">0x14</span>    <span class="number">0x02</span>    <span class="number">0x2c</span>    <span class="number">0x0a</span>    <span class="number">0x02</span>    <span class="number">0x0c</span>    <span class="number">0x02</span>    <span class="number">0x0c</span></span><br></pre></td></tr></table></figure>
+
+<h4><span id="ptrdentryの変遷">ptrDentryの変遷</span></h4><aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⚠️ 役立つか不明
+
+</aside>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">watch *<span class="number">0x22ec3f3</span></span><br><span class="line"></span><br><span class="line">commands <span class="number">1</span></span><br><span class="line">&gt; x/2i $pc-<span class="number">4</span></span><br><span class="line">&gt; x/1wx <span class="number">0x22ec3f3</span></span><br><span class="line">&gt; x/4s <span class="number">0x22ec3f3</span></span><br><span class="line">&gt; end</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li>めちゃくちゃたくさんディレクトリ作ったが、文字列サイズが伸びるわけでもない。</li>
+<li>ptrDentryが <code>ls /</code> 領域を指してブレークするときの命令:<ul>
+<li>1回目 0x18004f4:   stw     r4,0(r3)</li>
+<li>2回目 0x1800228:   stw     r5,0(r3)</li>
+<li>(… 以下、交互。回数がいつも決まってるわけではない)</li>
+</ul>
+</li>
+<li>ptrDentryが 0x0, 0x1, 0x2, 0x3 を指してブレークするときの命令:<ul>
+<li>0x0→ 0x1800340:   stw     r5,0(r3)</li>
+<li>0x1→ 0x1800100:   stw     r5,0(r3)</li>
+<li>0x2→ 0x1800100:   stw     r5,0(r3)</li>
+<li>0x3→  0x1800100:   stw     r5,0(r3)</li>
+<li>0x4→ 0x1800100:   stw     r5,0(r3)</li>
+</ul>
+</li>
+<li><strong>ptrDentryが 0x000000fa を指してブレークする前後で TheString 変化が！</strong><ul>
+<li>before 0x000000fa : 空文字列</li>
+<li>soon after 0x000000fa: “]XWP “</li>
+<li><strong>0xfaになってブレークするときの命令</strong><ul>
+<li><strong>0xfa→ 0x1800524:   stw     r4,0(r3)</strong></li>
+<li><strong>以後のブレークは全て 0x1800524</strong></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4><span id="nothing-happened-を作っているところ再訪">“nothing happened…” を作っているところ再訪</span></h4><aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⚠️ 役立つか不明
+
+</aside>
+
+<p>この領域にフラグが作られて、それがwriteされる問題だと思うんだよな… 俺が作問者ならそうする。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">record full</span><br><span class="line">watch *<span class="number">0x236934b</span>  <span class="comment"># TheString先頭</span></span><br><span class="line">b *<span class="number">0x1800938</span> <span class="keyword">if</span> $r13==<span class="number">0x2</span>  <span class="comment"># TheStringに入れる文字を拾う箇所</span></span><br><span class="line"></span><br><span class="line">commands <span class="number">1</span></span><br><span class="line">&gt; x/2i $pc-<span class="number">4</span></span><br><span class="line">&gt; x/16wx <span class="number">0x236934b</span></span><br><span class="line">&gt; x/1s <span class="number">0x236934b</span></span><br><span class="line">&gt; end</span><br><span class="line"></span><br><span class="line">commands <span class="number">2</span></span><br><span class="line">&gt; x/2i $pc-<span class="number">4</span></span><br><span class="line">&gt; x/16wx $r6  <span class="comment"># TheStringに入れる文字列</span></span><br><span class="line">&gt; x/1s <span class="number">0x236934b</span></span><br><span class="line">&gt; end</span><br><span class="line"></span><br><span class="line">c</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>一旦、 *0x236934b (4バイト) の変遷を追う → <strong>2ステージに分けて文字ができている</strong></p>
+<ol>
+<li>c 1~4回: <code>0x18004c4:   stb     r4,0(r3)</code> が4回呼び出され、 0xb65d9497 になる</li>
+<li>c 5~8回:  <code>0x18004c4:   stb     r4,0(r3)</code> が4回呼び出され、 0x6e6f7468 &#x3D;&#x3D; “noth” になる</li>
+</ol>
+<hr>
+<p>*vmIP から文字を取っているコード → 1800954 (interesting1() の過程) とそこに至るまで</p>
+<ul>
+<li>r3 &#x3D;&#x3D; 0x236934b</li>
+<li>r6 &#x3D;&#x3D; 格納する文字列がLSBに入った4バイト</li>
+<li>(r4 &#x3D; *r6) &amp; 0xFF &#x3D;&#x3D; 格納する文字</li>
+</ul>
+<img src="/img/2024/09-08/image%2029.png" alt="image.png" width="500px" height="auto">
+
+<hr>
+<p>0x236934b に格納しているコード → 18004c4</p>
+<ul>
+<li>r3 &#x3D;&#x3D; 0x236934b</li>
+<li>r4 &amp; 0xFF &#x3D;&#x3D; 格納する文字？<ul>
+<li>いきなり最初から <code>&#39;n&#39;</code> ではなく、 <code>0xb6</code> から格納された</li>
+</ul>
+</li>
+</ul>
+<img src="/img/2024/09-08/image%2030.png" alt="image.png" width="500px" height="auto">
+
+<hr>
+<p>*<em>TheString (nothing) の取得箇所は常に <em>0x22ec3ef &amp; 0xFF。この中身が転々としている</em></em></p>
+<table>
+<thead>
+<tr>
+<th>文字</th>
+<th>取得元</th>
+<th>周辺メモリダンプ</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>n</td>
+<td>*0x22ec3ef &amp; 0xFF</td>
+<td>pwndbg&gt;  x&#x2F;32wx 0x22ec3ef</td>
+</tr>
+<tr>
+<td>0x22ec3ef:      0x000000<strong>6e</strong>      0x000000fa      0x01810c3c      0x0236934b</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x22ec3ff:      0x20000000      0x01800ad8      0x00000000      0x00000000</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>o</td>
+<td>*0x22ec3ef &amp; 0xFF</td>
+<td>pwndbg&gt; x&#x2F;32wx 0x22ec3ef</td>
+</tr>
+<tr>
+<td>0x22ec3ef:      0x000000<strong>6f</strong>      0x00000011      0x01810c3c      0x0236934b</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x22ec3ff:      0x40000000      0x01800ad8      0x00000000      0x00000000</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>t</td>
+<td>*0x22ec3ef &amp; 0xFF</td>
+<td>pwndbg&gt; x&#x2F;32wx 0x22ec3ef</td>
+</tr>
+<tr>
+<td>0x22ec3ef:      0x000000<strong>74</strong>      0x000000c0      0x01810c3c      0x0236934b</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x22ec3ff:      0x40000000      0x01800ad8      0x00000000      0x00000000</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>h</td>
+<td>*0x22ec3ef &amp; 0xFF</td>
+<td>pwndbg&gt; x&#x2F;32wx 0x22ec3ef</td>
+</tr>
+<tr>
+<td>0x22ec3ef:      0x000000<strong>68</strong>      0x000000de      0x01810c3c      0x0236934b</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x22ec3ff:      0x40000000      0x01800ad8      0x00000000      0x00000000</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>i</td>
+<td>*0x22ec3ef &amp; 0xFF</td>
+<td>pwndbg&gt; x&#x2F;32wx 0x22ec3ef</td>
+</tr>
+<tr>
+<td>0x22ec3ef:      0x000000<strong>69</strong>      0x000000fa      0x01810c3c      0x0236934b</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>0x22ec3ff:      0x20000000      0x01800ad8      0x00000000      0x00000000</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>n</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>g</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>(スペース)</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>h</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>a</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>p</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>p</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>e</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>n</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>e</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>d</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>.</td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h4><span id="thestringのソース文字の変遷を追う">TheStringのソース文字の変遷を追う</span></h4><aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⚠️ 役立つか不明
+
+</aside>
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">record full</span><br><span class="line">watch *<span class="number">0x22ec3ef</span>  <span class="comment"># TheStringソース文字</span></span><br><span class="line"></span><br><span class="line">commands <span class="number">1</span></span><br><span class="line">&gt; x/2i $pc-<span class="number">4</span></span><br><span class="line">&gt; x/16wx <span class="number">0x22ec3ef</span></span><br><span class="line">&gt; end</span><br><span class="line"></span><br><span class="line">c</span><br></pre></td></tr></table></figure>
+
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>変更箇所 (同上は空欄)</th>
+<th>変更後値</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>1</td>
+<td>0x1800228:   stw     r5,0(r3)</td>
+<td>0x10</td>
+</tr>
+<tr>
+<td>2</td>
+<td></td>
+<td>0x20</td>
+</tr>
+<tr>
+<td>3</td>
+<td></td>
+<td>0x30</td>
+</tr>
+<tr>
+<td>…</td>
+<td></td>
+<td>0x40</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0x50</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0x60</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0x70</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0x80</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0x90</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0xa0</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0xb<strong>8</strong></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0xc<strong>c</strong></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0xdc</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0xec</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0xfc</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0x<strong>1</strong>0c</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0x11c</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0x12c</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0x13c</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0x1<strong>50</strong></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0x160</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0x1<strong>78</strong></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0x188</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td>0x198</td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800524:   stw     r4,0(r3)</td>
+<td><strong>0xb6</strong></td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800340:   stw     r5,0(r3)</td>
+<td>0x4c (L)</td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800228:   stw     r5,0(r3)</td>
+<td><strong>0x6e (n)</strong></td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800524:   stw     r4,0(r3)</td>
+<td>0x5d (])</td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800340:   stw     r5,0(r3)</td>
+<td>0x4c (L)</td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800228:   stw     r5,0(r3)</td>
+<td><strong>0x6e (n)</strong></td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800340:   stw     r5,0(r3)</td>
+<td><strong>0x6f (o)</strong></td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800524:   stw     r4,0(r3)</td>
+<td>0x94</td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800340:   stw     r5,0(r3)</td>
+<td>0x54 (T)</td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800228:   stw     r5,0(r3)</td>
+<td>0x76 (v)</td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800340:   stw     r5,0(r3)</td>
+<td><strong>0x74 (t)</strong></td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800524:   stw     r4,0(r3)</td>
+<td>0x97</td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800340:   stw     r5,0(r3)</td>
+<td>0x49 (I)</td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800228:   stw     r5,0(r3)</td>
+<td>0x6b (k)</td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800340:   stw     r5,0(r3)</td>
+<td><strong>0x68 (h)</strong></td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800524:   stw     r4,0(r3)</td>
+<td>0xb1</td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800340:   stw     r5,0(r3)</td>
+<td>0x4b (K)</td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800228:   stw     r5,0(r3)</td>
+<td>0x6d (m)</td>
+</tr>
+<tr>
+<td></td>
+<td>0x1800340:   stw     r5,0(r3)</td>
+<td><strong>0x69 (i)</strong></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody></table>
+<h4><span id="仮説true-getdentry結果が出るまで-thestringは一文字も確定していない">[仮説→true]: getdentry結果が出るまで、TheStringは一文字も確定していない</span></h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">record full</span><br><span class="line">b *<span class="number">0x1800564</span>  <span class="comment"># sc</span></span><br><span class="line">c  <span class="comment"># open</span></span><br><span class="line">c  <span class="comment"># getdentry</span></span><br><span class="line">n</span><br><span class="line"></span><br><span class="line">pwndbg&gt; x/1s <span class="number">0x236934b</span></span><br><span class="line"><span class="number">0x236934b</span>:      <span class="string">&quot;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<h4><span id="仮説-true-vmupdater4byupdatedvmr0-でr13の値で条件分岐する箇所-r13-in-1-2-3-のいずれか">[仮説 → true] <code>vmUpdateR4ByUpdatedvmR0,...()</code> でR13の値で条件分岐する箇所、R13 in (1, 2, 3) のいずれか</span></h4><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">record full</span><br><span class="line">b *<span class="number">0x1800930</span> <span class="keyword">if</span> $r13&lt;<span class="number">1</span> || $r13&gt;<span class="number">3</span>  <span class="comment"># cmpwi</span></span><br><span class="line">c</span><br></pre></td></tr></table></figure>
+
+<p>ブレークせず！</p>
+<p><strong>では、R13の意味とはなにか？</strong></p>
+<h4><span id="仮説-false-vmupdater4byupdatedvmr0-で-r13x3dx3d2の処理をr13x3dx3d1と同じにすればフラグが得られる">[仮説 → false]  <code>vmUpdateR4ByUpdatedvmR0,...()</code> で、R13&#x3D;&#x3D;2の処理をR13&#x3D;&#x3D;1と同じにすればフラグが得られる</span></h4><p>バイナリエディタで処理書き換えた power2 作ったけど、実行するとSEGV</p>
+
+    
+  </div>
+  <footer class="entry-footer">
+    <div class="entry-meta-footer">
+      <span class="category">
+        
+      </span>
+      <span class="tags">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
+
+      </span>
+    </div>
+  </footer>
+  
+  <footer class="author-info clearfix">
+    <img class="author-picture circle" src="https://www.gravatar.com/avatar/cb02a2b3f429b7c938d1fe2665e8e342">
+    <div class="author-content right">
+      <div class="author-caption">
+        <span class="label">author</span>
+        Sho Nakatani a.k.a. laysakura
+      </div>
+      <p class="author-description">
+        トヨタ自動車株式会社所属。プリンシパル・リサーチャーとして、セキュリティ・プライバシー・データ基盤に関する業務に従事。<br>
+        OSCP/BSCP/CISSP/情報処理安全確保支援士(合格) 等の資格保有。CTF出場やセキュリティ関連の講演活動も行っている。<br>
+        （<a target="_blank" rel="noopener" href="https://github.com/laysakura/resume-jp">詳細プロフィール</a>）
+      </p>
+      <ul class="author-social-buttons">
+        <li class="author-social-button"><a class="fa fa-lg fa-twitter-square" target="_blank" rel="noopener" href="https://twitter.com/laysakura"></a>
+        </li>
+        <li class="author-social-button"><a class="fa fa-lg fa-github-square" target="_blank" rel="noopener" href="https://github.com/laysakura"></a>
+        </li>
+      </ul>
+    </div>
+  </footer>
+  
+  
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2024/08/16/vc-security/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">
+        
+          Verifiable Credentialsのセキュリティ的考慮事項
+        
+      </div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+<section id="comments">
+  <div id="disqus_thread">
+
+    <!-- comment service provided by disqus -->
+    <script>
+      /**
+       *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+       *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+       */
+      var disqus_config = function () {
+        this.page.url = https://laysakura.github.io/2024/09/08/automotive-ctf-2024-qual/;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = https://laysakura.github.io/2024/09/08/automotive-ctf-2024-qual/; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+      (function () {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//laysakura.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by
+        Disqus.</a></noscript>
+  </div>
+</section>
+
+
+    </div>
+    <div class="mb-search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:laysakura.github.io">
+  </form>
+</div>
+<footer id="footer">
+	<h1 class="footer-blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<span class="copyright">
+		&copy; 2024 Sho Nakatani a.k.a. laysakura<br>
+		Modify from <a href="https://sanographix.github.io/tumblr/apollo/" target="_blank">Apollo</a> theme, designed by <a href="https://www.sanographix.net/" target="_blank">SANOGRAPHIX.NET</a><br>
+		Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+	</span>
+</footer>
+
+    
+<script>
+  var disqus_shortname = 'laysakura';
+  
+  var disqus_url = 'https://laysakura.github.io/2024/09/08/automotive-ctf-2024-qual/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+
+  <!-- https://github.com/vfeskov/vanilla-back-to-top -->
+  <script src="https://unpkg.com/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js"></script>
+  <script>addBackToTop({
+    diameter: 50,
+    backgroundColor: '#33a6b880',
+    textColor: '#fff'
+  })</script>
+
+</body>
+</html>
