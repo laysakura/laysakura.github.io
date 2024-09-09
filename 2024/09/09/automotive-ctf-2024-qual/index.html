@@ -5,12 +5,12 @@
   
   <title>Automotive CTF Japan 2024 予選 - writeup | 俺とお前とlaysakura</title>
   
-  <link rel="canonical" href="https://laysakura.github.io/2024/09/08/automotive-ctf-2024-qual/"/>
+  <link rel="canonical" href="https://laysakura.github.io/2024/09/09/automotive-ctf-2024-qual/"/>
   <meta name="viewport" content="width=device-width">
   <meta name="description" content="（↑順位確定時点のスコア画像） Automotive CTF Japanの予選にチーム参加し、5位で予選を突破しました。（※所属とは無関係に個人活動として参加） 全問正解できましたが、先着順で順位が上になるのでこの順位です。 基本今まではCTF1人参加だったので、チーム参加は新鮮でした。お誘いくださったbeaさん、一緒に戦った hamayanhamayanさん、kusano_kさん、tkito">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Automotive CTF Japan 2024 予選 - writeup">
-<meta property="og:url" content="https://laysakura.github.io/2024/09/08/automotive-ctf-2024-qual/index.html">
+<meta property="og:url" content="https://laysakura.github.io/2024/09/09/automotive-ctf-2024-qual/index.html">
 <meta property="og:site_name" content="俺とお前とlaysakura">
 <meta property="og:description" content="（↑順位確定時点のスコア画像） Automotive CTF Japanの予選にチーム参加し、5位で予選を突破しました。（※所属とは無関係に個人活動として参加） 全問正解できましたが、先着順で順位が上になるのでこの順位です。 基本今まではCTF1人参加だったので、チーム参加は新鮮でした。お誘いくださったbeaさん、一緒に戦った hamayanhamayanさん、kusano_kさん、tkito">
 <meta property="og:locale" content="ja_JP">
@@ -44,8 +44,8 @@
 <meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2028.png">
 <meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2029.png">
 <meta property="og:image" content="https://laysakura.github.io/img/2024/09-08/image%2030.png">
-<meta property="article:published_time" content="2024-09-08T13:53:40.000Z">
-<meta property="article:modified_time" content="2024-09-08T14:24:25.613Z">
+<meta property="article:published_time" content="2024-09-09T00:03:35.000Z">
+<meta property="article:modified_time" content="2024-09-09T00:04:42.527Z">
 <meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
 <meta property="article:tag" content="CTF">
 <meta name="twitter:card" content="summary">
@@ -112,8 +112,8 @@
       <article id="post-Automotive-CTF-Japan-2024-予選-writeup" class="post">
   <footer class="entry-meta-header">
     <span class="meta-elements date">
-      <a href="/2024/09/08/automotive-ctf-2024-qual/" class="article-date">
-  <time datetime="2024-09-08T13:53:40.000Z" itemprop="datePublished">2024-09-08</time>
+      <a href="/2024/09/09/automotive-ctf-2024-qual/" class="article-date">
+  <time datetime="2024-09-09T00:03:35.000Z" itemprop="datePublished">2024-09-09</time>
 </a>
     </span>
   </footer>
@@ -383,30 +383,9 @@
 <tbody><tr>
 <td>共通</td>
 <td>140行セット同士を比べると、<strong>あるバイトが出てくる行は同じ</strong>(101, 102, 103すべて)。</td>
-<td>E or F</td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>行番号で決まっている</td>
-<td>0, 1, …, A, B, …, E</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>の15進数周期</td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>(※Fはない)</td>
+<td>E or F。行番号で決まっている</td>
+<td>0, 1, …, A, B, …, E の15進数周期 (※Fはない)</td>
 <td>-</td>
-<td></td>
-<td></td>
-<td></td>
 </tr>
 <tr>
 <td>101</td>
@@ -424,24 +403,10 @@
 </tr>
 <tr>
 <td>103</td>
-<td>わからん</td>
-<td></td>
-<td></td>
-<td></td>
-</tr>
-<tr>
-<td>（規則性があるようには思えない。乱数かも）</td>
+<td>わからん（規則性があるようには思えない。乱数かも）</td>
 <td>常にF</td>
 <td>-</td>
-<td><code>J09LJw==</code> 固定</td>
-<td></td>
-</tr>
-<tr>
-<td>→ base64decすると <code>&#39;OK&#39;</code></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td><code>J09LJw==</code> 固定 → base64decすると <code>&#39;OK&#39;</code></td>
 </tr>
 </tbody></table>
 <hr>
@@ -1479,8 +1444,8 @@
        *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
        */
       var disqus_config = function () {
-        this.page.url = https://laysakura.github.io/2024/09/08/automotive-ctf-2024-qual/;  // Replace PAGE_URL with your page's canonical URL variable
-        this.page.identifier = https://laysakura.github.io/2024/09/08/automotive-ctf-2024-qual/; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+        this.page.url = https://laysakura.github.io/2024/09/09/automotive-ctf-2024-qual/;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = https://laysakura.github.io/2024/09/09/automotive-ctf-2024-qual/; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
       };
       (function () {  // DON'T EDIT BELOW THIS LINE
         var d = document, s = d.createElement('script');
@@ -1520,7 +1485,7 @@
 <script>
   var disqus_shortname = 'laysakura';
   
-  var disqus_url = 'https://laysakura.github.io/2024/09/08/automotive-ctf-2024-qual/';
+  var disqus_url = 'https://laysakura.github.io/2024/09/09/automotive-ctf-2024-qual/';
   
   (function(){
     var dsq = document.createElement('script');
