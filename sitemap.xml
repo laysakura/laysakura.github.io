@@ -11,9 +11,27 @@
   </url>
   
   <url>
+    <loc>https://laysakura.github.io/2024/09/09/automotive-ctf-2024-qual/</loc>
+    
+    <lastmod>2024-10-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://laysakura.github.io/2024/09/14/automotive-ctf-2024-japan-final/</loc>
     
-    <lastmod>2024-10-22</lastmod>
+    <lastmod>2024-10-24</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://laysakura.github.io/2024/10/25/automotive-security-notes/</loc>
+    
+    <lastmod>2024-10-24</lastmod>
     
     <changefreq>monthly</changefreq>
     <priority>0.6</priority>
@@ -21,15 +39,6 @@
   
   <url>
     <loc>https://laysakura.github.io/2024/08/16/vc-security/</loc>
-    
-    <lastmod>2024-09-09</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://laysakura.github.io/2024/09/09/automotive-ctf-2024-qual/</loc>
     
     <lastmod>2024-09-09</lastmod>
     
@@ -92,6 +101,15 @@
   </url>
   
   <url>
+    <loc>https://laysakura.github.io/2021/12/15/toyota-3.5month-passed/</loc>
+    
+    <lastmod>2024-09-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
     <loc>https://laysakura.github.io/2022/03/30/rust-RwLock-writer-starvation/</loc>
     
     <lastmod>2024-09-09</lastmod>
@@ -102,15 +120,6 @@
   
   <url>
     <loc>https://laysakura.github.io/2022/08/31/beam-multi-lang-backend/</loc>
-    
-    <lastmod>2024-09-09</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://laysakura.github.io/2021/12/15/toyota-3.5month-passed/</loc>
     
     <lastmod>2024-09-09</lastmod>
     
@@ -164,7 +173,7 @@
   </url>
   
   <url>
-    <loc>https://laysakura.github.io/2020/01/31/handcraft-cpu-os-1/</loc>
+    <loc>https://laysakura.github.io/2020/02/03/handcraft-cpu-os-2/</loc>
     
     <lastmod>2024-09-09</lastmod>
     
@@ -173,7 +182,7 @@
   </url>
   
   <url>
-    <loc>https://laysakura.github.io/2020/02/03/handcraft-cpu-os-2/</loc>
+    <loc>https://laysakura.github.io/2020/01/31/handcraft-cpu-os-1/</loc>
     
     <lastmod>2024-09-09</lastmod>
     
@@ -227,15 +236,6 @@
   </url>
   
   <url>
-    <loc>https://laysakura.github.io/2019/12/22/rust-DataStructures-Algorithm-BinaryTree/</loc>
-    
-    <lastmod>2024-09-09</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://laysakura.github.io/2019/12/25/rust-DataStructures-Algorithm-BinarySearchTree/</loc>
     
     <lastmod>2024-09-09</lastmod>
@@ -245,7 +245,7 @@
   </url>
   
   <url>
-    <loc>https://laysakura.github.io/2019/05/20/rust-succinct/</loc>
+    <loc>https://laysakura.github.io/2019/12/22/rust-DataStructures-Algorithm-BinaryTree/</loc>
     
     <lastmod>2024-09-09</lastmod>
     
@@ -255,6 +255,15 @@
   
   <url>
     <loc>https://laysakura.github.io/2018/02/18/backlog-world-2018/</loc>
+    
+    <lastmod>2024-09-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://laysakura.github.io/2019/05/20/rust-succinct/</loc>
     
     <lastmod>2024-09-09</lastmod>
     
@@ -281,15 +290,6 @@
   </url>
   
   <url>
-    <loc>https://laysakura.github.io/2014/12/30/fast-scalable-parallel-csv-parser/</loc>
-    
-    <lastmod>2024-09-09</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
     <loc>https://laysakura.github.io/2014/02/18/mysqlite/</loc>
     
     <lastmod>2024-09-09</lastmod>
@@ -299,16 +299,7 @@
   </url>
   
   <url>
-    <loc>https://laysakura.github.io/2013/10/11/perl-japanese-full-text-search/</loc>
-    
-    <lastmod>2024-09-09</lastmod>
-    
-    <changefreq>monthly</changefreq>
-    <priority>0.6</priority>
-  </url>
-  
-  <url>
-    <loc>https://laysakura.github.io/2013/12/05/python-rainbow-logging-handler/</loc>
+    <loc>https://laysakura.github.io/2014/12/30/fast-scalable-parallel-csv-parser/</loc>
     
     <lastmod>2024-09-09</lastmod>
     
@@ -326,7 +317,16 @@
   </url>
   
   <url>
-    <loc>https://laysakura.github.io/2012/01/06/sse-8flops-clock/</loc>
+    <loc>https://laysakura.github.io/2013/12/05/python-rainbow-logging-handler/</loc>
+    
+    <lastmod>2024-09-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://laysakura.github.io/2013/10/11/perl-japanese-full-text-search/</loc>
     
     <lastmod>2024-09-09</lastmod>
     
@@ -336,6 +336,15 @@
   
   <url>
     <loc>https://laysakura.github.io/2011/10/11/perf-stat-performance-counters/</loc>
+    
+    <lastmod>2024-09-09</lastmod>
+    
+    <changefreq>monthly</changefreq>
+    <priority>0.6</priority>
+  </url>
+  
+  <url>
+    <loc>https://laysakura.github.io/2012/01/06/sse-8flops-clock/</loc>
     
     <lastmod>2024-09-09</lastmod>
     
@@ -371,7 +380,7 @@
 
   
   <url>
-    <loc>https://laysakura.github.io/tags/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%99%E3%83%BC%E3%82%B9/</loc>
+    <loc>https://laysakura.github.io/tags/Linux-Kernel/</loc>
     <lastmod>2024-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -385,7 +394,14 @@
   </url>
   
   <url>
-    <loc>https://laysakura.github.io/tags/Python/</loc>
+    <loc>https://laysakura.github.io/tags/Linux%E3%82%AA%E3%83%9A%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/</loc>
+    <lastmod>2024-10-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://laysakura.github.io/tags/%E3%83%87%E3%83%BC%E3%82%BF%E3%83%99%E3%83%BC%E3%82%B9/</loc>
     <lastmod>2024-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -399,28 +415,14 @@
   </url>
   
   <url>
-    <loc>https://laysakura.github.io/tags/Linux-Kernel/</loc>
+    <loc>https://laysakura.github.io/tags/Python/</loc>
     <lastmod>2024-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
   </url>
   
   <url>
-    <loc>https://laysakura.github.io/tags/Linux%E3%82%AA%E3%83%9A%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/</loc>
-    <lastmod>2024-10-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://laysakura.github.io/tags/Rust/</loc>
-    <lastmod>2024-10-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://laysakura.github.io/tags/Succinct-Data-Structure/</loc>
+    <loc>https://laysakura.github.io/tags/SQLite/</loc>
     <lastmod>2024-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -441,35 +443,14 @@
   </url>
   
   <url>
-    <loc>https://laysakura.github.io/tags/SQLite/</loc>
-    <lastmod>2024-10-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://laysakura.github.io/tags/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3/</loc>
-    <lastmod>2024-10-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://laysakura.github.io/tags/%E3%82%B9%E3%83%88%E3%83%AA%E3%83%BC%E3%83%A0%E5%87%A6%E7%90%86/</loc>
-    <lastmod>2024-10-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
-    <loc>https://laysakura.github.io/tags/Apache-Beam/</loc>
-    <lastmod>2024-10-24</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.2</priority>
-  </url>
-  
-  <url>
     <loc>https://laysakura.github.io/tags/%E8%87%AA%E4%BD%9CCPU-%E8%87%AA%E4%BD%9COS/</loc>
+    <lastmod>2024-10-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://laysakura.github.io/tags/Rust/</loc>
     <lastmod>2024-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -483,7 +464,35 @@
   </url>
   
   <url>
+    <loc>https://laysakura.github.io/tags/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3/</loc>
+    <lastmod>2024-10-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://laysakura.github.io/tags/Succinct-Data-Structure/</loc>
+    <lastmod>2024-10-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://laysakura.github.io/tags/%E8%87%AA%E5%8B%95%E8%BB%8A%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3/</loc>
+    <lastmod>2024-10-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
     <loc>https://laysakura.github.io/tags/%E8%BB%A2%E8%81%B7/</loc>
+    <lastmod>2024-10-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://laysakura.github.io/tags/%E3%83%88%E3%83%A8%E3%82%BF/</loc>
     <lastmod>2024-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>
@@ -504,7 +513,14 @@
   </url>
   
   <url>
-    <loc>https://laysakura.github.io/tags/%E3%83%88%E3%83%A8%E3%82%BF/</loc>
+    <loc>https://laysakura.github.io/tags/%E3%82%B9%E3%83%88%E3%83%AA%E3%83%BC%E3%83%A0%E5%87%A6%E7%90%86/</loc>
+    <lastmod>2024-10-24</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.2</priority>
+  </url>
+  
+  <url>
+    <loc>https://laysakura.github.io/tags/Apache-Beam/</loc>
     <lastmod>2024-10-24</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.2</priority>

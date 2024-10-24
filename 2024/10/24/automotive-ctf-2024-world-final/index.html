@@ -19,9 +19,10 @@
 <meta property="og:image" content="https://laysakura.github.io/img/2024/10-25/bell.png">
 <meta property="og:image" content="https://laysakura.github.io/img/2024/10-25/ic.png">
 <meta property="article:published_time" content="2024-10-24T00:25:00.000Z">
-<meta property="article:modified_time" content="2024-10-24T00:47:36.031Z">
+<meta property="article:modified_time" content="2024-10-24T20:02:34.841Z">
 <meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
 <meta property="article:tag" content="CTF">
+<meta property="article:tag" content="自動車セキュリティ">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://laysakura.github.io/img/2024/10-25/head.png">
 
@@ -214,7 +215,7 @@
 ⛳ bh{TAKE_THE_LONG_WAY_HOME}
 </aside>
 
-<h3><span id="i-am-speed-カテゴリ">I am Speed カテゴリ</span></h3><p>スピードメーターが会場にデデンと置かれている。既に電源とCAN-to-USBデバイスが配線されており、PCにUSB指して以下のコマンド打つだけでCAN通信ができるようになる。</p>
+<h3><span id="i-am-speed-カテゴリ">I am Speed カテゴリ</span></h3><p>スピードメーターが会場にデデンと置かれている。既に電源とCAN-to-USBデバイスが配線されており、PCにUSB刺して以下のコマンド打つだけでCAN通信ができるようになる。</p>
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sudo ip <span class="built_in">link</span> <span class="built_in">set</span> can0 <span class="built_in">type</span> can bitrate 500000</span><br><span class="line">sudo ip <span class="built_in">link</span> <span class="built_in">set</span> up can0</span><br><span class="line">candump -t a -ac can0</span><br></pre></td></tr></table></figure>
 
 <hr>
@@ -259,7 +260,7 @@
       </span>
       <span class="tags">
         
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/CTF/" rel="tag">CTF</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%87%AA%E5%8B%95%E8%BB%8A%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3/" rel="tag">自動車セキュリティ</a></li></ul>
 
       </span>
     </div>
@@ -289,6 +290,15 @@
   
   
 <nav id="article-nav">
+  
+    <a href="/2024/10/25/automotive-security-notes/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          自動車セキュリティ（カーハック）知見まとめ
+        
+      </div>
+    </a>
   
   
     <a href="/2024/09/14/automotive-ctf-2024-japan-final/" id="article-nav-older" class="article-nav-link-wrap">
