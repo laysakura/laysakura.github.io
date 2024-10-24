@@ -3,6 +3,7 @@ title: Automotive CTF 2024 日本決勝 - 体験記 & Writeup
 id: automotive-ctf-2024-japan-final
 tags:
   - CTF
+  - 自動車セキュリティ
 date: 2024-09-14 04:30:24
 ---
 

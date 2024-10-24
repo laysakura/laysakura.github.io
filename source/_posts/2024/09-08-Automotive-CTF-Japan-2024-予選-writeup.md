@@ -3,6 +3,7 @@ title: Automotive CTF Japan 2024 予選 - writeup
 id: automotive-ctf-2024-qual
 tags:
   - CTF
+  - 自動車セキュリティ
 date: 2024-09-09 09:03:35
 ---
 

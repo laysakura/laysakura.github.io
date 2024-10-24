@@ -14,6 +14,7 @@ tags:
   - 機械学習
   - セキュリティ
   - CTF
+  - 自動車セキュリティ
   - 認証技術
   - Verifiable Credentials
   - VPN

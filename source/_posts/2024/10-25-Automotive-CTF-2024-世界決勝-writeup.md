@@ -3,6 +3,7 @@ title: Automotive CTF 2024 世界決勝 - 体験記 & Writeup
 id: automotive-ctf-2024-world-final
 tags:
   - CTF
+  - 自動車セキュリティ
 date: 2024-10-24 09:25:00
 ---
 
