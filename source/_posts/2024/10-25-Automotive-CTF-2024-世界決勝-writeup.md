@@ -179,7 +179,7 @@ echo "22 F3 00" | isotpsend -s 7e2 -d 7ea can0
 
 ### I am Speed カテゴリ
 
-スピードメーターが会場にデデンと置かれている。既に電源とCAN-to-USBデバイスが配線されており、PCにUSB指して以下のコマンド打つだけでCAN通信ができるようになる。
+スピードメーターが会場にデデンと置かれている。既に電源とCAN-to-USBデバイスが配線されており、PCにUSB刺して以下のコマンド打つだけでCAN通信ができるようになる。
 
 ```bash
 sudo ip link set can0 type can bitrate 500000
