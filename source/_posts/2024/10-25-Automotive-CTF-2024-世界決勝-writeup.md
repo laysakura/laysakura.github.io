@@ -3,12 +3,12 @@ title: Automotive CTF 2024 世界決勝 - 体験記 & Writeup
 id: automotive-ctf-2024-world-final
 tags:
   - CTF
-date: 2024-10-25 00:00:00
+date: 2024-10-24 09:25:00
 ---
 
 <img src="/img/2024/10-25/head.png" alt="header" width="auto" height="auto">
 
-デトロイトで開催された[Automotive CTF](https://vicone.com/automotive-ctf)の決勝に "TeamOne" チームとして参加し、**TODO 順位**
+デトロイトで開催された[Automotive CTF](https://vicone.com/automotive-ctf)の決勝に "TeamOne" チームとして参加し、出場6チーム中 **4位** でした。
 （※所属とは無関係に個人活動として参加）
 
 CTFを初めて1年ちょっと、まさか世界で戦う機会に預かれるなんて思ってもみませんでした。良い経験になりました。
@@ -42,8 +42,7 @@ CTFを初めて1年ちょっと、まさか世界で戦う機会に預かれる�
 
 大会後の懇親会では、前年度覇者のpwnalone氏（高レベルなwriteupを拝見して会いたいと思ってた）やRAMN問題の作問者（トヨタの同僚 but 話したの2,3年ぶり）とお話できたりして来てよかった感がありました。
 
-コンテスト中から一貫して順位や他チームのスコアは非公開で、10/25(水)の表彰式で初めて発表されます。
-**TODO 順位**
+コンテスト中から一貫して順位や他チームのスコアは非公開で、10/25(水)の表彰式で初めて発表されます。日本時間の木曜早朝にチームメンバーからのdiscordメッセージで4位と教えてもらいました。即席チームとしては頑張れたと思うけど微妙に悔しい！
 
 会場は [Newlab](https://www.newlab.com/) という自動車やらハードウェアに関連するスタートアップが利用するイケてる建物（自動車も搬入できる！）で、気持ちよくコンテストに取り組めました。運営の方々、ありがとうございました！！！！
 
@@ -79,7 +78,7 @@ DYNAMICALLY_DEFINE_DATA_IDENTIFIER (0x2c) は初見。
 <aside style="padding: 10px; border-radius: 5px; border: 1px solid #eee; background-color: transparent; width: 800px;">
 💡方針
 
-1. [CVE解説論文](https://www.researchgate.net/publication/321183727_Security_Evaluation_of_an_Airbag-ECU_by_Reusing_Threat_Modeling_Artefacts)に従ってSecurity Access突破
+1. [CVE解説論文](https://www.researchgate.net/publication/321183727_Security_Evaluation_of_an_Airbag-ECU_by_Reusing_Threat_Modeling_Artefacts)に従ってSecurity Access突破（シードのNOT演算でキーが出るらしい）
 2. `% echo "2E 11 11 AB CD" | isotpsend -s 7e2 -d 7ea can0` (DID 0x1111 に適当な値を書く)
 3. `% echo "22 00 00" | isotpsend -s 7e2 -d 7ea can0` (DID 0x0000 から読む)
 
