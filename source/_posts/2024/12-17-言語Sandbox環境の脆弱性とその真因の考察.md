@@ -18,7 +18,7 @@ JTCでセキュリティ・プライバシー・データ基盤領域の研究�
 
 {% githubCard user:zopefoundation repo:RestrictedPython %}
 
-言語Sandbox環境の理念は素晴らしく、応用先も色々と考えられるものですが、設計を誤ると攻撃者とのいたちごっこになってしまうということをこの記事を通してお伝えできればと思います。
+言語Sandbox環境の理念は素晴らしく、応用先も色々と考えられるものですが、初手の設計を誤ると攻撃者とのいたちごっこになってしまうということをこの記事を通してお伝えできればと思います。
 
 それではお楽しみください（ここからは常体で失礼します）。
 
@@ -95,7 +95,7 @@ docker run -it -p 6000:6000 restricted-python
 **コンテナ内でのコマンド**
 
 ```console
-## Python実行サーバー起動
+# Python実行サーバー起動
 ./run-server.sh
 ```
 
@@ -106,7 +106,7 @@ docker run -it -p 6000:6000 restricted-python
 ```console
 cd RestrictedPython-CVE-PoC
 
-## フィボナッチ数列を計算するプログラムをサーバーに投入し、結果を得る
+# フィボナッチ数列を計算するプログラムをサーバーに投入し、結果を得る
 % nc localhost 6000 < ./example/fib.py
 Hello from python sandbox server!
 Your `run` function is executed by me with RestrictedPython, and you'll get the `return` value.
@@ -114,11 +114,38 @@ Enter Python code to execute:
 Return value: 55
 ```
 
+### 「危険」なコードは実行できない
+
+フィボナッチ数列は計算できたが、次のような「危険」な（サーバーの情報を漏洩したりRCEにつながるような）コードはエラーとなることを確認する。
+
+**ホストマシンでのコマンド**
+
+```console
+cd RestrictedPython-CVE-PoC
+
+# `open()` 関数を使ったプログラムwサーバーに投入するとエラー
+% nc localhost 6000 < ./example/open_to_info_leak.py
+Hello from python sandbox server!
+Your `run` function is executed by me with RestrictedPython, and you'll get the `return` value.
+Enter Python code to execute:
+Error executing the client code:
+name 'open' is not defined
+
+# `import` も使えない
+% nc localhost 6000 < ./example/import_os_to_rce.py
+Hello from python sandbox server!
+Your `run` function is executed by me with RestrictedPython, and you'll get the `return` value.
+Enter Python code to execute:
+Error executing the client code:
+Import is prohibited by the policy
+```
+
 ## RestrictedPythonの使い方・動作原理
 
 ### 使い方
 
-[restricted_python_cve/run_server.py](https://github.com/laysakura/RestrictedPython-CVE-PoC/blob/main/restricted_python_cve/run_server.py) から、sandbox環境の設定を抜粋。
+RestrictedPythonを使ったsandbox環境の設定例を、 [restricted_python_cve/run_server.py](https://github.com/laysakura/RestrictedPython-CVE-PoC/blob/main/restricted_python_cve/run_server.py) から、抜粋。
+続く小節で説明をするのでまずは流し読みで良い。
 
 ```python
 def execute_restricted_code(code):
@@ -182,13 +209,17 @@ def execute_restricted_code(code):
             - `getattr(a, 'b')` → `_getattr_(a, 'b')`
     - バイトコードというのは .pyc の中身と同じもの
 2. バイトコードを実行する環境として、グローバル関数・変数（以下、グローバル）を設定
-    - 例えば上述のトランスパイル結果の `_getattr_` について: `policy_globals["_getattr_"] = Guards.safer_getattr` の行により、Python標準の `getattr` ではなくRestrictedPythonの `safer_getattr` をグローバルに設定している
-        - （設定なければ実行時に「`_getattr_` 関数が見つからない」ような旨のエラーとなる）
+    - 例1: `policy_globals = {**safe_globals,**utility_builtins}` により、標準的なPythonよりも限られたグローバルを設定
+    - 例2: `policy_globals["__builtins__"]["__import__"] = no_import` により、 `import` 呼び出し時に例外が発生するようにしている
+    - 例3: `policy_globals["_getattr_"] = Guards.safer_getattr` の行により、Python標準の `getattr` ではなくRestrictedPythonの `safer_getattr` をグローバルに設定している
+        - `safer_getattr` は `_` で始まるアトリビュート（`__init__` など）へのアクセスを禁止し、攻撃者が言語機能を利用する余地を低減している
 3. `exec` 関数（これはRestrictedPythonではなくPython標準の関数）に、バイトコードと上述の設定済みグローバルを与える
 4. `exec` に設定した my_locals に、バイトコード実行の結果セットされたローカル関数・変数が格納される
     - それによりローカル関数としてセットされた `run()` 関数を実行（クライアントに `run()` 関数を書いてもらう制約あり）
 
 #### 動作原理を動的に確認
+
+上記で実行した `./example/open_to_info_leak.py` を改めて確認する。
 
 **コンテナ内でのコマンド**
 
