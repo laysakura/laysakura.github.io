@@ -3,13 +3,13 @@ title: ソフトウェア研究における脅威モデリング（Cyber-sec+ Ad
 id: threat-modeling-for-software-research
 tags:
   - セキュリティ
-date: 2024-12-02 00:00:00
+date: 2024-12-02 07:30:00
 ---
 
 <img src="/img/2024/12-02/head.png" alt="スライド表紙" width="auto" height="auto">
 
 [Cyber-sec+ Advent Calendar 2024](https://adventar.org/calendars/10158) 2日目の記事です。
-昨日初日は **Cyber-sec+ / 一般社団法人サイバーセキュリティ連盟** 様による **TODO TODO TODO TODO** の記事でした。
+昨日の初日は Cyber-sec+ コミュニティーマネージャー Nissy さんによる [一切の感情を排したロジカルモンスターがコミュニティロゴを制作するとこうなる](https://zenn.dev/cybersec_plus/articles/a3b3671e2e93b2) の記事でした。
 
 本日の記事は「ソフトウェア研究における脅威モデリング」という題でお送りします。スライドを作成したのでご覧ください。
 
@@ -19,6 +19,6 @@ date: 2024-12-02 00:00:00
 
 <https://twitter.com/intent/tweet?url=https://speakerdeck.com/laysakura/what-s-why-howto-xie-wei-moterinku&text=%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E7%A0%94%E7%A9%B6%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E8%84%85%E5%A8%81%E3%83%A2%E3%83%87%E3%83%AA%E3%83%B3%E3%82%B0>
 
-明日3日目は **Kensuke Takahashi** さんによる **TODO TODO TODO TODO** の記事です。
+明日3日目は Kensuke Takahashi さんによる「OWASPから学ぶLLM／生成AIのセキュリティモデルとソリューション」の記事です。
 
 ありがとうございました！！
