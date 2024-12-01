@@ -8,6 +8,8 @@ date: 2024-12-02 07:30:00
 
 <img src="/img/2024/12-02/head.png" alt="スライド表紙" width="auto" height="auto">
 
+---
+
 [Cyber-sec+ Advent Calendar 2024](https://adventar.org/calendars/10158) 2日目の記事です。
 昨日の初日は Cyber-sec+ コミュニティーマネージャー Nissy さんによる [一切の感情を排したロジカルモンスターがコミュニティロゴを制作するとこうなる](https://zenn.dev/cybersec_plus/articles/a3b3671e2e93b2) の記事でした。
 
@@ -21,4 +23,4 @@ date: 2024-12-02 07:30:00
 
 明日3日目は Kensuke Takahashi さんによる「OWASPから学ぶLLM／生成AIのセキュリティモデルとソリューション」の記事です。
 
-ありがとうございました！！
+ありがとうございました！
