@@ -3,13 +3,13 @@
 <head>
   <meta charset="utf-8">
   
-  <title>過去の投稿 | 俺とお前とlaysakura</title>
+  <title>過去の投稿: 2024/12 | 俺とお前とlaysakura</title>
   
-  <link rel="canonical" href="https://laysakura.github.io/archives/page/5/"/>
+  <link rel="canonical" href="https://laysakura.github.io/archives/2024/12/"/>
   <meta name="viewport" content="width=device-width">
   <meta property="og:type" content="website">
 <meta property="og:title" content="俺とお前とlaysakura">
-<meta property="og:url" content="https://laysakura.github.io/archives/page/5/index.html">
+<meta property="og:url" content="https://laysakura.github.io/archives/2024/12/index.html">
 <meta property="og:site_name" content="俺とお前とlaysakura">
 <meta property="og:locale" content="ja_JP">
 <meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
@@ -75,11 +75,11 @@
     <div id="main">
       
   
-    <article id="post-perf-stat-でパフォーマンスカウンタの値を直接指定し表示" class="post">
+    <article id="post-ソフトウェア研究における脅威モデリング（Cyber-sec-Advent-Calendar-2024）" class="post">
   <footer class="entry-meta-header">
     <span class="meta-elements date">
-      <a href="/2011/10/11/perf-stat-performance-counters/" class="article-date">
-  <time datetime="2011-10-11T04:13:30.000Z" itemprop="datePublished">2011-10-11</time>
+      <a href="/2024/12/02/threat-modeling-for-software-research/" class="article-date">
+  <time datetime="2024-12-01T22:30:00.000Z" itemprop="datePublished">2024-12-02</time>
 </a>
     </span>
   </footer>
@@ -88,20 +88,25 @@
     
   
     <h1 itemprop="name" class="entry-title">
-      <a class="article-title" href="/2011/10/11/perf-stat-performance-counters/">perf stat でパフォーマンスカウンタの値を直接指定し表示</a>
+      <a class="article-title" href="/2024/12/02/threat-modeling-for-software-research/">ソフトウェア研究における脅威モデリング（Cyber-sec+ Advent Calendar 2024）</a>
     </h1>
   
 
   </header>
   <div class="entry-content">
     
-    <h2 id="perfについて少し"><a href="#perfについて少し" class="headerlink" title="perfについて少し"></a>perfについて少し</h2><p>最近のLinuxでは，perfという便利なパフォーマンス解析ツールが使えます．<br>aptやyumなどのパッケージ管理ツールで入れられると思いますが(Debian系だとlinux-tools*って名前のパッケージのはず)，詳しい使い方はここでは解説しません．</p>
-<p>さて，このperfには色々な使い方がありますが，中でもperf statはプログラム実行中に起こるハードウェア的なイベントを取得できるものです．<br>使用例はこんな感じ．</p>
-    
-    <p class="article-more-link">
-      <a href="/2011/10/11/perf-stat-performance-counters/#more">続きを読む</a>
-    </p>
-    
+    <img src="/img/2024/12-02/head.png" alt="スライド表紙" width="auto" height="auto">
+
+<hr>
+<p><a target="_blank" rel="noopener" href="https://adventar.org/calendars/10158">Cyber-sec+ Advent Calendar 2024</a> 2日目の記事です。<br>昨日の初日は Cyber-sec+ コミュニティーマネージャー Nissy さんによる <a target="_blank" rel="noopener" href="https://zenn.dev/cybersec_plus/articles/a3b3671e2e93b2">一切の感情を排したロジカルモンスターがコミュニティロゴを制作するとこうなる</a> の記事でした。</p>
+<p>本日の記事は「ソフトウェア研究における脅威モデリング」という題でお送りします。スライドを作成したのでご覧ください。</p>
+<iframe class="speakerdeck-iframe" frameborder="0" src="https://speakerdeck.com/player/5d89d09ebaf040d3b3ea00e36a94800d" title="ソフトウェア研究における脅威モデリング" allowfullscreen="true" style="border: 0px; background: padding-box padding-box rgba(0, 0, 0, 0.1); margin: 0px; padding: 0px; border-radius: 6px; box-shadow: rgba(0, 0, 0, 0.2) 0px 5px 40px; width: 100%; height: auto; aspect-ratio: 560 / 315;" data-ratio="1.7777777777777777"></iframe>
+
+<p>以下のツイートリンクからフィードバック頂ければありがたく拝読します！</p>
+<p><a target="_blank" rel="noopener" href="https://twitter.com/intent/tweet?url=https://speakerdeck.com/laysakura/what-s-why-howto-xie-wei-moterinku&amp;text=%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E7%A0%94%E7%A9%B6%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E8%84%85%E5%A8%81%E3%83%A2%E3%83%87%E3%83%AA%E3%83%B3%E3%82%B0">https://twitter.com/intent/tweet?url=https://speakerdeck.com/laysakura/what-s-why-howto-xie-wei-moterinku&amp;text=%E3%82%BD%E3%83%95%E3%83%88%E3%82%A6%E3%82%A7%E3%82%A2%E7%A0%94%E7%A9%B6%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E8%84%85%E5%A8%81%E3%83%A2%E3%83%87%E3%83%AA%E3%83%B3%E3%82%B0</a></p>
+<p>明日3日目は Kensuke Takahashi さんによる「OWASPから学ぶLLM／生成AIのセキュリティモデルとソリューション」の記事です。</p>
+<p>ありがとうございました！</p>
+
     
   </div>
   <footer class="entry-footer">
@@ -111,7 +116,7 @@
       </span>
       <span class="tags">
         
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/High-Performance-Computing/" rel="tag">High Performance Computing</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux-Kernel/" rel="tag">Linux Kernel</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux%E3%82%AA%E3%83%9A%E3%83%AC%E3%83%BC%E3%82%B7%E3%83%A7%E3%83%B3/" rel="tag">Linuxオペレーション</a></li></ul>
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3/" rel="tag">セキュリティ</a></li></ul>
 
       </span>
     </div>
@@ -127,61 +132,6 @@
 
 
   
-    <article id="post-Linux-のスケジューリング調査と超低優先度プロセスの実装" class="post">
-  <footer class="entry-meta-header">
-    <span class="meta-elements date">
-      <a href="/2011/01/25/linux-scheduling-low-prio-process/" class="article-date">
-  <time datetime="2011-01-25T06:30:00.000Z" itemprop="datePublished">2011-01-25</time>
-</a>
-    </span>
-  </footer>
-  
-  <header class="entry-header">
-    
-  
-    <h1 itemprop="name" class="entry-title">
-      <a class="article-title" href="/2011/01/25/linux-scheduling-low-prio-process/">Linux のスケジューリング調査と超低優先度プロセスの実装</a>
-    </h1>
-  
-
-  </header>
-  <div class="entry-content">
-    
-    <p>恩師<a target="_blank" rel="noopener" href="https://www.eidos.ic.i.u-tokyo.ac.jp/~tau/">田浦健次朗</a>先生の講義、「<a target="_blank" rel="noopener" href="https://www.eidos.ic.i.u-tokyo.ac.jp/~tau/lecture/operating_systems/">オペレーティングシステム</a>」で試験を受ける代わりにカーネルハックする課題をやりました。</p>
-<p>目覚ましい成果とは言えない結果でしたが、調査や実装の記録を書いた発表スライドを残しておきます。</p>
-<p><a target="_blank" rel="noopener" href="https://www.eidos.ic.i.u-tokyo.ac.jp/~tau/lecture/operating_systems/2010/nakatani.pdf">講義資料として上がってるPDF</a> （なぜかはてブがいっぱいついてる）</p>
-<p>上記のはいつ研究室のサーバから消されてもおかしくないので、ここでも配信しておきます。</p>
-<p><a href="/pdf/2011/01-25-linux-scheduling-low-prio-process.pdf">元PDF</a></p>
-
-    
-  </div>
-  <footer class="entry-footer">
-    <div class="entry-meta-footer">
-      <span class="category">
-        
-      </span>
-      <span class="tags">
-        
-  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Linux-Kernel/" rel="tag">Linux Kernel</a></li></ul>
-
-      </span>
-    </div>
-  </footer>
-  
-  
-</article>
-
-
-<hr class="article-devider">
-
-
-
-
-  
-  
-    <nav id="page-nav">
-      <a class="extend prev" rel="prev" href="/archives/page/4/">« Prev</a><a class="page-number" href="/archives/">1</a><span class="space">&hellip;</span><a class="page-number" href="/archives/page/3/">3</a><a class="page-number" href="/archives/page/4/">4</a><span class="page-number current">5</span>
-    </nav>
   
 
 
